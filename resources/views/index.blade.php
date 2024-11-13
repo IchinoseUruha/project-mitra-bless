@@ -88,7 +88,7 @@
     <div class="container mw-1620 bg-white border-radius-10">
       <div class="mb-3 mb-xl-5 pt-1 pb-4"></div>
       <section class="category-carousel container">
-        <h2 class="section-title text-center mb-3 pb-xl-2 mb-xl-4">You Might Like</h2>
+        <h2 class="section-title text-center mb-3 pb-xl-2 mb-xl-4">Categories</h2>
 
         <div class="position-relative">
           <div class="swiper-container js-swiper-slider" data-settings='{
@@ -133,56 +133,63 @@
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_1.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Women<br />Tops</a>
+                  <a href="#" class="menu-link fw-medium">Shampoo</a>
                 </div>
               </div>
               <div class="swiper-slide">
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_2.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Women<br />Pants</a>
+                  <a href="#" class="menu-link fw-medium">Shoap</a>
                 </div>
               </div>
               <div class="swiper-slide">
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_3.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Women<br />Clothes</a>
+                  <a href="#" class="menu-link fw-medium">Lipstic</a>
                 </div>
               </div>
               <div class="swiper-slide">
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_4.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Men<br />Jeans</a>
+                  <a href="#" class="menu-link fw-medium">Deodorant</a>
                 </div>
               </div>
               <div class="swiper-slide">
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_5.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Men<br />Shirts</a>
+                  <a href="#" class="menu-link fw-medium">Face Makeup</a>
                 </div>
               </div>
               <div class="swiper-slide">
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_6.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Men<br />Shoes</a>
+                  <a href="#" class="menu-link fw-medium">Parfume</a>
                 </div>
               </div>
               <div class="swiper-slide">
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_7.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Women<br />Dresses</a>
+                  <a href="#" class="menu-link fw-medium">Cosmetic Tools</a>
                 </div>
               </div>
               <div class="swiper-slide">
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_8.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Kids<br />Tops</a>
+                  <a href="#" class="menu-link fw-medium">Bathing Tools</a>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_8.png')}}" width="124"
+                  height="124" alt="" />
+                <div class="text-center">
+                  <a href="#" class="menu-link fw-medium">Tissue</a>
                 </div>
               </div>
             </div><!-- /.swiper-wrapper -->
