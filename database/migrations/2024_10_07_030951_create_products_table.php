@@ -9,26 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('produk', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('kategori_id')->constrained('kategori')->onDelete('cascade');
             $table->string('name');
-            $table->string('slug')->unique();
-            $table->string('short_description')->nullable();
-            $table->text('description');
-            $table->decimal('regular_price');
-            $table->decimal('sale_price')->nullable();
-            $table->string('SKU');
-            $table->enum('stock_status', ['instock', 'outofstock']);
-            $table->boolean('featured')->default(false);
-            $table->unsignedInteger('quantity')->default(10);
-            $table->string('image')->nullable();
-            $table->text('images')->nullable();
-            $table->bigInteger('category_id')->unsigned()->nullable();
-            $table->bigInteger('brand_id')->unsigned()->nullable();
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
-            $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
+            $table->text('description')->nullable();
+            $table->foreignId('brand_id')->nullable()->constrained('brand')->onDelete('set null');
+            $table->string('slug')->unique(); // Removed ->after('name')
+            $table->decimal('price', 20, 2);
             $table->timestamps();
         });
     }
@@ -38,6 +28,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::table('produk', function (Blueprint $table) {
+            $table->dropForeign(['brand_id']);
+            $table->dropColumn('brand_id');
+        });
+        
+        Schema::dropIfExists('produk');
     }
 };

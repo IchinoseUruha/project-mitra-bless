@@ -59,6 +59,9 @@
 /*-----------------------------------------------*/
 /*------------------ Shop Checkout --------------*/
 /*-----------------------------------------------*/
+
+
+
 :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;
@@ -108,7 +111,6 @@ body {
 hr {
   margin: 1rem 0;
   color: inherit;
-  background-color: currentColor;
   border: 0;
   opacity: 0.25; }
 
@@ -215,7 +217,7 @@ sup {
   top: -.5em; }
 
 a {
-  color: #222222;
+  color: #F062A8;
   text-decoration: none; }
   a:hover {
     color: #1b1b1b; }
@@ -6781,10 +6783,10 @@ svg.flaticon {
   font-family: 'SofiaProBold';
   src: url(../fonts/SofiaProBold.woff); }
 body {
-  color: #222222;
+  color: #F062A8;
   font-family: "Rajdhani", "Jost", sans-serif;
   font-size: 0.875rem;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.7143; }
 
 /*============================================*/
@@ -6801,9 +6803,12 @@ h5,
 .h5,
 h6,
 .h6 {
-  color: #222222;
+  color: #F062A8;
   font-family: "Rajdhani", "Jost", sans-serif;
+
+  
   font-weight: 500; }
+  
 
 .font-special {
   font-family: "Allura", cursive; }
@@ -8146,7 +8151,7 @@ th[align="right"] {
 body ::-webkit-scrollbar {
   margin-right: 1.25rem;
   width: .25rem;
-  height: .25rem;
+  height: .50rem;
   background-color: #ffffff; }
 body ::-webkit-scrollbar-thumb {
   border-radius: .25rem;
@@ -8427,7 +8432,7 @@ img {
     left: 1.5625rem;
     width: 0;
     height: 2px;
-    background-color: #222222;
+    background-color: #F062A8;;
     transition: width 0.36s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     @media (prefers-reduced-motion: reduce) {
       .nav-link_underscore:after {
@@ -12071,7 +12076,7 @@ textarea.form-control-lg {
   position: relative;
   padding-top: 2px;
   padding-bottom: 2px;
-  color: #222222;
+  color: #F062A8;
   font-weight: 500;
   line-height: 1.5rem;
   text-decoration: none;
@@ -12252,7 +12257,7 @@ textarea.form-control-lg {
 
 .header-desk {
   display: flex;
-  align-items: center; }
+  align-items: center;}
 
 .header-fullwidth {
   padding: 0 1.75rem;
@@ -12279,7 +12284,7 @@ textarea.form-control-lg {
   display: flex;
   padding: 0.25rem 0.5rem;
   text-decoration: none;
-  color: #222222; }
+  color: #F062A8; }
   .header-tools__item .flaticon::before {
     display: block;
     line-height: 1; }
@@ -12734,7 +12739,7 @@ textarea.form-control-lg {
     border-bottom-color: rgba(255, 255, 255, 0.15); }
 
 .footer_type_2 {
-  background-color: #ffffff;
+  background-color: #FFD6DC;
   color: #767676; }
   .footer_type_2 .form-select {
     background-image: url("data:image/svg+xml,%3csvg width='14' height='8' viewBox='0 0 14 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M7.49932 0.360778C7.22726 0.0887249 6.77274 0.0887249 6.49999 0.360778L0.206656 6.638C-0.0688853 6.91355 -0.0688853 7.3604 0.206656 7.63524C0.482197 7.91078 0.929749 7.91078 1.20529 7.63524L6.99997 1.85667L12.794 7.63594C13.0702 7.91148 13.517 7.91148 13.7933 7.63594C14.0688 7.3604 14.0688 6.91355 13.7933 6.6387L7.49932 0.360778Z' fill='%23767676'/%3e%3c/svg%3e"); }
@@ -15308,7 +15313,9 @@ button.js-add-wishlist.active .flaticon.flaticon-heart, a.add-to-wishlist.active
 .login-register {
   width: 40.625rem;
   max-width: 100%;
-  padding: 0 4.6875rem; }
+  padding: 0 4.6875rem;
+
+}
   @media (max-width: 767.98px) {
     .login-register {
       padding: 0 1rem; } }
@@ -15318,7 +15325,8 @@ button.js-add-wishlist.active .flaticon.flaticon-heart, a.add-to-wishlist.active
   .login-register .btn {
     font-size: 0.875rem;
     height: 3.75rem;
-    font-weight: 500; }
+    font-weight: 500;
+  background-color: #F062A8; }
   .login-register p {
     color: #767676; }
 
@@ -15539,3 +15547,11 @@ body.coming-soon-page {
     display: none; }
   .btn-video-player.playing svg.btn-pause {
     display: block; }
+
+    .clicker-script-regular {
+      font-family: "Clicker Script", cursive;
+      font-weight: 400;
+      font-style: normal;
+    }
+
+ 

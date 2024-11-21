@@ -317,7 +317,7 @@
                 <a href="{{ route('cart.index') }}" class="navigation__link">Cart</a>
               </li>
               <li class="navigation__item">
-                <a href="about.html" class="navigation__link">About</a>
+                <a href="about" class="navigation__link">About</a>
               </li>
               <li class="navigation__item">
                 <a href="contact.html" class="navigation__link">Contact</a>
@@ -406,7 +406,7 @@
                 <a href="{{ route('cart.index') }}" class="navigation__link">Cart</a>
               </li>
               <li class="navigation__item">
-                <a href="about.html" class="navigation__link">About</a>
+                <a href="about" class="navigation__link">About</a>
               </li>
               <li class="navigation__item">
                 <a href="contact.html" class="navigation__link">Contact</a>
@@ -515,9 +515,9 @@
                 <img src="{{ asset('assets/images/logo.png') }}" alt="SurfsideMedia" class="logo__image d-block" />
               </a>
             </div>
-            <p class="footer-address">123 Beach Avenue, Surfside City, CA 00000</p>
-            <p class="m-0"><strong class="fw-medium">contact@surfsidemedia.in</strong></p>
-            <p><strong class="fw-medium">+1 000-000-0000</strong></p>
+            <p class="footer-address">Jl. Husni Thamrin No.4, Pekan Binjai, Kec.Binjai Kota, Kota Binjai, Sumatera Utara</p>
+            <p class="m-0"><strong class="fw-medium">bless@gmail.com</strong></p>
+            <p><strong class="fw-medium">0618821672</strong></p>
   
             <ul class="social-links list-unstyled d-flex flex-wrap mb-0">
               <li>
@@ -567,7 +567,7 @@
           <div class="footer-column footer-menu mb-4 mb-lg-0">
             <h6 class="sub-menu__title text-uppercase">Company</h6>
             <ul class="sub-menu__list list-unstyled">
-              <li class="sub-menu__item"><a href="about-2.html" class="menu-link menu-link_us-s">About Us</a></li>
+              <li class="sub-menu__item"><a href="about" class="menu-link menu-link_us-s">About Us</a></li>
               <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Careers</a></li>
               <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Affiliates</a></li>
               <li class="sub-menu__item"><a href="blog_list1.html" class="menu-link menu-link_us-s">Blog</a></li>
@@ -603,10 +603,10 @@
             <h6 class="sub-menu__title text-uppercase">Categories</h6>
             <ul class="sub-menu__list list-unstyled">
               <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Shirts</a></li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Jeans</a></li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Shoes</a></li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Bags</a></li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Shop All</a></li>
+              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Skincare</a></li>
+              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Body Care</a></li>
+              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Face Makeup</a></li>
+              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Cosmetics Tools</a></li>
             </ul>
           </div>
         </div>
@@ -614,7 +614,7 @@
   
       <div class="footer-bottom">
         <div class="container d-md-flex align-items-center">
-          <span class="footer-copyright me-auto">©2024 Surfside Media</span>
+          <span class="footer-copyright me-auto">©2024 Bless</span>
           <div class="footer-settings d-md-flex align-items-center">
             <a href="privacy-policy.html">Privacy Policy</a> &nbsp;|&nbsp; <a href="terms-conditions.html">Terms &amp;
               Conditions</a>

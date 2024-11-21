@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Clicker+Script&family=Hind+Siliguri:wght@300;400;500;600;700&family=MonteCarlo&family=Passions+Conflict&display=swap" rel="stylesheet">
 <main>
 
     <section class="swiper-container js-swiper-slider swiper-number-pagination slideshow" data-settings='{
@@ -25,10 +29,10 @@
               </div>
             </div>
             <div class="slideshow-text container position-absolute start-50 top-50 translate-middle">
-              <h6 class="text_dash text-uppercase fs-base fw-medium animate animate_fade animate_btt animate_delay-3">
-                New Arrivals</h6>
-              <h2 class="h1 fw-normal mb-0 animate animate_fade animate_btt animate_delay-5">Night Spring</h2>
-              <h2 class="h1 fw-bold animate animate_fade animate_btt animate_delay-5">Dresses</h2>
+              <h6 class="clicker-script-regular text_dash text-uppercase fs-base fw-medium animate animate_fade animate_btt animate_delay-3">
+                best place for you</h6>
+              <h2 class="h1 fw-normal mb-0 animate animate_fade animate_btt animate_delay-5">Glow Up</h2>
+              <h2 class="h1 fw-bold animate animate_fade animate_btt animate_delay-5">Starts Here</h2>
               <a href="#"
                 class="btn-link btn-link_lg default-underline fw-medium animate animate_fade animate_btt animate_delay-7">Shop
                 Now</a>
@@ -48,10 +52,10 @@
               </div>
             </div>
             <div class="slideshow-text container position-absolute start-50 top-50 translate-middle">
-              <h6 class="text_dash text-uppercase fs-base fw-medium animate animate_fade animate_btt animate_delay-3">
-                New Arrivals</h6>
-              <h2 class="h1 fw-normal mb-0 animate animate_fade animate_btt animate_delay-5">Night Spring</h2>
-              <h2 class="h1 fw-bold animate animate_fade animate_btt animate_delay-5">Dresses</h2>
+              <h6 class="clicker-script-regular text_dash text-uppercase fs-base fw-medium animate animate_fade animate_btt animate_delay-3">
+                best place for you</h6>
+              <h2 class="h1 fw-normal mb-0 animate animate_fade animate_btt animate_delay-5">Pamper Yourself,</h2>
+              <h2 class="h1 fw-bold animate animate_fade animate_btt animate_delay-5">You Deserve It</h2>
               <a href="#"
                 class="btn-link btn-link_lg default-underline fw-medium animate animate_fade animate_btt animate_delay-7">Shop
                 Now</a>
@@ -67,10 +71,10 @@
                 class="slideshow-character__img animate animate_fade animate_rtl animate_delay-10 w-auto h-auto" />
             </div>
             <div class="slideshow-text container position-absolute start-50 top-50 translate-middle">
-              <h6 class="text_dash text-uppercase fs-base fw-medium animate animate_fade animate_btt animate_delay-3">
-                New Arrivals</h6>
-              <h2 class="h1 fw-normal mb-0 animate animate_fade animate_btt animate_delay-5">Night Spring</h2>
-              <h2 class="h1 fw-bold animate animate_fade animate_btt animate_delay-5">Dresses</h2>
+              <h6 class="clicker-script-regular text_dash text-uppercase fs-base fw-medium animate animate_fade animate_btt animate_delay-3">
+                best place for you</h6>
+              <h2 class="h1 fw-normal mb-0 animate animate_fade animate_btt animate_delay-5">From Skincare</h2>
+              <h2 class="h1 fw-bold animate animate_fade animate_btt animate_delay-5">to Self-Care</h2>
               <a href="#"
                 class="btn-link btn-link_lg default-underline fw-medium animate animate_fade animate_btt animate_delay-7">Shop
                 Now</a>
@@ -130,95 +134,76 @@
             }'>
             <div class="swiper-wrapper">
               <div class="swiper-slide">
-                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_1.png')}}" width="124"
+                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_skincare.png')}}" width="124"
+                  height="124" alt="" />
+                <div class="text-center">
+                  <a href="#" class="menu-link fw-medium">Skincare</a>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_soap.png')}}" width="124"
+                  height="124" alt="" />
+                <div class="text-center">
+                  <a href="#" class="menu-link fw-medium">Soap</a>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_sampo.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
                   <a href="#" class="menu-link fw-medium">Shampoo</a>
                 </div>
               </div>
               <div class="swiper-slide">
-                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_2.png')}}" width="124"
+                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_bodycare.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Shoap</a>
+                  <a href="#" class="menu-link fw-medium">Body Care</a>
                 </div>
               </div>
               <div class="swiper-slide">
-                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_3.png')}}" width="124"
-                  height="124" alt="" />
-                <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Lipstic</a>
-                </div>
-              </div>
-              <div class="swiper-slide">
-                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_4.png')}}" width="124"
-                  height="124" alt="" />
-                <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Deodorant</a>
-                </div>
-              </div>
-              <div class="swiper-slide">
-                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_5.png')}}" width="124"
+                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_makeup.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
                   <a href="#" class="menu-link fw-medium">Face Makeup</a>
                 </div>
               </div>
               <div class="swiper-slide">
-                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_6.png')}}" width="124"
+                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_parfume.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
                   <a href="#" class="menu-link fw-medium">Parfume</a>
                 </div>
               </div>
               <div class="swiper-slide">
-                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_7.png')}}" width="124"
+                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_makeuptools.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
                   <a href="#" class="menu-link fw-medium">Cosmetic Tools</a>
                 </div>
               </div>
               <div class="swiper-slide">
-                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_8.png')}}" width="124"
+                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_bath.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Bathing Tools</a>
+                  <a href="#" class="menu-link fw-medium">Bathing Tools anjay</a>
                 </div>
               </div>
-              <div class="swiper-slide">
-                <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_8.png')}}" width="124"
-                  height="124" alt="" />
-                <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Tissue</a>
-                </div>
+          
               </div>
             </div><!-- /.swiper-wrapper -->
           </div><!-- /.swiper-container js-swiper-slider -->
-
-          <div
-            class="products-carousel__prev products-carousel__prev-1 position-absolute top-50 d-flex align-items-center justify-content-center">
-            <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-              <use href="#icon_prev_md" />
-            </svg>
-          </div><!-- /.products-carousel__prev -->
-          <div
-            class="products-carousel__next products-carousel__next-1 position-absolute top-50 d-flex align-items-center justify-content-center">
-            <svg width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
-              <use href="#icon_next_md" />
-            </svg>
-          </div><!-- /.products-carousel__next -->
-        </div><!-- /.position-relative -->
       </section>
 
       <div class="mb-3 mb-xl-5 pt-1 pb-4"></div>
 
       <section class="hot-deals container">
-        <h2 class="section-title text-center mb-3 pb-xl-3 mb-xl-4">Hot Deals</h2>
+        <h2 class="section-title text-center mb-3 pb-xl-3 mb-xl-4">Most Popular Products</h2>
         <div class="row">
           <div
             class="col-md-6 col-lg-4 col-xl-20per d-flex align-items-center flex-column justify-content-center py-4 align-items-md-start">
-            <h2>Summer Sale</h2>
-            <h2 class="fw-bold">Up to 60% Off</h2>
+            <h2>Most Frequently </h2>
+            <h2 class="fw-bold">Purchased Items</h2>
 
             <div class="position-relative d-flex align-items-center text-center pt-xxl-4 js-countdown mb-3"
               data-date="18-3-2024" data-time="06:50">
@@ -588,39 +573,6 @@
 
       <div class="mb-3 mb-xl-5 pt-1 pb-4"></div>
 
-      <section class="category-banner container">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="category-banner__item border-radius-10 mb-5">
-              <img loading="lazy" class="h-auto"  src=" {{asset('assets/images/home/demo3/category_9.jpg')}}" width="690" height="665"
-                alt="" />
-              <div class="category-banner__item-mark">
-                Starting at $19
-              </div>
-              <div class="category-banner__item-content">
-                <h3 class="mb-0">Blazers</h3>
-                <a href="#" class="btn-link default-underline text-uppercase fw-medium">Shop Now</a>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="category-banner__item border-radius-10 mb-5">
-              <img loading="lazy" class="h-auto"  src=" {{asset('assets/images/home/demo3/category_10.jpg')}}" width="690" height="665"
-                alt="" />')}}
-              <div class="category-banner__item-mark">
-                Starting at $19
-              </div>
-              <div class="category-banner__item-content">
-                <h3 class="mb-0">Sportswear</h3>
-                <a href="#" class="btn-link default-underline text-uppercase fw-medium">Shop Now</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div class="mb-3 mb-xl-5 pt-1 pb-4"></div>
-
       <section class="products-grid container">
         <h2 class="section-title text-center mb-3 pb-xl-3 mb-xl-4">Featured Products</h2>
 
@@ -929,9 +881,3 @@
 
   </main>
 @endsection
-
-
-
-
-
-

@@ -17,18 +17,16 @@ class AuthAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(Auth::check())
-        {
-            if(Auth::user()->utype==='ADMIN')
-            {
+        if (Auth::check()) {
+            // Periksa apakah pengguna adalah admin
+            if (Auth::user()->utype === 'ADMIN') {
                 return $next($request);
-            }else{
+            } else {
                 Session::flush();
                 return redirect()->route('login');
             }
-        }else{
+        } else {
             return redirect()->route('login');
         }
-       
     }
 }

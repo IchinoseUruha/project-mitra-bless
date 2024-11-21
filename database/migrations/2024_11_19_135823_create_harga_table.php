@@ -9,14 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('slug')->unique();
             $table->timestamps();
         });
+    }
+
+    public function harga()
+    {
+        return $this->hasOne(Harga::class)->where('is_current', true);
     }
 
     /**
@@ -24,7 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        
-        Schema::dropIfExists('brands');
+        Schema::dropIfExists('harga');
     }
 };

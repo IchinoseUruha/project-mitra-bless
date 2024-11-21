@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('brands', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->timestamps();
+        Schema::table('kategori', function (Blueprint $table) {
+            $table->string('slug')->unique()->after('name'); // Add slug column
         });
     }
 
@@ -24,7 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        
-        Schema::dropIfExists('brands');
+        Schema::table('kategori', function (Blueprint $table) {
+            $table->dropColumn('slug');
+        });
     }
 };
