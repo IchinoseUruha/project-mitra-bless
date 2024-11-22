@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
@@ -34,6 +34,9 @@ Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/shop/{product_slug}', [ShopController::class, 'product_details'])->name('shop.product.details');
 Route::get('/product/{product_slug}', [ShopController::class, 'product_details'])->name('shop.product.details');
 
+//details
+Route::post('/product/{id}/increase', [ProductController::class, 'increaseQuantity'])->name('product.increase');
+Route::post('/product/{id}/decrease', [ProductController::class, 'decreaseQuantity'])->name('product.decrease');
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add', [CartController::class, 'add_items'])->name('cart.add');
