@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrderController;
 use App\Http\Middleware\AuthAdmin;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,10 @@ Auth::routes();
 Route::get('/about', function () {
     return view('about');
 });
+
+
+Route::get('/order-history', [OrderController::class, 'index'])->name('order.history')->middleware('auth');
+Route::get('/order/{id}', [OrderController::class, 'show'])->name('order.details')->middleware('auth');
 
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
