@@ -93,7 +93,7 @@
   }
 
   .btn:hover {
-    background-color: #5b21b6;
+    background-color: #b93175;
   }
 
   .btn-cart {

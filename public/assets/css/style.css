@@ -6774,7 +6774,7 @@ svg.flaticon {
   background-color: transparent !important; }
 
 .bg-white-overlay {
-  background-color: rgba(255, 255, 255, 0.9); }
+  background-color: rgba(255, 255, 255, 0.767); }
 
 .pt-100per {
   padding-top: 100% !important; }
@@ -12115,7 +12115,7 @@ textarea.form-control-lg {
   display: inline-block;
   position: relative;
   padding: 0.5em 0;
-  color: #222222;
+  color: #F062A8;
   line-height: 1.5em; }
 
 .menu-link_us-s:after {

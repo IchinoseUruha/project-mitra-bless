@@ -25,7 +25,7 @@
               <div class="character_markup type2">
                 <p
                   class="text-uppercase font-sofia mark-grey-color animate animate_fade animate_btt animate_delay-10 mb-0">
-                  Dresses</p>
+                  Beauty</p>
               </div>
             </div>
             <div class="slideshow-text container position-absolute start-50 top-50 translate-middle">
