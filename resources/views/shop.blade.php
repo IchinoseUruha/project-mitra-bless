@@ -1,5 +1,14 @@
 @extends('layouts.app')
 
+@push('styles')
+    <link href="https://example.com/custom-page-style.css" rel="stylesheet">
+@endpush
+
+@push('scripts')
+    <script src="https://example.com/custom-page-script.js"></script>
+@endpush
+
+
 @section('content')
 <style>
   .brand-list li, .category-list li {
@@ -95,8 +104,48 @@
   .btn-cart:hover {
     background-color: #e0e0e0;
   }
+
+  .toast {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        min-width: 300px;
+    }
+
+    .custom-popup {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #28a745;
+        color: white;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
 </style>
+
 <main class="pt-90">
+
+    <!-- Toast Notification -->
+    @if (session('success'))
+        <div aria-live="polite" aria-atomic="true" class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+            <div class="toast align-items-center text-bg-success border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('success') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Custom Pop-Up -->
+    <div id="successPopup" class="custom-popup" style="display: none;">
+        <p>{{ session('success') }}</p>
+    </div>
+
     <section class="shop-main container d-flex pt-4 pt-xl-5">
         <!-- Sidebar -->
         <div class="shop-sidebar side-sticky bg-body w-25" id="shopFilter">
@@ -258,6 +307,14 @@
             $("#hdnSizes").val(sizes.join(","));
             $("#frmfilter").submit();
         });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        @if (session('success'))
+            const popup = document.getElementById('successPopup');
+            popup.style.display = 'block';
+            setTimeout(() => popup.style.display = 'none', 3000); // Hide after 3 seconds
+        @endif
     });
 </script>
 @endpush
