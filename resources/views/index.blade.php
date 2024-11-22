@@ -186,7 +186,7 @@
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_bath.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Bathing Tools anjay</a>
+                  <a href="#" class="menu-link fw-medium">Bathing Tools</a>
                 </div>
               </div>
           

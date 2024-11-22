@@ -75,7 +75,7 @@
 
   .btn {
     display: inline-block;
-    background-color: #7c3aed;
+    background-color: #F062A8;
     color: #fff;
     padding: 0.75rem 1.5rem;
     border-radius: 5px;
