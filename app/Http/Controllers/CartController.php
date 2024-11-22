@@ -37,6 +37,12 @@ class CartController extends Controller
     {
         // dd($request->all());
 
+         // Cek apakah pengguna sudah login
+    if (!Auth::check()) {
+        // Jika belum login, kirim pesan ke sesi
+        return redirect()->route('login')->with('login_error', 'Anda belum login, silakan login terlebih dahulu.');
+    }
+
         // Validasi input
         $request->validate([
             'id' => 'required|exists:produk,id', // Pastikan 'id' adalah ID valid di tabel 'produk'
