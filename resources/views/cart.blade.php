@@ -15,8 +15,8 @@
               <tr>
                 <th>Product</th>
                 <th></th>
-                <th>Price</th>
-                <th>Quantity</th>
+                <th>Harga</th>
+                <th>Jumlah</th>
                 <th>Subtotal</th>
                 <th></th>
               </tr>
@@ -35,7 +35,7 @@
                       </div>
                   </td>
                   <td>
-                    <span class="shopping-cart__product-price">${{ number_format($item->quantity * $item->produk->price, 1) }}</span>
+                    <span class="shopping-cart__product-price">Rp. {{ number_format($item->quantity * $item->produk->price, 1) }}</span>
                 </td>
                   <td>{{ $item->quantity }}</td>
                   <td>
@@ -54,7 +54,7 @@
                       </div>
                   </td>
                   <td>
-                      <span class="shopping-cart__subtotal">${{ number_format($item->quantity * $item->produk->price, 1) }}</span>
+                      <span class="shopping-cart__subtotal">Rp. {{ number_format($item->quantity * $item->produk->price, 1) }}</span>
                   </td>
                   <td>
                       <form method="POST" action="{{ route('cart.remove', $item->id) }}">

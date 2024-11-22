@@ -55,10 +55,17 @@ class CartController extends Controller
         Cart::updateOrCreate(
             [
                 'customer_id' => Auth::id(),
-                'produk_id' => $request->id, // Pastikan 'produk_id' diisi dengan benar
+                'produk_id' => $request->id,
             ],
             [
-                'quantity' => \DB::raw('quantity + ' . $request->quantity), // Menambahkan kuantitas
+                'quantity' => Cart::where('customer_id', Auth::id())
+                    ->where('produk_id', $request->id)
+                    ->exists()
+                    ? Cart::where('customer_id', Auth::id())
+                        ->where('produk_id', $request->id)
+                        ->first()
+                        ->quantity + $request->quantity
+                    : $request->quantity,
             ]
         );
     

@@ -208,7 +208,6 @@
 <!-- Hidden Form -->
 <form id="frmfilter" method="GET" action="{{ route('shop.index') }}">
     <input type="hidden" name="page" value="{{ $products->currentPage() }}">
-    <input type="hidden" name="size" id="size" value="{{ $size }}" />
     <input type="hidden" name="order" id="order" value={{ $order }} />
     <input type="hidden" name="brands" id="hdnBrands" value="{{ $filter_brands }}" />
     <input type="hidden" name="categories" id="hdnCategories" value="{{ $filter_categories }}" />
