@@ -161,3 +161,8 @@ body {
     width: 20px;
     margin: 0 auto;
 }
+
+.col-md-6.col-lg-4.col-xl-20per .h2-yay h2 {
+    font-size: 18px !important;
+    color: red;
+}

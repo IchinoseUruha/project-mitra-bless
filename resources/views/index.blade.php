@@ -202,8 +202,8 @@
         <div class="row">
           <div
             class="col-md-6 col-lg-4 col-xl-20per d-flex align-items-center flex-column justify-content-center py-4 align-items-md-start">
-            <h2>Most Frequently </h2>
-            <h2 class="fw-bold">Purchased Items</h2>
+            <div class="h2-yay"><h2 style="font-size: 24px;">Most Frequently</h2>
+              <h2 style="font-size: 24px;">Purchased Items</h2></div>
 
             <div class="position-relative d-flex align-items-center text-center pt-xxl-4 js-countdown mb-3"
               data-date="18-3-2024" data-time="06:50">
