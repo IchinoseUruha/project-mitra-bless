@@ -1,117 +1,267 @@
 @extends('layouts.app')
 
 @section('content')
-<main class="pt-90">
+<main class="pt-90 bg-gradient-to-br from-pink-50 to-pink-100 min-h-screen">
     <div class="mb-4 pb-4"></div>
-    <section class="shop-checkout container">
-      <div class="flex items-center justify-center min-h-screen">
-        <h2 class="page-title text-center">Keranjang Anda</h2>
-    </div>
-      <div class="shopping-cart">
+    <section class="shop-checkout container mx-auto px-4">
+
+  <div style="display: flex; justify-content: center; align-items: center; min-height: 5vh;">       
+    <h2 class="page-title text-center text-4xl font-bold text-pink-700 tracking-wide bg-white px-6 py-3 rounded-full shadow-[0_4px_6px_rgba(255,105,180,0.3)]">
+        Keranjang Anda
+    </h2>   
+</div>
+
+      <div class="shopping-cart bg-white rounded-3xl shadow-2xl overflow-hidden transform transition-all duration-300 hover:scale-[1.01]">
         @if($items->count() > 0)
-        <div class="cart-table__wrapper">
-          <table class="cart-table">
-            <thead>
+        <div class="cart-table__wrapper p-6">
+          <table class="cart-table w-full">
+            <thead class="bg-gradient-to-r from-pink-500 to-pink-600 text-white">
               <tr>
-                <th>Product</th>
-                <th></th>
-                <th>Harga</th>
-                <th>Jumlah</th>
-                <th>Subtotal</th>
-                <th></th>
+                <th class="p-4 text-left">Produk</th>
+                <th class="p-4 text-left">Detail</th>
+                <th class="p-4 text-center">Harga</th>
+                <th class="p-4 text-center">Jumlah</th>
+                <th class="p-4 text-center">Subtotal</th>
               </tr>
             </thead>
+            {{-- <tbody>
+              @foreach($items as $item)
+              <tr class="border-b border-pink-100 hover:bg-pink-50 transition-colors duration-300">
+                  <td class="p-4">
+                      <div class="shopping-cart__product-item">
+                          <img 
+                            loading="lazy" 
+                            src="{{ asset('uploads/products/thumbnails') }}/{{ $item->produk->image }}" 
+                            width="120" 
+                            height="120" 
+                            alt="{{ $item->produk->name }}" 
+                            class="rounded-xl shadow-lg transform hover:scale-110 transition-transform"
+                          />
+                      </div>
+                  </td>
+                  <td class="p-4">
+                      <div class="shopping-cart__product-item__detail">
+                          <h4 class="font-bold text-pink-800">{{ $item->produk->name }}</h4>
+                      </div>
+                  </td>
+                  <td class="p-4 text-center">
+                    <span class="shopping-cart__product-price text-pink-600 font-semibold">
+                      Rp. {{ number_format($item->produk->price, 2) }}
+                    </span>
+                </td>
+
+                <td class="p-4 text-center">
+                  <div class="qty-control flex items-center justify-center gap-2">
+                      <!-- Tombol Kurangi -->
+                      <form method="POST" action="{{ route('cart.quantity.decrease', $item->id) }}" class="m-0">
+                          @csrf
+                          @method('PUT')
+                          <button 
+                            type="submit" 
+                            class="qty-control__reduce bg-pink-500 text-white w-8 h-8 rounded-full hover:bg-pink-600 transition-all flex items-center justify-center"
+                          >
+                            -
+                          </button>
+                      </form>
+              
+                      <!-- Jumlah -->
+                      <span 
+                        class="qty-control__number text-center bg-gray-100 border border-pink-300 rounded py-2 px-4 text-pink-800 font-semibold shadow-inner">
+                        {{ $item->quantity }}
+                      </span>
+              
+                      <!-- Tombol Tambah -->
+                      <form method="POST" action="{{ route('cart.quantity.increase', $item->id) }}" class="m-0">
+                          @csrf
+                          @method('PUT')
+                          <button 
+                            type="submit" 
+                            class="qty-control__increase bg-pink-500 text-white w-8 h-8 rounded-full hover:bg-pink-600 transition-all flex items-center justify-center"
+                          >
+                            +
+                          </button>
+                      </form>
+                  </div>
+              </td>
+              
+                
+                  <td class="p-4 text-center">
+                      <span class="shopping-cart__subtotal text-pink-700 font-bold">
+                        Rp. {{ number_format($item->quantity * $item->produk->price, 2) }}
+                      </span>
+                  </td>
+              </tr>
+              @endforeach 
+            </tbody> --}}
+
             <tbody>
               @foreach($items as $item)
-              <tr>
-                  <td>
-                      <div class="shopping-cart__product-item">
-                          <img loading="lazy" src="{{ asset('uploads/products/thumbnails') }}/{{ $item->produk->image }}" width="120" height="120" alt="{{ $item->produk->name }}" />
+              <tr class="border-b border-pink-100 hover:bg-pink-50 transition-colors duration-300">
+                  <td class="p-4 w-1/6">
+                      <div class="shopping-cart__product-item flex justify-center">
+                          <img 
+                            loading="lazy" 
+                            src="{{ asset('uploads/products/thumbnails') }}/{{ $item->produk->image }}" 
+                            width="120" 
+                            height="120" 
+                            alt="{{ $item->produk->name }}" 
+                            class="rounded-xl shadow-lg transform hover:scale-110 transition-transform"
+                          />
                       </div>
                   </td>
-                  <td>
+                  <td class="p-4 w-1/4">
                       <div class="shopping-cart__product-item__detail">
-                          <h4>{{ $item->produk->name }}</h4>
+                          <h4 class="font-bold text-pink-800 text-lg">{{ $item->produk->name }}</h4>
                       </div>
                   </td>
-                  <td>
-                    <span class="shopping-cart__product-price">Rp. {{ number_format($item->quantity * $item->produk->price, 1) }}</span>
+                  <td class="p-4 w-1/6 text-center">
+                      <span class="shopping-cart__product-price text-pink-600 font-semibold block">
+                          Rp. {{ number_format($item->produk->price, 2) }}
+                      </span>
+                  </td>
+            
+                  {{-- <td class="p-4 w-1/6 text-center">
+                      <div class="qty-control flex items-center justify-center">
+                          <div class="inline-flex items-center border border-pink-200 rounded-full overflow-hidden">
+                              <form method="POST" action="{{ route('cart.quantity.decrease', $item->id) }}" class="m-0">
+                                  @csrf
+                                  @method('PUT')
+                                  <button 
+                                    type="submit" 
+                                    class="qty-control__reduce bg-pink-500 text-white w-8 h-8 hover:bg-pink-600 transition-all flex items-center justify-center"
+                                  >
+                                    -
+                                  </button>
+                              </form>
+                      
+                              <span 
+                                class="qty-control__number px-4 text-pink-800 font-semibold bg-gray-50">
+                                {{ $item->quantity }}
+                              </span>
+                      
+                              <form method="POST" action="{{ route('cart.quantity.increase', $item->id) }}" class="m-0">
+                                  @csrf
+                                  @method('PUT')
+                                  <button 
+                                    type="submit" 
+                                    class="qty-control__increase bg-pink-500 text-white w-8 h-8 hover:bg-pink-600 transition-all flex items-center justify-center"
+                                  >
+                                    +
+                                  </button>
+                              </form>
+                          </div>
+                      </div>
+                  </td> --}}
+
+                  <td class="p-4 text-center">
+                    <div class="qty-control flex items-center justify-center space-x-2">
+                        <form method="POST" action="{{ route('cart.quantity.decrease', $item->id) }}" class="m-0">
+                            @csrf
+                            @method('PUT')
+                            <button 
+                              type="submit" 
+                              class="qty-control__reduce bg-pink-500 text-white w-8 h-8 rounded-full hover:bg-pink-600 transition-all flex items-center justify-center"
+                            >
+                              -
+                            </button>
+                        </form>
+                        
+                        <span 
+                          class="qty-control__number text-center bg-gray-100 border border-pink-300 rounded py-2 px-4 text-pink-800 font-semibold shadow-inner"
+                        >
+                          {{ $item->quantity }}
+                        </span>
+                        
+                        <form method="POST" action="{{ route('cart.quantity.increase', $item->id) }}" class="m-0">
+                            @csrf
+                            @method('PUT')
+                            <button 
+                              type="submit" 
+                              class="qty-control__increase bg-pink-500 text-white w-8 h-8 rounded-full hover:bg-pink-600 transition-all flex items-center justify-center"
+                            >
+                              +
+                            </button>
+                        </form>
+                    </div>
                 </td>
-                  <td>{{ $item->quantity }}</td>
-                  <td>
-                      <div class="qty-control position-relative">
-                          <form method="POST" action="{{ route('cart.quantity.decrease', $item->id) }}">
-                              @csrf
-                              @method('PUT')
-                              <button type="submit" class="qty-control__reduce">-</button>
-                          </form>
-                          <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" class="qty-control__number text-center">
-                          <form method="POST" action="{{ route('cart.quantity.increase', $item->id) }}">
-                              @csrf
-                              @method('PUT')
-                              <button type="submit" class="qty-control__increase">+</button>
-                          </form>
-                      </div>
-                  </td>
-                  <td>
-                      <span class="shopping-cart__subtotal">Rp. {{ number_format($item->quantity * $item->produk->price, 1) }}</span>
-                  </td>
-                  <td>
-                      <form method="POST" action="{{ route('cart.remove', $item->id) }}">
-                          @csrf
-                          @method('DELETE')
-                          <button type="submit" class="remove-cart">Remove</button>
-                      </form>
+                  
+                  <td class="p-4 w-1/6 text-center">
+                      <span class="shopping-cart__subtotal text-pink-700 font-bold block">
+                          Rp. {{ number_format($item->quantity * $item->produk->price, 2) }}
+                      </span>
                   </td>
               </tr>
               @endforeach 
             </tbody>
           </table>
-          <div class="cart-table-footer">
+          <div class="cart-table-footer mt-6 flex justify-end">
             <form action="{{ route('cart.clear') }}" method="POST">
               @csrf
               @method('DELETE')
-                <button class="btn btn-light" type="submit">CLEAR CART</button>
+
+                <button 
+                class="btn btn-primary btn-checkout bg-gradient-to-r from-pink-500 to-pink-600 text-white px-8 py-4 rounded-full text-lg font-bold hover:from-pink-600 hover:to-pink-700 transition-all shadow-lg" 
+                type="submit"
+              >
+                KOSONGKAN KERANJANG
+              </button>
             </form>
-          </div>
+          </div>          
         </div>
-        <div class="shopping-cart__totals-wrapper">
+
+        <div class="shopping-cart__totals-wrapper bg-pink-50 p-6">
           <div class="sticky-content">
-            <div class="shopping-cart__totals">
-              <h3>Cart Totals</h3>
-              <table class="cart-totals">
-                <tbody>
-                  <tr>
-                    <th>Subtotal</th>
-                    <td>${{ number_format($subtotal, 1)  }}</td>
-                  </tr>
-                  <tr>
-                    <th>Shipping</th>
-                    <td>Free</td>
-                  </tr>
-                  <tr>
-                    <th>Tax</th>
-                    <td>${{ number_format($tax, 1) }}</td>
-                  </tr>
-                  <tr>
-                    <th>Total</th>
-                    <td>${{ number_format($total, 1) }}</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="shopping-cart__totals bg-white rounded-xl shadow-lg p-6">
+              <h3 class="text-2xl font-bold text-white bg-gradient-to-r from-pink-500 to-pink-600 p-4 -mx-6 -mt-6 mb-4 rounded-t-xl">
+                Ringkasan Keranjang
+              </h3>
+              <div class="flex justify-between items-start">
+                <!-- Kolom Kiri -->
+                <div class="text-left">
+                  <p class="text-pink-700 font-semibold">Subtotal</p>
+                  <p class="text-pink-700 font-semibold">Pengiriman</p>
+                  <p class="text-pink-700 font-semibold">Pajak</p>
+                  <p class="text-pink-800 font-bold text-xl mt-2">Total</p>
+                </div>
+                <!-- Kolom Kanan -->
+                <div class="text-right">
+                  <p class="text-gray-800">Rp. {{ number_format($subtotal, 2) }}</p>
+                  <p class="text-gray-800">Gratis</p>
+                  <p class="text-gray-800">Rp. {{ number_format($tax, 2) }}</p>
+                  <p class="text-pink-800 font-bold text-xl mt-2">
+                    Rp. {{ number_format($total, 2) }}
+                  </p>
+                </div>
+              </div>
             </div>
-            <div class="mobile_fixed-btn_wrapper">
+            <div class="mobile_fixed-btn_wrapper mt-6 text-center">
               <div class="button-wrapper container">
-                <a href="checkout.html" class="btn btn-primary btn-checkout">PROCEED TO CHECKOUT</a>
+                <a 
+                  href="checkout.html" 
+                  class="btn btn-primary btn-checkout bg-gradient-to-r from-pink-500 to-pink-600 text-white px-8 py-4 rounded-full text-lg font-bold hover:from-pink-600 hover:to-pink-700 transition-all shadow-lg"
+                >
+                  LANJUTKAN KE CHECKOUT
+                </a>
               </div>
             </div>
           </div>
         </div>
+        
+        
+
+        
         @else
-            <div class="row">
-                <div class="col-md-12 text-center pt-5 bp-5">
-                    <p>No item found in your cart</p>
-                    <a href="{{ route('shop.index') }}" class="btn btn-info">Shop Now</a>
+            <div class="row p-12 text-center bg-pink-50">
+                <div class="col-md-12">
+                    <div class="bg-white p-8 rounded-3xl shadow-xl">
+                        <p class="text-4xl text-pink-600 mb-4">Tidak ada item di keranjang Anda</p>
+                        <a 
+                          href="{{ route('shop.index') }}" 
+                          class="btn btn-info bg-pink-600 text-white px-6 py-3 rounded-full hover:bg-pink-700 transition-colors"
+                        >
+                          Belanja Sekarang
+                        </a>
+                    </div>
                 </div>
             </div>
         @endif
@@ -135,7 +285,6 @@
         $(".remove-cart").on("click", function(){
           $(this).closest('form').submit();
         });
-
     });
 </script>
 @endpush
