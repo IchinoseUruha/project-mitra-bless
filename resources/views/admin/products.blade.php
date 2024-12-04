@@ -44,14 +44,11 @@
                         <tr>
                             <th>No</th>
                             <th>Name</th>
-                            <th>Price</th>
-                            <th>Sale Price</th>
-                            <th>SKU</th>
+                            <th>Harga</th>
                             <th>Category</th>
                             <th>Brand</th>
-                            <th>Featured</th>
-                            <th>Stock</th>
-                            <th>Quantity</th>
+                            <th>Status Stock</th>
+                            <th>Jumlah Produk</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -61,20 +58,14 @@
                         <tr>
                             <td>{{ $product->id }}</td>
                             <td class="pname">
-                                <div class="image">
-                                    <img src="{{ asset('uploads/products/thumbnails') }}/{{ $product->image }}" alt="{{ $product->name }}" class="image">
-                                </div>
                                 <div class="name">
                                     <a href="#" class="body-title-2">{{ $product->name }}</a>
                                     <div class="text-tiny mt-3">{{ $product->slug }}</div>
                                 </div>
                             </td>
-                            <td>${{ $product->regular_price }}</td>
-                            <td>${{ $product->sale_price }}</td>
-                            <td>{{ $product->SKU }}</td>
+                            <td>Rp. {{ $product->price }}</td>
                             <td>{{ $product->category->name }}</td>
                             <td>{{ $product->brand->name }}</td>
-                            <td>{{ $product->featured == 0  ? "No" : "Yes"}}</td>
                             <td>{{ $product->stock_status }}</td>
                             <td>{{ $product->quantity }}</td>
                             <td>
