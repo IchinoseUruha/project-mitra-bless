@@ -13,20 +13,19 @@ class AuthAdmin
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check()) {
-            // Periksa apakah pengguna adalah admin
-            if (Auth::user()->utype === 'ADMIN') {
-                return $next($request);
-            } else {
-                Session::flush();
-                return redirect()->route('login');
-            }
-        } else {
-            return redirect()->route('login');
+        // Periksa apakah pengguna sudah login dan memiliki utype 'Admin'
+        if (Auth::check() && strcasecmp(Auth::user()->utype, 'Admin') === 0) {
+            return $next($request); // Jika Admin, lanjutkan request
         }
+
+        // Jika bukan admin atau belum login, logout dan redirect ke login
+        Auth::logout();
+        return redirect()->route('login')->with('error', 'You do not have admin access.');
     }
 }

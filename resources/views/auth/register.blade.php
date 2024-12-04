@@ -39,7 +39,7 @@
 
                         <div class="pb-3"></div>
 
-                        <div class="form-floating mb-3">
+                        {{-- <div class="form-floating mb-3">
                             <input id="mobile" type="text" class="form-control form-control_gray @error('mobile') is-invalid @enderror" name="mobile" value="{{ old('mobile') }}"
                                 required autocomplete="mobile">
                             <label for="mobile">Mobile Phone</label>
@@ -48,7 +48,7 @@
                                 <strong>{{ $message }}</strong>
                             </span>
                             @enderror
-                        </div>
+                        </div> --}}
 
                         <div class="pb-3"></div>
 
