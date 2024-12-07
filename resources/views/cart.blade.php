@@ -237,7 +237,7 @@
             <div class="mobile_fixed-btn_wrapper mt-6 text-center">
               <div class="button-wrapper container">
                 <a 
-                  href="checkout.html" 
+                  href="{{ route('checkout.index') }}" 
                   class="btn btn-primary btn-checkout bg-gradient-to-r from-pink-500 to-pink-600 text-white px-8 py-4 rounded-full text-lg font-bold hover:from-pink-600 hover:to-pink-700 transition-all shadow-lg"
                 >
                   LANJUTKAN KE CHECKOUT
