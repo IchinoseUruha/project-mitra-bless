@@ -31,9 +31,9 @@
 
                 <!-- Total Harga -->
                 <div class="total-price">
-                    <p><strong>Subtotal: </strong>Rp {{ number_format($subtotal, 0, ',', '.') }}</p>
-                    <p><strong>Pajak (10%): </strong>Rp {{ number_format($tax, 0, ',', '.') }}</p>
-                    <p><strong>Total: </strong>Rp {{ number_format($total, 0, ',', '.') }}</p>
+                    <p class="text-gray-800">subtotal: Rp. {{ number_format($subtotal, 2) }}</p>
+                    <p><strong>Pajak (10%): </strong>Rp {{ number_format($tax, 2) }}</p>
+                    <p><strong>Total: </strong>Rp {{ number_format($total, 2) }}</p>
                 </div>
             </div>
         </div>
@@ -41,7 +41,7 @@
         <!-- Form Checkout -->
         <div class="col-md-4">
             <div class="checkout-form">
-                <h3>Formulir Checkout</h3>
+               <h3>Formulir Checkout</h3>
                 <form action="{{ route('checkout.process') }}" method="POST">
                     @csrf
 
@@ -60,6 +60,15 @@
                             <option value="cash_on_delivery">Bayar di Tempat</option>
                         </select>
                     </div>
+
+                                        <!-- Metode Pengiriman -->
+                                        <div class="form-group">
+                                            <label for="payment_method">Silahkan pilih pengiriman</label>
+                                            <select name="sending_method" id="sending_method" class="form-control" required>
+                                                <option value="diantar">Diantar ke rumah</option>
+                                                <option value="diambil">Ambil di toko</option>
+                                            </select>
+                                        </div>
 
                     <!-- Tombol Submit -->
                     <button type="submit" class="btn btn-primary">Lanjutkan ke Pembayaran</button>
