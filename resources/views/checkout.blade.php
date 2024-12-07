@@ -21,9 +21,9 @@
                         @foreach ($cartItems as $item)
                             <tr>
                                 <td>{{ $item->produk->name }}</td>
-                                <td>Rp {{ number_format($item->produk->price, 0, ',', '.') }}</td>
+                                <td>Rp {{ number_format($item->produk->price, 2) }}</td>
                                 <td>{{ $item->quantity }}</td>
-                                <td>Rp {{ number_format($item->quantity * $item->produk->price, 0, ',', '.') }}</td>
+                                <td>Rp {{ number_format($item->quantity * $item->produk->price, 2) }}</td>
                             </tr>
                         @endforeach
                     </tbody>
