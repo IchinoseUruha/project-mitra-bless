@@ -100,15 +100,26 @@
                                 </div>
 
                                 <!-- Form Add to Cart (terpisah) -->
-                                <form action="{{ route('cart.add') }}" method="POST">
+                                <form action="{{ route('cart.add') }}" method="POST" class="mb-2">
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $product->id }}">
                                     <input type="hidden" name="name" value="{{ $product->name }}">
                                     <input type="hidden" name="price" value="{{ $product->price }}">
                                     <input type="hidden" name="quantity" value="{{ session('quantity', 1) }}">
-                                    <div class="d-grid gap-2 mb-3">
+                                    <div class="d-grid gap-2">
                                         <button type="submit" class="btn btn-pink">+ Keranjang</button>
-                                        <button type="button" class="btn btn-outline-pink">Beli Langsung</button>
+                                    </div>
+                                </form>
+
+                                <!-- Form Beli Langsung -->
+                                <form action="{{ route('checkout.direct') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="id" value="{{ $product->id }}">
+                                    <input type="hidden" name="name" value="{{ $product->name }}">
+                                    <input type="hidden" name="price" value="{{ $product->price }}">
+                                    <input type="hidden" name="quantity" value="{{ session('quantity', 1) }}">
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-outline-pink">Beli Langsung</button>
                                     </div>
                                 </form>
 

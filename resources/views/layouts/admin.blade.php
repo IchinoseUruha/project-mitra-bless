@@ -118,17 +118,12 @@
                                 <li class="menu-item has-children">
                                     <a href="javascript:void(0);" class="menu-item-button">
                                         <div class="icon"><i class="icon-file-plus"></i></div>
-                                        <div class="text">Order</div>
+                                        <div class="text">Pemesanan</div>
                                     </a>
                                     <ul class="sub-menu">
-                                        <li class="sub-menu-item">
+                                        <li class="menu-item">
                                             <a href="orders.html" class="">
-                                                <div class="text">Orders</div>
-                                            </a>
-                                        </li>
-                                        <li class="sub-menu-item">
-                                            <a href="order-tracking.html" class="">
-                                                <div class="text">Order tracking</div>
+                                                <div class="text">Pemesanan</div>
                                             </a>
                                         </li>
                                     </ul>
@@ -139,13 +134,6 @@
                                         <div class="text">Slider</div>
                                     </a>
                                 </li>
-                                <li class="menu-item">
-                                    <a href="coupons.html" class="">
-                                        <div class="icon"><i class="icon-grid"></i></div>
-                                        <div class="text">Coupons</div>
-                                    </a>
-                                </li>
-
                                 <li class="menu-item">
                                     <a href="users.html" class="">
                                         <div class="icon"><i class="icon-user"></i></div>

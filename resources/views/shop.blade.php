@@ -220,7 +220,7 @@
             <div class="product-card">
                 <div class="product-image">
                     <a href="{{ route('shop.product.details', ['product_slug' => $product->slug]) }}">
-                        <img src="{{ asset('uploads/products') }}/{{ $product->image }}" alt="{{ $product->name }}">
+                        <img src="{{ asset($product->image_path) }}" alt="{{ $product->name }}">
                     </a>
                 </div>
                 <div class="product-info">
@@ -254,9 +254,8 @@
 </main>
 
 
-<!-- Hidden Form -->
+<!-- Hapus atau modifikasi form filter -->
 <form id="frmfilter" method="GET" action="{{ route('shop.index') }}">
-    <input type="hidden" name="page" value="{{ $products->currentPage() }}">
     <input type="hidden" name="order" id="order" value={{ $order }} />
     <input type="hidden" name="brands" id="hdnBrands" value="{{ $filter_brands }}" />
     <input type="hidden" name="categories" id="hdnCategories" value="{{ $filter_categories }}" />

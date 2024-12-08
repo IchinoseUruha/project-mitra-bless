@@ -18,7 +18,10 @@ class Product extends Model
         'description', 
         'price', 
         'slug', 
-        'image'
+        'stock_status',
+        'image_path',
+        'gallery_path',
+        'quantity'
     ];
 
     // Relasi ke Brand

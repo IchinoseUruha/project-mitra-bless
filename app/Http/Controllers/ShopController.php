@@ -18,21 +18,36 @@ class ShopController extends Controller
         $max_price = $request->query('max', 100000000);
         $order = $request->query('order', 'desc');
 
-        // Query products
+          // Query products dengan get()
         $products = Product::with(['brand', 'category'])
-            ->when($filter_brands, function ($query, $filter_brands) {
-                $query->whereIn('brand_id', explode(',', $filter_brands));
-            })
-            ->when($filter_categories, function ($query, $filter_categories) {
-                $query->whereIn('kategori_id', explode(',', $filter_categories));
-            })
-            ->whereBetween('price', [$min_price, $max_price])
-            ->orderBy('created_at', $order)
-            ->paginate(); // Default pagination
+        ->when($filter_brands, function ($query, $filter_brands) {
+            $query->whereIn('brand_id', explode(',', $filter_brands));
+        })
+        ->when($filter_categories, function ($query, $filter_categories) {
+            $query->whereIn('kategori_id', explode(',', $filter_categories));
+        })
+        ->whereBetween('price', [$min_price, $max_price])
+        ->orderBy('created_at', $order)
+        ->get();  // Menggunakan get() bukan paginate()
 
         // Query categories and brands for filters
         $categories = Category::all();
         $brands = Brand::all();
+
+
+        // Mapping products untuk menambahkan image_url
+        $products = $products->map(function($product) {
+            $imagePathJpg = public_path("uploads/products/{$product->id}.jpg");
+            $imagePathPng = public_path("uploads/products/{$product->id}.png");
+            if (file_exists($imagePathJpg)) {
+                $product->image_url = url("uploads/products/{$product->id}.jpg");
+            } elseif (file_exists($imagePathPng)) {
+                $product->image_url = url("uploads/products/{$product->id}.png");
+            } else {
+                $product->image_url = url("images/no-image.jpg");
+}
+            return $product;
+        });
 
         return view('shop', compact('products', 'categories', 'brands', 'filter_brands', 'filter_categories', 'min_price', 'max_price', 'order'));
     }

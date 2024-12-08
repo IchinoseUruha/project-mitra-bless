@@ -58,16 +58,16 @@
                         <div class="body-title mb-10">Category <span class="tf-color-1">*</span>
                         </div>
                         <div class="select">
-                            <select class="" name="category_id">
+                            <select class="" name="kategori_id">
                                 <option>Choose category</option>
                                 @foreach ($categories as $category)
-                                <option value="{{ $category->id }}" {{ $product->category_id == $category->id ? "selected" : "" }}>{{ $category->name }}</option>
+                                <option value="{{ $category->id }}" {{ $product->kategori_id == $category->id ? "selected" : "" }}>{{ $category->name }}</option>
                                 @endforeach
 
                             </select>
                         </div>
                     </fieldset>
-                    @error('category_id') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror
+                    @error('kategori_id') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror
 
                     <fieldset class="brand">
                         <div class="body-title mb-10">Brand <span class="tf-color-1">*</span>
@@ -101,12 +101,10 @@
                     <div class="body-title">Upload images <span class="tf-color-1">*</span>
                     </div>
                     <div class="upload-image flex-grow">
-                        @if($product->image)
-                        <div class="item" id="imgpreview">
-                            <img src="{{ asset('uploads/products') }}/{{ $product->image }}"
-                                class="effect8" alt="{{ $product->name }}">
-                        </div>
-                        @endif
+                            <div class="item" id="imgpreview" style="{{ $product->image_path ? '' : 'display:none' }}">
+                                <img src="{{ $product->image_path ? asset($product->image_path) : '' }}"
+                                    class="effect8" alt="{{ $product->name }}">
+                            </div>
                         <div id="upload-file" class="item up-load">
                             <label class="uploadfile" for="myFile">
                                 <span class="icon">
@@ -126,10 +124,10 @@
                         <div class="body-title mb-10">Regular Price <span
                                 class="tf-color-1">*</span></div>
                         <input class="mb-10" type="text" placeholder="Enter regular price"
-                            name="regular_price" tabindex="0" value="{{ $product->regular_price }}" aria-required="true"
+                            name="price" tabindex="0" value="{{ $product->price }}" aria-required="true"
                             required="">
                     </fieldset>
-                    @error('regular_price') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror
+                    @error('price') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror
 
                 </div>
 
@@ -143,6 +141,18 @@
                             required="">
                     </fieldset>
                     @error('quantity') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="cols gap22">
+                    <fieldset class="name">
+                        <div class="body-title mb-10">Status Stock</div>
+                        <div class="select mb-10">
+                            <select class="" name="stock_status">
+                                <option value="instock" {{ $product->stock_status == 'instock' ? 'selected' : '' }}>InStock</option>
+                                <option value="outofstock" {{ $product->stock_status == 'outofstock' ? 'selected' : '' }}>Out of Stock</option>
+                            </select>
+                        </div>
+                    </fieldset>
                 </div>
                 
                 <div class="cols gap10">
@@ -167,6 +177,9 @@
                 const [file] = this.files;
                 if(file){
                     $("#imgpreview img").attr('src',URL.createObjectURL(file));
+                    $("#imgpreview").show();
+                      // Tampilkan preview dari file yang baru dipilih
+                    $("#imgpreview img").attr('src', URL.createObjectURL(file));
                     $("#imgpreview").show();
                 }
             });

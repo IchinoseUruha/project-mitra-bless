@@ -56,7 +56,7 @@
                         <div class="body-title mb-10">Category <span class="tf-color-1">*</span>
                         </div>
                         <div class="select">
-                            <select class="" name="category_id">
+                            <select class="" name="kategori_id">
                                 <option>Choose category</option>
                                 @foreach ($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -65,7 +65,7 @@
                             </select>
                         </div>
                     </fieldset>
-                    @error('category_id') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror
+                    @error('kategori_id') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror
 
                     <fieldset class="brand">
                         <div class="body-title mb-10">Brand <span class="tf-color-1">*</span>
@@ -122,10 +122,10 @@
                         <div class="body-title mb-10">Regular Price <span
                                 class="tf-color-1">*</span></div>
                         <input class="mb-10" type="text" placeholder="Enter regular price"
-                            name="regular_price" tabindex="0" value="{{ old('regular_price') }}" aria-required="true"
+                            name="price" tabindex="0" value="{{ old('price') }}" aria-required="true"
                             required="">
                     </fieldset>
-                    @error('regular_price') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror
+                    @error('price') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror
 
                 </div>
 
