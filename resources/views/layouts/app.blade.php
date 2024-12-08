@@ -313,9 +313,9 @@
               <li class="navigation__item">
                 <a href="{{ route('shop.index') }}" class="navigation__link">Shop</a>
               </li>
-              <li class="navigation__item">
+              {{-- <li class="navigation__item">
                 <a href="{{ route('cart.index') }}" class="navigation__link">Cart</a>
-              </li>
+              </li> --}}
               <li class="navigation__item">
                 <a href="about" class="navigation__link">About</a>
               </li>
@@ -400,11 +400,16 @@
                 <a href="{{ route('home.index') }}" class="navigation__link">Home</a>
               </li>
               <li class="navigation__item">
-                <a href="{{ route('shop.index') }}" class="navigation__link">Shop</a>
+                <a href="{{ route('shop.index') }}" class="navigation__link">Belanja</a>
               </li>
               <li class="navigation__item">
-                <a href="{{ route('cart.index') }}" class="navigation__link">Cart</a>
+                <a href="{{ route('cart.index') }}" class="navigation__link">Keranjang</a>
               </li>
+              @auth
+              <li class="navigation__item">
+                  <a href="{{ route('order.details') }}" class="navigation__link">Orders</a>
+              </li>
+              @endauth
               <li class="navigation__item">
                 <a href="about" class="navigation__link">About</a>
               </li>

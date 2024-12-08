@@ -74,6 +74,7 @@ class CheckoutController extends Controller
 
     public function process(Request $request)
 {
+    
     // Update validasi sesuai field baru
     $request->validate([
         'sending_method' => 'required|in:diantar,diambil',

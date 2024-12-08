@@ -18,25 +18,23 @@ class OrderController extends Controller
     // Halaman Order History dengan View
     public function index()
     {
-        // Menggunakan database view untuk riwayat pesanan
-        $orders = OrderDetailsView::where('customer_email', Auth::user()->email)
-                                ->orderBy('order_date', 'desc')
-                                ->get()
-                                ->unique('order_id'); // Menghindari duplikasi karena join
-                      
-        return view('order.history', compact('orders'));
+        $orders = Order::with(['items.produk'])
+                        ->where('customer_id', Auth::id())
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                
+        return view('order.details', compact('orders'));
     }
 
     // Halaman Detail Order dengan View
     public function show($id)
     {
-        // Tambahkan with() untuk load relationship
-        $order = Order::with(['items.produk'])
-                     ->where('id', $id)
-                     ->where('customer_id', Auth::id())
-                     ->firstOrFail();
-
-        return view('order.details', compact('order')); // Pass variable order ke view
+        $orders = Order::with(['items.produk'])
+                  ->where('customer_id', Auth::id())
+                  ->orderBy('created_at', 'desc')
+                  ->get();
+                  
+        return view('order.details', compact('orders'));
     }
 
     // Membatalkan pesanan
@@ -46,15 +44,13 @@ class OrderController extends Controller
                      ->where('customer_id', Auth::id())
                      ->firstOrFail();
 
-        // Cek apakah order masih bisa dibatalkan
         if ($order->status !== 'menunggu_pembayaran') {
             return back()->with('error', 'Pesanan tidak dapat dibatalkan karena sudah diproses.');
         }
 
-        // Update status menjadi dibatalkan
         $order->update(['status' => 'dibatalkan']);
 
-        return redirect()->route('order.history')
+        return redirect()->route('order.details', $order->id)
                         ->with('success', 'Pesanan berhasil dibatalkan.');
     }
 
@@ -65,12 +61,10 @@ class OrderController extends Controller
                      ->where('customer_id', Auth::id())
                      ->firstOrFail();
 
-        // Cek apakah order sudah dalam status pengiriman
         if ($order->status !== 'sedang_dikirim') {
             return back()->with('error', 'Status pesanan tidak dapat diubah.');
         }
 
-        // Update status menjadi diterima
         $order->update(['status' => 'dikirim']);
 
         return redirect()->route('order.details', $order->id)
