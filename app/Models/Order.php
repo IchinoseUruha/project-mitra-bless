@@ -13,8 +13,9 @@ class Order extends Model
         'customer_id',
         'order_number',
         'address',
-        'delivery_method', 
+        'delivery_method',
         'payment_method',
+        'payment_details', // Tambahkan ini
         'subtotal',
         'tax',
         'total',
