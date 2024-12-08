@@ -14683,7 +14683,7 @@ button.js-add-wishlist.active .flaticon.flaticon-heart, a.add-to-wishlist.active
   gap: 3.625rem; }
   @media (max-width: 1199.98px) {
     .checkout-form {
-      flex-direction: column; } }
+      flex-direction: row; } }
   .checkout-form .billing-info__wrapper {
     padding-top: 3.125rem;
     flex-grow: 1; }
