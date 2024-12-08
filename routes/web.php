@@ -51,6 +51,19 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/account-dashboard', [UserController::class, 'index'])->name('user.index');
 });
 
+// Pindahkan ini SEBELUM middleware admin
+Route::middleware(['auth'])->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::post('/checkout/direct', [CheckoutController::class, 'directCheckout'])->name('checkout.direct');
+    
+    // Order routes
+    Route::get('/orders', [OrderController::class, 'index'])->name('order.history');
+    Route::get('/orders/{id}', [OrderController::class, 'show'])->name('order.details');
+    Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
+    Route::post('/orders/{id}/confirm', [OrderController::class, 'confirm'])->name('order.confirm');
+});
+
 
 Route::middleware(['auth', AuthAdmin::class])->group(function(){
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
@@ -79,10 +92,5 @@ Route::middleware(['auth', AuthAdmin::class])->group(function(){
     Route::put('/admin/product/update', [AdminController::class, 'product_update'])->name('admin.product.update');
     Route::delete('/admin/product/{id}/delete', [AdminController::class, 'product_delete'])->name('admin.product.delete');
 
-    //checkout
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
-    Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
-    Route::post('/checkout/direct', [CheckoutController::class, 'directCheckout'])->name('checkout.direct');
 
 });

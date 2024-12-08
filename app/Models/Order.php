@@ -10,16 +10,38 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'customer_id',
         'order_number',
-        'total_price',
-        'status',
+        'address',
+        'delivery_method', 
+        'payment_method',
+        'subtotal',
+        'tax',
+        'total',
+        'status'
     ];
 
-    // Relasi ke user
-    public function user()
+    // Relasi ke order items
+    public function items()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(OrderItem::class);
+    }
+
+    // Relasi ke customer/user
+    public function customer()
+    {
+        return $this->belongsTo(User::class, 'customer_id');
+    }
+
+    // Method untuk mendapatkan status yang tersedia
+    public static function getStatuses()
+    {
+        return [
+            'menunggu_pembayaran' => 'Menunggu Pembayaran',
+            'sedang_diproses' => 'Sedang Diproses',
+            'sedang_dikirim' => 'Sedang Dikirim',
+            'dikirim' => 'Dikirim',
+            'dibatalkan' => 'Dibatalkan'
+        ];
     }
 }
-

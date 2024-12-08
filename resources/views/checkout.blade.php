@@ -55,7 +55,7 @@
                     <div class="form-group">
                         <label for="payment_method">Metode Pembayaran</label>
                         <select name="payment_method" id="payment_method" class="form-control" required>
-                            <option value="credit_card">Kartu Kredit</option>
+                            <option value="credit_card">E-Wallet</option>
                             <option value="bank_transfer">Transfer Bank</option>
                             <option value="cash_on_delivery">Bayar di Tempat</option>
                         </select>
@@ -71,7 +71,7 @@
                                         </div>
 
                     <!-- Tombol Submit -->
-                    <button type="submit" class="btn btn-primary">Lanjutkan ke Pembayaran</button>
+                    <button type="submit" class="btn btn-primary">Konfirmasi</button>
                 </form>
             </div>
         </div>

@@ -4,20 +4,35 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrdersTable extends Migration
+return new class extends Migration
 {
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id'); // Relasi ke tabel users
-            $table->string('order_number')->unique(); // Nomor unik untuk pesanan
-            $table->decimal('total_price', 10, 2); // Total harga
-            $table->string('status'); // Status pesanan (pending, completed, dll)
+            $table->foreignId('customer_id')->constrained('users');
+            $table->string('order_number')->unique();
+            $table->decimal('subtotal', 10, 2);
+            $table->decimal('tax', 10, 2);
+            $table->decimal('total', 10, 2);
+            
+            // Informasi pengiriman
+            $table->text('address')->nullable();
+            $table->enum('delivery_method', ['diantar', 'diambil']);
+            
+            // Informasi pembayaran
+            $table->enum('payment_method', ['e-wallet', 'bank_transfer', 'cash_on_delivery']);
+            
+            // Status pesanan
+            $table->enum('status', [
+                'menunggu_pembayaran',
+                'sedang_diproses',
+                'sedang_dikirim',
+                'dikirim',
+                'dibatalkan'
+            ])->default('menunggu_pembayaran');
+            
             $table->timestamps();
-
-            // Foreign key untuk user_id
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -25,5 +40,4 @@ class CreateOrdersTable extends Migration
     {
         Schema::dropIfExists('orders');
     }
-}
-
+};
