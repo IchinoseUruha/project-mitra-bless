@@ -43,16 +43,18 @@
   }
 
   .product-image {
-    height: 200px;
+    height: 200px; /* Menetapkan tinggi tetap untuk gambar */
     background-color: #f0f0f0;
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden; /* Menyembunyikan bagian gambar yang keluar */
   }
 
   .product-image img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%; /* Membuat gambar memenuhi lebar kontainer */
+    height: auto; /* Menjaga rasio aspek gambar */
+    object-fit: cover; /* Mengatur agar gambar terpotong dengan proporsional dan mengisi kontainer */
   }
 
   .product-info {
