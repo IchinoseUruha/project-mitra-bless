@@ -156,87 +156,179 @@
   </div>
 </div>
 
-<style>
-.text-pink {
-    color: #FF1493 !important;
-}
-
-.border-pink {
-    border-color: #FF1493 !important;
-}
-
-.btn-pink {
-    background-color: #FF1493;
-    color: white;
-    border: 1px solid #FF1493;
-}
-
-.btn-pink:hover {
-    background-color: #FF69B4;
-    color: white;
-    border: 1px solid #FF69B4;
-}
-
-.btn-outline-pink {
-    color: #FF1493;
-    border: 1px solid #FF1493;
-    background-color: white;
-}
-
-.btn-outline-pink:hover {
-    background-color: #FF1493;
-    color: white;
-}
-
-.nav-tabs .nav-link.active {
-    color: #FF1493 !important;
-    border-bottom: 2px solid #FF1493;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    background: none;
-}
-
-.nav-tabs .nav-link {
-    border: none;
-    color: #666;
-}
-
-.nav-tabs {
-    border-bottom: none;
-}
-
-.btn-link {
-    text-decoration: none;
-}
-
-.btn-link:hover {
-    color: #FF69B4;
-}
-
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-input[type="number"] {
-    -moz-appearance: textfield;
-}
-
-.form-control:focus {
-    border-color: #FF1493;
-    box-shadow: 0 0 0 0.2rem rgba(255, 20, 147, 0.25);
-}
-
-.toast {
+<style><style>
+    /* Reset beberapa default style */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    /* Body */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f7f7f7;
+        line-height: 1.6;
+    }
+    
+    /* Container */
+    .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    /* Gambar Produk */
+    .img-fluid {
+        max-height: 400px;
+        object-fit: contain;
+    }
+    
+    /* Produk Info */
+    h1, h2 {
+        font-weight: bold;
+    }
+    
+    /* Nama Produk */
+    h1.h4 {
+        color: #F062A8;
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+    
+    /* Harga Produk */
+    h2 {
+        color: #F062A8;
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+    
+    /* Tab Navigation */
+    .nav-tabs .nav-item {
+        margin-right: 15px;
+    }
+    
+    .nav-tabs .nav-link {
+        color: #F062A8 !important;
+        font-size: 1.1rem;
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: white;
+        background-color: #F062A8 !important;
+        border-radius: 8px;
+    }
+    
+    /* Tab Content */
+    .tab-content {
+        margin-top: 20px;
+    }
+    
+    .text-pink {
+        color: #F062A8;
+    }
+    
+    /* Product Description */
+    .product-description {
+        font-size: 1rem;
+        color: #333;
+        margin-top: 15px;
+    }
+    
+    /* Purchase Box */
+    .card {
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-top: 30px;
+    }
+    
+    .card-body {
+        padding: 20px;
+    }
+    
+    .card-header {
+        background-color: #F062A8;
+        color: white;
+        font-size: 1.3rem;
+        font-weight: bold;
+        padding: 12px 15px;
+        border-radius: 8px 8px 0 0;
+    }
+    
+    .btn-pink {
+        background-color: #F062A8;
+        color: white;
+        border: 1px solid #F062A8;
+        padding: 12px 15px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        width: 100%;
+        transition: background-color 0.3s ease;
+    }
+    
+    .btn-pink:hover {
+        background-color: #F062A8;
+        border-color: #F062A8;
+    }
+    
+    .btn-outline-pink {
+        color: #F062A8;
+        border: 1px solid #F062A8;
+        padding: 12px 15px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        width: 100%;
+        transition: background-color 0.3s ease;
+    }
+    
+    .btn-outline-pink:hover {
+        background-color: #F062A8;
+        color: white;
+    }
+    
+    /* Quantity Controls */
+    .d-flex {
+        display: flex;
+        align-items: center;
+    }
+    
+    .d-flex form {
+        margin-right: 10px;
+    }
+    
+    .d-flex span {
+        font-size: 1.2rem;
+        font-weight: bold;
+        min-width: 30px;
+        text-align: center;
+    }
+    
+    /* Subtotal */
+    .d-flex.justify-content-between {
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+    
+    .d-flex.justify-content-between span:last-child {
+        color: #F062A8;
+    }
+    
+    /* Toast Notification */
+    .toast {
         position: absolute;
         top: 20px;
         right: 20px;
         min-width: 300px;
+        background-color: #28a745;
+        color: white;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-
-.custom-popup {
+    
+    /* Custom Popup */
+    .custom-popup {
         position: fixed;
         top: 20px;
         right: 20px;
@@ -246,7 +338,55 @@ input[type="number"] {
         border-radius: 5px;
         box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         z-index: 1000;
-}
+        display: none;
+    }
+    
+    .custom-popup p {
+        margin: 0;
+    }
+    
+    /* Input Focus */
+    .form-control:focus {
+        border-color: #F062A8;
+        box-shadow: 0 0 0 0.2rem rgba(240, 98, 168, 0.25);
+    }
+    
+    .nav-tabs .nav-link {
+        color: #666;
+    }
+    
+    /* Media Query for Mobile */
+    @media screen and (max-width: 768px) {
+        .container {
+            width: 95%;
+        }
+    
+        .col-lg-5, .col-lg-7 {
+            width: 100%;
+            text-align: center;
+        }
+    
+        .card-body {
+            padding: 15px;
+        }
+    
+        .nav-tabs .nav-link {
+            font-size: 1rem;
+        }
+    
+        .btn-pink,
+        .btn-outline-pink {
+            padding: 12px;
+        }
+    
+        .custom-popup {
+            width: auto;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
+    </style>
+    
 </style>
 @endsection
 

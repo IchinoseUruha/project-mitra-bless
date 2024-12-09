@@ -1,11 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    tr th {
+        background-color: #F062A8!important;
+    }
+    </style>
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <div class="card">
-                <div class="card-header bg-pink text-white">
+                <div>
                     <h5 class="mb-0">Daftar Pesanan</h5>
                 </div>
                 
@@ -14,8 +18,8 @@
                     <!-- Header Pesanan -->
                     <div class="table-responsive">
                         <table class="table mb-0">
-                            <thead class="bg-dark text-white">
-                                <tr>
+                            <thead class="bg-pink text-white">
+                                <tr class="bg-pink" style="">
                                     <th>Nomor Pesanan</th>
                                     <th>Tanggal</th>
                                     <th>Status</th>
@@ -68,14 +72,12 @@
                     <!-- Detail Produk -->
                     <div class="table-responsive detail-table" id="detail{{ $order->id }}" style="display: none;">
                         <table class="table">
-                            <thead class="bg-dark text-white">
                                 <tr>
                                     <th>Produk</th>
                                     <th>Harga</th>
                                     <th>Jumlah</th>
                                     <th>Subtotal</th>
                                 </tr>
-                            </thead>
                             <tbody>
                                 @foreach($order->items as $item)
                                 <tr>
@@ -111,9 +113,6 @@
 </div>
 
 <style>
-.bg-pink {
-    background-color: #F062A8;
-}
 .text-pink {
     color: #F062A8;
 }
