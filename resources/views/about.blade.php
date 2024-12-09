@@ -29,39 +29,25 @@
 
     <!-- Foto Tim -->
     <h2 class="text-center text-pink mb-4">Our Team</h2>
-    <div class="row text-center">
-        <div class="col-md-4 col-sm-6 mb-4">
-            <div class="photo-container">
-                <img src="{{ asset('uploads/about/photo1.jpg') }}" alt="Foto 1">
-            </div>
+    <div class="team-container">
+        <div class="team-member">
+            <img src="{{ asset('uploads/about/photo1.jpg') }}" alt="Foto 1">
             <p class="mt-3">Deskripsi 1</p>
         </div>
-
-        <div class="col-md-4 col-sm-6 mb-4">
-            <div class="photo-container">
-                <img src="{{ asset('uploads/about/photo2.jpg') }}" alt="Foto 2">
-            </div>
+        <div class="team-member">
+            <img src="{{ asset('uploads/about/photo2.jpg') }}" alt="Foto 2">
             <p class="mt-3">Deskripsi 2</p>
         </div>
-
-        <div class="col-md-4 col-sm-6 mb-4">
-            <div class="photo-container">
-                <img src="{{ asset('uploads/about/photo3.jpg') }}" alt="Foto 3">
-            </div>
+        <div class="team-member">
+            <img src="{{ asset('uploads/about/photo3.jpg') }}" alt="Foto 3">
             <p class="mt-3">Deskripsi 3</p>
         </div>
-
-        <div class="col-md-4 col-sm-6 mb-4">
-            <div class="photo-container">
-                <img src="{{ asset('uploads/about/photo4.jpg') }}" alt="Foto 4">
-            </div>
+        <div class="team-member">
+            <img src="{{ asset('uploads/about/photo4.jpg') }}" alt="Foto 4">
             <p class="mt-3">Deskripsi 4</p>
         </div>
-
-        <div class="col-md-4 col-sm-6 mb-4">
-            <div class="photo-container">
-                <img src="{{ asset('uploads/about/photo5.jpg') }}" alt="Foto 5">
-            </div>
+        <div class="team-member">
+            <img src="{{ asset('uploads/about/photo5.jpg') }}" alt="Foto 5">
             <p class="mt-3">Deskripsi 5</p>
         </div>
     </div>
@@ -69,13 +55,6 @@
 @endsection
 
 <style>
-/* Reset beberapa default style */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 /* Warna utama */
 .text-pink {
     color: #F062A8;
@@ -87,49 +66,26 @@
     margin: 0 auto;
 }
 
-/* Styling Foto */
-.photo-container {
+/* Styling Foto Tim */
+.team-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 kolom sejajar */
+    gap: 30px; /* Jarak antar elemen */
+    justify-items: center;
+    align-items: center;
+}
+
+.team-member {
+    text-align: center;
+}
+
+.team-member img {
     width: 150px;
     height: 150px;
-    margin: 0 auto;
-    overflow: hidden;
-    border-radius: 50%; /* Membuat foto menjadi bulat */
+    border-radius: 50%; /* Membuat foto bulat */
     border: 5px solid #F062A8; /* Border pink */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.photo-container img {
-    width: 100%;
-    height: 100%;
     object-fit: cover;
-}
-
-/* Deskripsi Teks */
-.about-description p {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: #6c757d;
-    margin-bottom: 20px;
-    text-align: justify; /* Agar teks rata kiri-kanan */
-}
-
-/* Responsif */
-@media screen and (max-width: 768px) {
-    .photo-container {
-        width: 120px;
-        height: 120px;
-    }
-
-    .about-description p {
-        font-size: 1rem;
-    }
-
-    h2 {
-        font-size: 1.5rem;
-    }
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Tambahan untuk styling judul section */
@@ -140,19 +96,20 @@ h2 {
     margin-bottom: 30px;
 }
 
-/* Styling untuk gambar pada kolom */
-.row {
-    display: flex;
-    justify-content: center; /* Pastikan kolom sejajar di tengah */
-    flex-wrap: wrap;
-    gap: 30px; /* Memberikan jarak antar kolom */
-}
+/* Responsif */
+@media screen and (max-width: 768px) {
+    .team-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 kolom untuk layar kecil */
+        gap: 20px;
+    }
 
-.col-md-4, .col-sm-6 {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
+    .team-member img {
+        width: 120px;
+        height: 120px;
+    }
 
+    h2 {
+        font-size: 1.5rem;
+    }
+}
 </style>
