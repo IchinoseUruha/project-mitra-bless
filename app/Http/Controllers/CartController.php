@@ -110,4 +110,10 @@ class CartController extends Controller
         Cart::where('customer_id', Auth::id())->delete();
         return redirect()->route('cart.index')->with('success', 'Keranjang berhasil dikosongkan.');
     }
+
+    public function produk()
+{
+    return view('cart', compact('items', 'subtotal', 'tax', 'total'));
+    return $this->belongsTo(Product::class, 'produk_id');
+}
 }
