@@ -11,22 +11,71 @@
 
 @section('content')
 <style>
-  .brand-list li, .category-list li {
-    line-height: 40px;
+  .brand-list, .category-list {
+    display: flex;
+    flex-direction: column; /* Susunan vertikal */
+    gap: 0.5rem; /* Memberi jarak antar elemen */
   }
 
-  .brand-list li .chk-brand, .category-list li .chk-category {
-    width: 1rem;
-    height: 1rem;
-    color: #e4e4e4;
-    border: 0.125rem solid currentColor;
-    border-radius: 0;
-    margin-right: 0.75rem;
+  .swatch-size, .swatch-category {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    border: 1px solid #7c3aed;
+    border-radius: 4px;
+    color: #7c3aed;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    width: 100%; /* Biar lebar penuh */
+    box-sizing: border-box; /* Menghindari elemen melampaui kontainer */
   }
 
-  .swatch-category.active, .swatch-size.active {
-    background-color: #000;
+  .swatch-size:hover, .swatch-category:hover {
+    background-color: #7c3aed;
     color: #fff;
+  }
+
+  .swatch-size.active, .swatch-category.active {
+    background-color: #7c3aed;
+    color: #fff;
+  }
+
+  .shop-sidebar {
+    max-width: 250px; /* Lebar sidebar tetap */
+    padding: 1rem; /* Padding untuk ruang dalam */
+    border-right: 1px solid #ddd; /* Batas di sisi kanan */
+    margin-right: 1rem; /* Jarak antar konten utama */
+  }
+
+  .accordion-item h5 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .accordion-item {
+    margin-bottom: 1.5rem; /* Jarak antar accordion */
+  }
+
+  /* Perbaikan pada filter list */
+  .accordion-body {
+    display: flex;
+    flex-wrap: wrap; /* Elemen secara otomatis membungkus */
+    gap: 0.75rem; /* Jarak antar elemen */
+  }
+
+  .accordion-button {
+    font-size: 1.1rem;
+    color: #FF1493;
+    font-weight: bold;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    padding: 0.75rem;
+    transition: background-color 0.3s ease;
+  }
+
+  .accordion-button:hover {
+    background-color: #e0e0e0;
   }
 
   .product-grid {
@@ -40,7 +89,13 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-  }
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Tambahkan transisi di sini */
+}
+
+.product-card:hover {
+    transform: translateY(-10px); /* Mengangkat ke atas */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Memberikan bayangan yang lebih intens */
+}
 
   .product-image {
     height: 200px; /* Menetapkan tinggi tetap untuk gambar */
