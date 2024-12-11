@@ -18,7 +18,7 @@ Auth::routes();
 
 Route::get('/about', function () {
     return view('about');
-});
+})->name('about');
 
 
 Route::get('/order-history', [OrderController::class, 'index'])->name('order.history')->middleware('auth');

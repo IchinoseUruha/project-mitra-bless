@@ -411,7 +411,7 @@
               </li>
               @endauth
               <li class="navigation__item">
-                <a href="about" class="navigation__link">About</a>
+                <a href="{{ route('about') }}" class="navigation__link">About</a>
               </li>
               <li class="navigation__item">
                 <a href="contact.html" class="navigation__link">Contact</a>
