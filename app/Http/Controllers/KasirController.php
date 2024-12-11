@@ -18,7 +18,7 @@ class KasirController extends Controller
                     ->get();
 
         if ($orders->isEmpty()) {
-            return view('kasir')->with('message', 'Tidak ada pesanan yang belum dibayar.');
+            return view('karyawan.kasir')->with('message', 'Tidak ada pesanan yang belum dibayar.');
         }
 
         // Menghitung total dan pajak
@@ -59,7 +59,7 @@ class KasirController extends Controller
         $tax = $total * 0.1;
 
         // Kirim data ke view
-        return view('kasir', compact('orders', 'total', 'tax'));
+        return view('karyawan.kasir', compact('orders', 'total', 'tax'));
     }
 
     // Konfirmasi Pembayaran

@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
 use App\Http\Middleware\AuthAdmin;
+use App\Http\Middleware\AuthKasir;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CheckoutController;
@@ -94,8 +95,9 @@ Route::middleware(['auth', AuthAdmin::class])->group(function(){
     Route::put('/admin/product/update', [AdminController::class, 'product_update'])->name('admin.product.update');
     Route::delete('/admin/product/{id}/delete', [AdminController::class, 'product_delete'])->name('admin.product.delete');
 
+});
+
+Route::middleware(['auth', AuthKasir::class])->group(function(){
     Route::get('/kasir', [KasirController::class, 'showKasir'])->name('kasir.index');
     Route::post('/kasir/confirm', [KasirController::class, 'confirmPayment'])->name('kasir.confirm');
-
-
 });

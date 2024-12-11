@@ -55,6 +55,15 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+
+            // Redirect berdasarkan utype
+        if(strcasecmp(Auth::user()->utype, 'ADMIN') === 0) {
+            return redirect()->route('admin.index');
+        }
+        else if(strcasecmp(Auth::user()->utype, 'Kasir') === 0) {
+            return redirect()->route('kasir.index');
+        }
+        
             return redirect()->intended(route('home.index'));
         }
 
