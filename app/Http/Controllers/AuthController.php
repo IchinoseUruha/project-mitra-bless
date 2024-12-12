@@ -60,7 +60,7 @@ class AuthController extends Controller
         if(strcasecmp(Auth::user()->utype, 'ADMIN') === 0) {
             return redirect()->route('admin.index');
         }
-        else if(strcasecmp(Auth::user()->utype, 'Kasir') === 0) {
+        else if(strcasecmp(Auth::user()->utype, 'KARYAWAN') === 0) {
             return redirect()->route('kasir.index');
         }
         

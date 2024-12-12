@@ -21,7 +21,7 @@ class AuthKasir
     {   
 
         // Periksa apakah pengguna sudah login dan memiliki utype 'Kasir'
-        if (Auth::check() && strcasecmp(Auth::user()->utype, 'Kasir') === 0) {
+        if (Auth::check() && strcasecmp(Auth::user()->utype, 'KARYAWAN') === 0) {
             return $next($request); // Jika Kasir, lanjutkan request
         }
 
