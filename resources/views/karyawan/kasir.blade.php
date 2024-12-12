@@ -72,26 +72,17 @@
                         <th>Harga Satuan</th>
                         <th>Diskon</th>
                         <th>Harga Total</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="table-body">
-                    <tr>
-                        <td><input type="text" class="form-control" name="namaBarang[]" readonly></td>
-                        <td><input type="text" class="form-control" name="kodeBarang[]" readonly></td>
-                        <td><input type="text" class="form-control" name="brand[]" readonly></td>
-                        <td><input type="number" class="form-control" name="jumlahBarang[]" placeholder="0"></td>
-                        <td><input type="text" class="form-control" name="hargaSatuan[]" placeholder="0.00" readonly></td>
-                        <td><input type="text" class="form-control" name="discountPercent[]" placeholder="0.00" readonly></td>
-                        <td><input type="text" class="form-control" name="hargaTotal[]" placeholder="0.00" readonly></td>
-                    </tr>
                 </tbody>
             </table>
             <div class="text-end mt-3">
-                <button type="button" class="btn btn-success" id="add-row">Tambah Pesanan</button>
+                <button type="button" class="btn btn-success" id="add-row">Cari Produk</button>
             </div>
             <div class="row summary">
                 <div class="col-md-6">
-                
                 </div>
             </div>
             <div class="row mt-4">
@@ -170,116 +161,74 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Fungsi format Rupiah
         function formatRupiah(angka) {
             return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
         }
-    
-        // Event listener saat dokumen siap
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set tanggal hari ini
-            document.getElementById('tanggal').valueAsDate = new Date();
-            
-            // Event listener untuk tombol hapus yang sudah ada
-            setupDeleteButtons();
-        });
-    
-        // Setup event listeners untuk tombol hapus
-        function setupDeleteButtons() {
-            document.querySelectorAll('.remove-row').forEach(button => {
-                button.addEventListener('click', function() {
-                    this.closest('tr').remove();
-                    updateGrandTotal();
-                });
-            });
-        }
-    
-        // Event listener untuk tombol Tambah Pesanan
+
+        // Event listener untuk tombol Cari Produk
         document.getElementById('add-row').addEventListener('click', function() {
-            const tableBody = document.getElementById('table-body');
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td><input type="text" class="form-control" name="namaBarang[]" readonly></td>
-                <td><input type="text" class="form-control" name="kodeBarang[]" readonly></td>
-                <td><input type="text" class="form-control" name="brand[]" readonly></td>
-                <td><input type="number" class="form-control" name="jumlahBarang[]" placeholder="0"></td>
-                <td><input type="text" class="form-control" name="hargaSatuan[]" placeholder="0.00" readonly></td>
-                <td><input type="text" class="form-control" name="discountPercent[]" placeholder="0.00" readonly></td>
-                <td><input type="text" class="form-control" name="hargaTotal[]" placeholder="0.00" readonly></td>
-                <td>
-                    <button type="button" class="btn btn-danger btn-sm remove-row">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </td>
-            `;
-    
-            // Tambahkan ke tabel
-            tableBody.appendChild(newRow);
-    
-            // Setup event listener untuk tombol hapus baru
-            setupDeleteButtons();
-    
-            // Tampilkan modal pencarian
             const modal = new bootstrap.Modal(document.getElementById('searchProductModal'));
             modal.show();
         });
-    
+
         // Fungsi untuk memilih produk
         function pilihProduk(id, nama, brand, harga, stok) {
             const tableBody = document.getElementById('table-body');
-            // Cari baris kosong terakhir
-            const emptyRows = Array.from(tableBody.getElementsByTagName('tr')).filter(row => {
-                return !row.querySelector('[name="kodeBarang[]"]').value;
-            });
-            
-            if (emptyRows.length > 0) {
-                const row = emptyRows[0];
-                row.querySelector('[name="kodeBarang[]"]').value = id;
-                row.querySelector('[name="namaBarang[]"]').value = nama;
-                row.querySelector('[name="brand[]"]').value = brand;
-                row.querySelector('[name="hargaSatuan[]"]').value = formatRupiah(harga);
-    
-                // Setup input jumlah
-                const qtyInput = row.querySelector('[name="jumlahBarang[]"]');
-                qtyInput.max = stok;
-                qtyInput.value = 1; // Set default value
-                
-                // Event listener untuk perubahan jumlah
-                qtyInput.addEventListener('input', function() {
-                    const qty = parseInt(this.value) || 0;
-                    // Validasi jumlah tidak melebihi stok
-                    if (qty > stok) {
-                        this.value = stok;
-                        alert('Jumlah melebihi stok tersedia!');
-                    }
-                    const total = this.value * harga;
-                    row.querySelector('[name="hargaTotal[]"]').value = formatRupiah(total);
-                    updateGrandTotal();
-                });
-    
-                // Hitung total awal
-                row.querySelector('[name="hargaTotal[]"]').value = formatRupiah(harga);
-                updateGrandTotal();
-            }
-    
+
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td><input type="text" class="form-control" name="namaBarang[]" value="${nama}" readonly></td>
+                <td><input type="text" class="form-control" name="kodeBarang[]" value="${id}" readonly></td>
+                <td><input type="text" class="form-control" name="brand[]" value="${brand}" readonly></td>
+                <td><input type="number" class="form-control" name="jumlahBarang[]" value="1" max="${stok}"></td>
+                <td><input type="text" class="form-control" name="hargaSatuan[]" value="${formatRupiah(harga)}" readonly></td>
+                <td><input type="text" class="form-control" name="discountPercent[]" value="0.00" readonly></td>
+                <td><input type="text" class="form-control" name="hargaTotal[]" value="${formatRupiah(harga)}" readonly></td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm remove-row">Hapus</button>
+                </td>
+            `;
+
+            tableBody.appendChild(newRow);
+
             // Tutup modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('searchProductModal'));
             modal.hide();
+
+            // Setup event listener untuk tombol hapus
+            newRow.querySelector('.remove-row').addEventListener('click', function() {
+                this.closest('tr').remove();
+                updateGrandTotal();
+            });
+
+            // Event listener untuk jumlah barang
+            const qtyInput = newRow.querySelector('[name="jumlahBarang[]"]');
+            qtyInput.addEventListener('input', function() {
+                const qty = parseInt(this.value) || 0;
+                if (qty > stok) {
+                    this.value = stok;
+                    alert('Jumlah melebihi stok tersedia!');
+                }
+                const total = this.value * harga;
+                newRow.querySelector('[name="hargaTotal[]"]').value = formatRupiah(total);
+                updateGrandTotal();
+            });
+
+            updateGrandTotal();
         }
-    
+
         // Fungsi update total keseluruhan
         function updateGrandTotal() {
             const totalInputs = document.getElementsByName('hargaTotal[]');
             let grandTotal = 0;
-    
+
             totalInputs.forEach(input => {
                 const value = input.value.replace(/[^0-9]/g, '');
                 grandTotal += parseInt(value) || 0;
             });
-    
-            // Update total di bagian summary
+
             document.querySelector('.summary .col-md-6').innerHTML = `
                 <div class="card">
                     <div class="card-body">
@@ -291,8 +240,7 @@
                     </div>
                 </div>
             `;
-    
-            // Enable/disable tombol checkout berdasarkan total
+
             const checkoutBtn = document.querySelector('[data-bs-target="#checkoutModal"]');
             if (grandTotal > 0) {
                 checkoutBtn.removeAttribute('disabled');
