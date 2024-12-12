@@ -2,73 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
-use App\Models\Order;
-use App\Models\OrderItem;
-use Illuminate\Support\Facades\Auth;
 
 class KasirController extends Controller
 {
-    // Halaman Kasir
     public function showKasir()
     {
-        // Ambil data pesanan yang belum dibayar
-        $orders = Order::with(['items.produk'])
-                    ->where('status', 'menunggu_pembayaran') // Filter berdasarkan status
+        // Ambil semua produk untuk ditampilkan di popup/modal pencarian
+        $products = Product::with(['brand', 'category'])
+                    ->where('quantity', '>', 0)
+                    ->orderBy('name')
                     ->get();
-
-        if ($orders->isEmpty()) {
-            return view('karyawan.kasir')->with('message', 'Tidak ada pesanan yang belum dibayar.');
-        }
-
-        // Menghitung total dan pajak
-        $total = 0;
-        $tax = 0;
-        
-        foreach ($orders as $order) {
-            foreach ($order->items as $item) {
-                $quantity = $item->quantity;
-                $productPrice = $item->produk->price;
-
-                // Hitung subtotal untuk item
-                $subtotal = $productPrice * $quantity;
-
-                // Hitung diskon berdasarkan jenis produk
-                $discount = 0;
-                if ($item->produk->type == 1) {
-                    $discount = 5;
-                    $quantity *= 12; // 1 lusin = 12 pcs
-                } elseif ($item->produk->type == 2) {
-                    $discount = 10;
-                    $quantity *= 24; // 24 lusin
-                } elseif ($item->produk->type == 3) {
-                    $discount = 10;
-                    $quantity *= 3; // 3 lusin
-                }
-
-                // Hitung subtotal item dengan diskon
-                $discountAmount = ($subtotal * $discount) / 100;
-                $totalItem = $subtotal - $discountAmount;
-
-                // Update total
-                $total += $totalItem;
-            }
-        }
-
-        // Hitung pajak 10% dari total
-        $tax = $total * 0.1;
-
-        // Kirim data ke view
-        return view('karyawan.kasir', compact('orders', 'total', 'tax'));
+                    
+        return view('karyawan.kasir', compact('products'));
     }
 
-    // Konfirmasi Pembayaran
-    public function confirmPayment(Request $request)
+    public function searchProducts(Request $request)
     {
-        // Proses konfirmasi pembayaran di sini
-        // Contoh: update status order menjadi 'lunas'
-        
-        // Setelah konfirmasi, redirect kembali ke halaman kasir atau halaman lain
-        return redirect()->route('kasir.index')->with('success', 'Pembayaran berhasil dikonfirmasi!');
+        $products = Product::with(['brand', 'category'])
+                    ->where('quantity', '>', 0)
+                    ->when($request->search, function($query) use ($request) {
+                        $query->where('name', 'like', "%{$request->search}%")
+                              ->orWhere('id', 'like', "%{$request->search}%");
+                    })
+                    ->orderBy('name')
+                    ->get();
+
+        return response()->json($products);
     }
 }

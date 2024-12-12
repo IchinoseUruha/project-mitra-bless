@@ -99,5 +99,5 @@ Route::middleware(['auth', AuthAdmin::class])->group(function(){
 
 Route::middleware(['auth', AuthKasir::class])->group(function(){
     Route::get('/kasir', [KasirController::class, 'showKasir'])->name('kasir.index');
-    Route::post('/kasir/confirm', [KasirController::class, 'confirmPayment'])->name('kasir.confirm');
+    Route::get('/kasir/search', [KasirController::class, 'searchProducts'])->name('kasir.search');
 });
