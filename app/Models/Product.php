@@ -31,7 +31,7 @@ class Product extends Model
     }
 
     // Relasi ke Category
-    public function category()
+    public function kategori()
     {
         return $this->belongsTo(Category::class, 'kategori_id'); // Ubah ke "category"
     }

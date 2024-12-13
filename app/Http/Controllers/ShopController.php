@@ -45,7 +45,7 @@ class ShopController extends Controller
                 $product->image_url = url("uploads/products/{$product->id}.png");
             } else {
                 $product->image_url = url("images/no-image.jpg");
-}
+            }
             return $product;
         });
 
