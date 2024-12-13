@@ -109,4 +109,12 @@ class KasirController extends Controller
             'message' => 'Produk berhasil ditambahkan ke keranjang'
         ]);
     }
+
+    public function showOrder()
+    {
+        // Get all products untuk referensi data produk
+        $products = Product::with(['brand', 'category'])->get();
+        
+        return view('karyawan.order_offline', compact('products'));
+    }
 }

@@ -379,9 +379,11 @@ body {
                         <span class="fw-bold">Subtotal</span>
                         <span id="subtotal" class="fw-bold text-primary">Rp 0</span>
                     </div>
-                    <button id="btnCheckout" class="btn btn-primary w-100" disabled>
-                        Lanjutkan Pemesanan
-                    </button>
+                    <a href="{{route('kasir.order')}}">
+                        <button id="btnCheckout" class="btn btn-primary w-100" disabled>
+                            Lanjutkan Pemesanan
+                        </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -389,17 +391,18 @@ body {
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    // Script untuk kasir.blade.php
     <script>
         // Cart Management
         let cart = [];
-
+    
         // Add to Cart functionality
         document.querySelectorAll('.add-to-cart').forEach(button => {
             button.addEventListener('click', function() {
                 const productId = this.dataset.id;
                 const productName = this.dataset.name;
                 const productPrice = parseFloat(this.dataset.price);
-
+    
                 addToCart(productId, productName, productPrice);
                 updateCartDisplay();
                 
@@ -410,221 +413,343 @@ body {
                 }
             });
         });
-
+    
         function addToCart(id, name, price) {
-                // Check if item already exists in cart
-                const existingItem = cart.find(item => item.id === id);
-                
-                if (existingItem) {
-                    // If item exists, increment quantity
-                    existingItem.quantity += 1;
-                } else {
-                    // If item is new, add to cart with quantity 1
-                    cart.push({
-                        id: id,
-                        name: name,
-                        price: price,
-                        quantity: 1
-                    });
-                }
-
-                // Show a brief notification
-                showNotification(`${name} ditambahkan ke pesanan`);
-            }
-
-            function updateCartDisplay() {
-                const cartContainer = document.getElementById('cartItems');
-                const subtotalElement = document.getElementById('subtotal');
-                const checkoutButton = document.getElementById('btnCheckout');
-                
-                // Clear current cart display
-                cartContainer.innerHTML = '';
-                
-                // Calculate subtotal and generate cart items HTML
-                let subtotal = 0;
-
-                cart.forEach(item => {
-                    const itemTotal = item.price * item.quantity;
-                    subtotal += itemTotal;
-
-                    cartContainer.innerHTML += `
-                        <div class="cart-item mb-3">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="mb-0">${item.name}</h6>
-                                    <small class="text-muted">Rp ${item.price.toLocaleString()} x ${item.quantity}</small>
-                                </div>
-                                <div class="d-flex flex-column align-items-end">
-                                    <span class="text-primary fw-bold">Rp ${itemTotal.toLocaleString()}</span>
-                                    <div class="btn-group btn-group-sm mt-2">
-                                        <button class="btn btn-outline-secondary" 
-                                                onclick="updateQuantity('${item.id}', ${item.quantity - 1})">
-                                            <i class="bi bi-dash"></i>
-                                        </button>
-                                        <span class="btn btn-outline-secondary disabled">
-                                            ${item.quantity}
-                                        </span>
-                                        <button class="btn btn-outline-secondary" 
-                                                onclick="updateQuantity('${item.id}', ${item.quantity + 1})">
-                                            <i class="bi bi-plus"></i>
-                                        </button>
-                                        <button class="btn btn-outline-danger" 
-                                                onclick="removeItem('${item.id}')">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+            // Check if item already exists in cart
+            const existingItem = cart.find(item => item.id === id);
+            
+            if (existingItem) {
+                // If item exists, increment quantity
+                existingItem.quantity += 1;
+            } else {
+                // If item is new, add to cart with quantity 1
+                cart.push({
+                    id: id,
+                    name: name,
+                    price: price,
+                    quantity: 1
                 });
-
-                // Update subtotal display
-                subtotalElement.textContent = `Rp ${subtotal.toLocaleString()}`;
-                
-                // Enable/disable checkout button based on cart contents
-                checkoutButton.disabled = cart.length === 0;
-
-                // Update cart badge if exists
-                const cartBadge = document.getElementById('cartBadge');
-                if (cartBadge) {
-                    cartBadge.textContent = cart.length;
-                    cartBadge.style.display = cart.length ? 'block' : 'none';
-                }
             }
-
-            function updateQuantity(id, newQuantity) {
-                // Remove item if quantity is 0 or less
-                if (newQuantity < 1) {
-                    removeItem(id);
-                    return;
-                }
-                
-                // Update quantity for specific item
-                const item = cart.find(item => item.id === id);
-                if (item) {
-                    item.quantity = newQuantity;
-                    updateCartDisplay();
-                }
-            }
-
-            function removeItem(id) {
-                // Remove item from cart array
-                cart = cart.filter(item => item.id !== id);
-                updateCartDisplay();
-                
-                // Show removal notification
-                const item = cart.find(item => item.id === id);
-                if (item) {
-                    showNotification(`${item.name} dihapus dari pesanan`);
-                }
-            }
-
-            function showNotification(message) {
-                // Create notification element
-                const notification = document.createElement('div');
-                notification.className = 'toast-notification';
-                notification.innerHTML = `
-                    <div class="toast align-items-center text-white bg-primary border-0" role="alert">
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                ${message}
+    
+            // Show a brief notification
+            showNotification(`${name} ditambahkan ke pesanan`);
+        }
+    
+        function updateCartDisplay() {
+            const cartContainer = document.getElementById('cartItems');
+            const subtotalElement = document.getElementById('subtotal');
+            const checkoutButton = document.getElementById('btnCheckout');
+            
+            // Clear current cart display
+            cartContainer.innerHTML = '';
+            
+            // Calculate subtotal and generate cart items HTML
+            let subtotal = 0;
+    
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+    
+                cartContainer.innerHTML += `
+                    <div class="cart-item mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-0">${item.name}</h6>
+                                <small class="text-muted">Rp ${item.price.toLocaleString()} x ${item.quantity}</small>
                             </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                            <div class="d-flex flex-column align-items-end">
+                                <span class="text-primary fw-bold">Rp ${itemTotal.toLocaleString()}</span>
+                                <div class="btn-group btn-group-sm mt-2">
+                                    <button class="btn btn-outline-secondary" 
+                                            onclick="updateQuantity('${item.id}', ${item.quantity - 1})">
+                                        <i class="bi bi-dash"></i>
+                                    </button>
+                                    <span class="btn btn-outline-secondary disabled">
+                                        ${item.quantity}
+                                    </span>
+                                    <button class="btn btn-outline-secondary" 
+                                            onclick="updateQuantity('${item.id}', ${item.quantity + 1})">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                    <button class="btn btn-outline-danger" 
+                                            onclick="removeItem('${item.id}')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
-                
-                // Add notification styles if not already present
-                if (!document.getElementById('notificationStyles')) {
-                    const styles = document.createElement('style');
-                    styles.id = 'notificationStyles';
-                    styles.innerHTML = `
-                        .toast-notification {
-                            position: fixed;
-                            bottom: 20px;
-                            right: 20px;
-                            z-index: 1050;
-                        }
-                    `;
-                    document.head.appendChild(styles);
-                }
-
-                // Add to document and show
-                document.body.appendChild(notification);
-                const toast = new bootstrap.Toast(notification.querySelector('.toast'));
-                toast.show();
-
-                // Remove after hiding
-                notification.addEventListener('hidden.bs.toast', function() {
-                    notification.remove();
-                });
+            });
+    
+            // Update subtotal display
+            subtotalElement.textContent = `Rp ${subtotal.toLocaleString()}`;
+            
+            // Enable/disable checkout button based on cart contents
+            checkoutButton.disabled = cart.length === 0;
+    
+            // Update cart badge if exists
+            const cartBadge = document.getElementById('cartBadge');
+            if (cartBadge) {
+                cartBadge.textContent = cart.length;
+                cartBadge.style.display = cart.length ? 'block' : 'none';
             }
-
-            // Search functionality
-            document.getElementById('searchProduct').addEventListener('input', function(e) {
-                const searchTerm = e.target.value.toLowerCase();
-                document.querySelectorAll('.product-card').forEach(card => {
-                    const productName = card.querySelector('.product-name').textContent.toLowerCase();
-                    const productCategory = card.querySelector('.product-category').textContent.toLowerCase();
-                    
-                    // Show/hide based on name or category match
-                    const matches = productName.includes(searchTerm) || productCategory.includes(searchTerm);
-                    card.style.display = matches ? '' : 'none';
-                });
+        }
+    
+        function updateQuantity(id, newQuantity) {
+            // Remove item if quantity is 0 or less
+            if (newQuantity < 1) {
+                removeItem(id);
+                return;
+            }
+            
+            // Update quantity for specific item
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.quantity = newQuantity;
+                updateCartDisplay();
+            }
+        }
+    
+        function removeItem(id) {
+            // Find item before removing for notification
+            const item = cart.find(item => item.id === id);
+            
+            // Remove item from cart array
+            cart = cart.filter(i => i.id !== id);
+            updateCartDisplay();
+            
+            // Show removal notification if item was found
+            if (item) {
+                showNotification(`${item.name} dihapus dari pesanan`);
+            }
+        }
+    
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'toast-notification';
+            notification.innerHTML = `
+                <div class="toast align-items-center text-white bg-primary border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            // Add notification styles if not already present
+            if (!document.getElementById('notificationStyles')) {
+                const styles = document.createElement('style');
+                styles.id = 'notificationStyles';
+                styles.innerHTML = `
+                    .toast-notification {
+                        position: fixed;
+                        bottom: 20px;
+                        right: 20px;
+                        z-index: 1050;
+                    }
+                `;
+                document.head.appendChild(styles);
+            }
+    
+            // Add to document and show
+            document.body.appendChild(notification);
+            const toast = new bootstrap.Toast(notification.querySelector('.toast'));
+            toast.show();
+    
+            // Remove after hiding
+            notification.addEventListener('hidden.bs.toast', function() {
+                notification.remove();
             });
-
-            // Checkout process
-            document.getElementById('btnCheckout').addEventListener('click', function() {
-                if (cart.length > 0) {
-                    // Prepare cart data for submission
-                    const cartData = {
-                        items: cart.map(item => ({
-                            id: item.id,
-                            quantity: item.quantity,
-                            price: item.price
-                        })),
-                        subtotal: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-                    };
-
-                    // Send to server
-                    fetch('/kasir/checkout', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        },
-                        body: JSON.stringify(cartData)
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Redirect to success page or show confirmation
-                            window.location.href = data.redirect;
-                        } else {
-                            // Show error message
-                            showNotification('Terjadi kesalahan saat checkout. Silakan coba lagi.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showNotification('Terjadi kesalahan saat checkout. Silakan coba lagi.');
-                    });
+        }
+    
+        // Search functionality
+        document.getElementById('searchProduct').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.product-card').forEach(card => {
+                const productName = card.querySelector('.product-name').textContent.toLowerCase();
+                const productCategory = card.querySelector('.product-category').textContent.toLowerCase();
+                
+                // Show/hide based on name or category match
+                const matches = productName.includes(searchTerm) || productCategory.includes(searchTerm);
+                card.style.display = matches ? '' : 'none';
+            });
+        });
+    
+        // Checkout process
+        document.getElementById('btnCheckout').addEventListener('click', function() {
+            if (cart.length > 0) {
+                // Simpan cart ke localStorage sebelum pindah halaman
+                localStorage.setItem('cartItems', JSON.stringify(cart));
+            }
+        });
+    
+        // Initialize tooltips and popovers if using Bootstrap
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+    
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+            popoverTriggerList.map(function(popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl);
+            });
+        });
+    </script>
+    
+    // Script untuk order_offline.blade.php
+    <script>
+        // Fungsi format Rupiah
+        function formatRupiah(angka) {
+            return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
+        }
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ambil data cart dari localStorage
+            const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            
+            // Isi tabel dengan data cart
+            const tableBody = document.getElementById('table-body');
+            cartItems.forEach(item => {
+                addItemToTable(item);
+            });
+    
+            // Update total pesanan
+            updateGrandTotal();
+    
+            // Event listener untuk tombol Cari Produk
+            document.getElementById('add-row').addEventListener('click', function() {
+                const modal = new bootstrap.Modal(document.getElementById('searchProductModal'));
+                modal.show();
+            });
+        });
+    
+        // Fungsi untuk menambahkan item ke tabel
+        function addItemToTable(item) {
+            const tableBody = document.getElementById('table-body');
+            const row = document.createElement('tr');
+            const product = window.products.find(p => p.id === item.id) || {};
+            
+            row.innerHTML = `
+                <td><input type="text" class="form-control" name="namaBarang[]" value="${item.name}" readonly></td>
+                <td><input type="text" class="form-control" name="kodeBarang[]" value="${item.id}" readonly></td>
+                <td><input type="text" class="form-control" name="brand[]" value="${product.brand?.name || '-'}" readonly></td>
+                <td><input type="number" class="form-control" name="jumlahBarang[]" value="${item.quantity}" min="1" max="${product.quantity || 999}"></td>
+                <td><input type="text" class="form-control" name="hargaSatuan[]" value="${formatRupiah(item.price)}" readonly></td>
+                <td><input type="text" class="form-control" name="discountPercent[]" value="0.00" readonly></td>
+                <td><input type="text" class="form-control" name="hargaTotal[]" value="${formatRupiah(item.price * item.quantity)}" readonly></td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm remove-row">Hapus</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+    
+            // Setup event listeners untuk row baru
+            setupRowEventListeners(row, item.price, product.quantity || 999);
+        }
+    
+        // Setup event listeners untuk baris tabel
+        function setupRowEventListeners(row, price, maxStock) {
+            // Event listener untuk tombol hapus
+            row.querySelector('.remove-row').addEventListener('click', function() {
+                row.remove();
+                updateGrandTotal();
+            });
+    
+            // Event listener untuk input jumlah
+            const qtyInput = row.querySelector('[name="jumlahBarang[]"]');
+            qtyInput.addEventListener('input', function() {
+                let qty = parseInt(this.value) || 0;
+                
+                // Validasi stok
+                if (qty > maxStock) {
+                    qty = maxStock;
+                    this.value = maxStock;
+                    showAlert('Jumlah melebihi stok tersedia!');
+                } else if (qty < 1) {
+                    qty = 1;
+                    this.value = 1;
                 }
+    
+                const total = qty * price;
+                row.querySelector('[name="hargaTotal[]"]').value = formatRupiah(total);
+                updateGrandTotal();
             });
-
-            // Initialize tooltips and popovers if using Bootstrap
-            document.addEventListener('DOMContentLoaded', function() {
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                tooltipTriggerList.map(function(tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl);
-                });
-
-                var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-                popoverTriggerList.map(function(popoverTriggerEl) {
-                    return new bootstrap.Popover(popoverTriggerEl);
-                });
+        }
+    
+        // Update grand total
+        function updateGrandTotal() {
+            const totalInputs = document.getElementsByName('hargaTotal[]');
+            let grandTotal = 0;
+    
+            totalInputs.forEach(input => {
+                const value = input.value.replace(/[^0-9]/g, '');
+                grandTotal += parseInt(value) || 0;
             });
-        </script>
+    
+            document.querySelector('.summary .col-md-6').innerHTML = `
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Ringkasan Pesanan</h5>
+                        <div class="d-flex justify-content-between">
+                            <span>Total:</span>
+                            <strong>${formatRupiah(grandTotal)}</strong>
+                        </div>
+                    </div>
+                </div>
+            `;
+    
+            // Update status tombol checkout
+            const checkoutBtn = document.querySelector('[data-bs-target="#checkoutModal"]');
+            checkoutBtn.disabled = grandTotal === 0;
+        }
+    
+        // Fungsi untuk menampilkan alert
+        function showAlert(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-warning alert-dismissible fade show position-fixed top-0 end-0 m-3';
+            alertDiv.setAttribute('role', 'alert');
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            
+            // Hapus alert setelah 3 detik
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+    
+        // Event listener untuk modal checkout
+        document.querySelector('#checkoutModal .btn-primary').addEventListener('click', function() {
+            // Kumpulkan data pesanan
+            const orderData = {
+                customer: document.getElementById('pelanggan').value,
+                date: document.getElementById('tanggal').value,
+                payment_method: document.getElementById('payment_method').value,
+                location: document.getElementById('lokasi').value,
+                items: Array.from(document.getElementsByTagName('tr')).slice(1).map(row => ({
+                    product_id: row.querySelector('[name="kodeBarang[]"]').value,
+                    quantity: parseInt(row.querySelector('[name="jumlahBarang[]"]').value),
+                    price: parseInt(row.querySelector('[name="hargaSatuan[]"]').value.replace(/[^0-9]/g, '')),
+                    discount: parseFloat(row.querySelector('[name="discountPercent[]"]').value)
+                }))
+            };
+    
+            // Di sini Anda bisa menambahkan kode untuk mengirim data ke server
+            console.log('Order Data:', orderData);
+    
+            // Clear localStorage setelah checkout berhasil
+            localStorage.removeItem('cartItems');
+    
+            // Redirect atau refresh halaman sesuai kebutuhan
+            // window.location.href = '/success-page';
+        });
+    </script>
     </body>
 </html>
