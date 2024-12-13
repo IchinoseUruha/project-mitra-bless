@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kasir</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
@@ -27,7 +28,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             margin: 20px;
         }
-        
+
         .table td, .table th {
             vertical-align: middle;
         }
@@ -60,10 +61,6 @@
         <form>
             <div class="row mb-3">
                 <div class="col-md-3">
-                    <label for="pelanggan" class="form-label">Pelanggan</label>
-                    <input type="text" class="form-control" id="pelanggan" placeholder="Masukkan Nama Pelanggan">
-                </div>
-                <div class="col-md-3">
                     <label for="tanggal" class="form-label">Tanggal</label>
                     <input type="date" class="form-control" id="tanggal">
                 </div>
@@ -72,8 +69,8 @@
                     <input type="text" class="form-control" id="payment_method" placeholder="Masukkan Tipe Pembayaran">
                 </div>
                 <div class="col-md-2">
-                    <label for="lokasi" class="form-label">Lokasi</label>
-                    <input type="text" class="form-control" id="lokasi" placeholder="Masukkan Lokasi">
+                    <label for="address" class="form-label">Address</label>
+                    <input type="text" class="form-control" id="address" placeholder="Masukkan Address">
                 </div>
             </div>
             <table class="table table-bordered">
@@ -125,228 +122,240 @@
    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Fungsi format Rupiah
-    function formatRupiah(angka) {
-        return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
-    }
-
-    // Setup event listeners untuk baris tabel
-    function setupRowEventListeners(row, harga) {
-        // Event listener untuk tombol hapus
-        row.querySelector('.remove-row').addEventListener('click', function() {
-            row.remove();
+    <script>
+        // Fungsi format Rupiah
+        function formatRupiah(angka) {
+            return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
+        }
+    
+        // Setup event listeners untuk baris tabel
+        function setupRowEventListeners(row, harga) {
+            // Event listener untuk tombol hapus
+            row.querySelector('.remove-row').addEventListener('click', function() {
+                row.remove();
+                updateGrandTotal();
+            });
+    
+            // Event listener untuk input jumlah
+            const qtyInput = row.querySelector('[name="jumlahBarang[]"]');
+            qtyInput.addEventListener('input', function() {
+                let qty = parseInt(this.value) || 0;
+                
+                // Validasi jumlah minimum
+                if (qty < 1) {
+                    qty = 1;
+                    this.value = 1;
+                }
+    
+                updateRowTotal(row, qty, harga);
+            });
+    
+            // Event listener untuk input diskon
+            const discountInput = row.querySelector('[name="discountPercent[]"]');
+            discountInput.addEventListener('input', function() {
+                let discount = parseFloat(this.value) || 0;
+                
+                // Validasi diskon (0-100%)
+                if (discount < 0) {
+                    discount = 0;
+                    this.value = '0.00';
+                } else if (discount > 100) {
+                    discount = 100;
+                    this.value = '100.00';
+                }
+    
+                const qty = parseInt(qtyInput.value) || 1;
+                updateRowTotal(row, qty, harga, discount);
+            });
+        }
+    
+        // Update total untuk satu baris
+        function updateRowTotal(row, quantity, price, discount = 0) {
+            const subtotal = quantity * price;
+            const discountAmount = subtotal * (discount / 100);
+            const total = subtotal - discountAmount;
+            
+            row.querySelector('[name="hargaTotal[]"]').value = formatRupiah(total);
             updateGrandTotal();
-        });
-
-        // Event listener untuk input jumlah
-        const qtyInput = row.querySelector('[name="jumlahBarang[]"]');
-        qtyInput.addEventListener('input', function() {
-            let qty = parseInt(this.value) || 0;
-            
-            // Validasi jumlah minimum
-            if (qty < 1) {
-                qty = 1;
-                this.value = 1;
-            }
-
-            updateRowTotal(row, qty, harga);
-        });
-
-        // Event listener untuk input diskon
-        const discountInput = row.querySelector('[name="discountPercent[]"]');
-        discountInput.addEventListener('input', function() {
-            let discount = parseFloat(this.value) || 0;
-            
-            // Validasi diskon (0-100%)
-            if (discount < 0) {
-                discount = 0;
-                this.value = '0.00';
-            } else if (discount > 100) {
-                discount = 100;
-                this.value = '100.00';
-            }
-
-            const qty = parseInt(qtyInput.value) || 1;
-            updateRowTotal(row, qty, harga, discount);
-        });
-    }
-
-    // Update total untuk satu baris
-    function updateRowTotal(row, quantity, price, discount = 0) {
-        const subtotal = quantity * price;
-        const discountAmount = subtotal * (discount / 100);
-        const total = subtotal - discountAmount;
-        
-        row.querySelector('[name="hargaTotal[]"]').value = formatRupiah(total);
-        updateGrandTotal();
-    }
-
-    // Update grand total
-    function updateGrandTotal() {
-        const totalInputs = document.getElementsByName('hargaTotal[]');
-        let subtotal = 0;
-        let totalDiscount = 0;
-        let grandTotal = 0;
-
-        totalInputs.forEach((input, index) => {
-            const value = parseInt(input.value.replace(/[^0-9]/g, '')) || 0;
-            const qtyInput = document.getElementsByName('jumlahBarang[]')[index];
-            const priceInput = document.getElementsByName('hargaSatuan[]')[index];
-            const discountInput = document.getElementsByName('discountPercent[]')[index];
-            
-            const qty = parseInt(qtyInput.value) || 0;
-            const price = parseInt(priceInput.value.replace(/[^0-9]/g, '')) || 0;
-            const discount = parseFloat(discountInput.value) || 0;
-            
-            const rowSubtotal = qty * price;
-            const rowDiscount = rowSubtotal * (discount / 100);
-            
-            subtotal += rowSubtotal;
-            totalDiscount += rowDiscount;
-            grandTotal += value;
-        });
-
-        // Update ringkasan pesanan
-        document.querySelector('.summary .col-md-6').innerHTML = `
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Ringkasan Pesanan</h5>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Subtotal:</span>
-                        <span>${formatRupiah(subtotal)}</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Total Diskon:</span>
-                        <span>-${formatRupiah(totalDiscount)}</span>
-                    </div>
-                    <div class="d-flex justify-content-between border-top pt-2">
-                        <span class="fw-bold">Total:</span>
-                        <strong>${formatRupiah(grandTotal)}</strong>
+        }
+    
+        // Update grand total
+        function updateGrandTotal() {
+            const totalInputs = document.getElementsByName('hargaTotal[]');
+            let subtotal = 0;
+            let totalDiscount = 0;
+            let grandTotal = 0;
+    
+            totalInputs.forEach((input, index) => {
+                const value = parseInt(input.value.replace(/[^0-9]/g, '')) || 0;
+                const qtyInput = document.getElementsByName('jumlahBarang[]')[index];
+                const priceInput = document.getElementsByName('hargaSatuan[]')[index];
+                const discountInput = document.getElementsByName('discountPercent[]')[index];
+                
+                const qty = parseInt(qtyInput.value) || 0;
+                const price = parseInt(priceInput.value.replace(/[^0-9]/g, '')) || 0;
+                const discount = parseFloat(discountInput.value) || 0;
+                
+                const rowSubtotal = qty * price;
+                const rowDiscount = rowSubtotal * (discount / 100);
+                
+                subtotal += rowSubtotal;
+                totalDiscount += rowDiscount;
+                grandTotal += value;
+            });
+    
+            // Update ringkasan pesanan
+            document.querySelector('.summary .col-md-6').innerHTML = `
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Ringkasan Pesanan</h5>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <span>${formatRupiah(subtotal)}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Total Diskon:</span>
+                            <span>-${formatRupiah(totalDiscount)}</span>
+                        </div>
+                        <div class="d-flex justify-content-between border-top pt-2">
+                            <span class="fw-bold">Total:</span>
+                            <strong>${formatRupiah(grandTotal)}</strong>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-
-        // Update status tombol checkout
-        const checkoutBtn = document.querySelector('[data-bs-target="#checkoutModal"]');
-        checkoutBtn.disabled = grandTotal === 0;
-
-        return {
-            subtotal,
-            totalDiscount,
-            grandTotal
-        };
-    }
-
-    // Fungsi untuk menampilkan alert
-    function showAlert(message) {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-warning alert-dismissible fade show position-fixed top-0 end-0 m-3';
-        alertDiv.setAttribute('role', 'alert');
-        alertDiv.style.zIndex = '9999';
-        alertDiv.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        `;
-        document.body.appendChild(alertDiv);
-        
-        // Hapus alert setelah 3 detik
-        setTimeout(() => {
-            alertDiv.remove();
-        }, 3000);
-    }
-
-    // Event listener saat halaman dimuat
-    document.addEventListener('DOMContentLoaded', function() {
-        // Set tanggal hari ini sebagai default
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('tanggal').value = today;
-
-        // Ambil data cart dari localStorage
-        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-        
-        // Tambahkan item dari cart ke tabel
-        cartItems.forEach(item => {
-            // Buat row baru
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td><input type="text" class="form-control" name="namaBarang[]" value="${item.name}" readonly></td>
-                <td><input type="text" class="form-control" name="kodeBarang[]" value="${item.id}" readonly></td>
-                <td><input type="text" class="form-control" name="brand[]" value="${item.brand || '-'}" readonly></td>
-                <td><input type="number" class="form-control" name="jumlahBarang[]" value="${item.quantity}" min="1"></td>
-                <td><input type="text" class="form-control" name="hargaSatuan[]" value="${formatRupiah(item.price)}" readonly></td>
-                <td><input type="text" class="form-control" name="discountPercent[]" value="0.00"></td>
-                <td><input type="text" class="form-control" name="hargaTotal[]" value="${formatRupiah(item.price * item.quantity)}" readonly></td>
-                <td>
-                    <button type="button" class="btn btn-danger btn-sm remove-row">Hapus</button>
-                </td>
             `;
-            
-            document.getElementById('table-body').appendChild(newRow);
-            
-            // Setup event listeners untuk baris baru
-            setupRowEventListeners(newRow, item.price);
-        });
-
-        // Update total awal
-        updateGrandTotal();
-    });
-
-    // Event listener untuk modal checkout
-    document.querySelector('#checkoutModal .btn-primary').addEventListener('click', function() {
-        // Validasi form
-        const customer = document.getElementById('pelanggan').value;
-        const date = document.getElementById('tanggal').value;
-        const paymentMethod = document.getElementById('payment_method').value;
-        const location = document.getElementById('lokasi').value;
-
-        if (!customer || !date || !paymentMethod || !location) {
-            showAlert('Mohon lengkapi semua data pesanan!');
-            return;
-        }
-
-        // Kumpulkan data pesanan
-        const items = Array.from(document.getElementById('table-body').getElementsByTagName('tr'))
-            .map(row => ({
-                product_id: row.querySelector('[name="kodeBarang[]"]').value,
-                name: row.querySelector('[name="namaBarang[]"]').value,
-                brand: row.querySelector('[name="brand[]"]').value,
-                quantity: parseInt(row.querySelector('[name="jumlahBarang[]"]').value),
-                price: parseInt(row.querySelector('[name="hargaSatuan[]"]').value.replace(/[^0-9]/g, '')),
-                discount: parseFloat(row.querySelector('[name="discountPercent[]"]').value),
-                total: parseInt(row.querySelector('[name="hargaTotal[]"]').value.replace(/[^0-9]/g, ''))
-            }));
-
-        const { subtotal, totalDiscount, grandTotal } = updateGrandTotal();
-
-        const orderData = {
-            customer,
-            date,
-            payment_method: paymentMethod,
-            location,
-            items,
-            summary: {
+    
+            // Update status tombol checkout
+            const checkoutBtn = document.querySelector('[data-bs-target="#checkoutModal"]');
+            checkoutBtn.disabled = grandTotal === 0;
+    
+            return {
                 subtotal,
-                total_discount: totalDiscount,
-                grand_total: grandTotal
+                totalDiscount,
+                grandTotal
+            };
+        }
+    
+        // Fungsi untuk menampilkan alert
+        function showAlert(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-warning alert-dismissible fade show position-fixed top-0 end-0 m-3';
+            alertDiv.setAttribute('role', 'alert');
+            alertDiv.style.zIndex = '9999';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            
+            // Hapus alert setelah 3 detik
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+    
+        // Event listener saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set tanggal hari ini sebagai default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('tanggal').value = today;
+    
+            // Ambil data cart dari localStorage
+            const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            
+            // Tambahkan item dari cart ke tabel
+            cartItems.forEach(item => {
+                // Buat row baru
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td><input type="text" class="form-control" name="namaBarang[]" value="${item.name}" readonly></td>
+                    <td><input type="text" class="form-control" name="kodeBarang[]" value="${item.id}" readonly></td>
+                    <td><input type="text" class="form-control" name="brand[]" value="${item.brand || '-'}" readonly></td>
+                    <td><input type="number" class="form-control" name="jumlahBarang[]" value="${item.quantity}" min="1"></td>
+                    <td><input type="text" class="form-control" name="hargaSatuan[]" value="${formatRupiah(item.price)}" readonly></td>
+                    <td><input type="text" class="form-control" name="discountPercent[]" value="0.00"></td>
+                    <td><input type="text" class="form-control" name="hargaTotal[]" value="${formatRupiah(item.price * item.quantity)}" readonly></td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm remove-row">Hapus</button>
+                    </td>
+                `;
+                
+                document.getElementById('table-body').appendChild(newRow);
+                
+                // Setup event listeners untuk baris baru
+                setupRowEventListeners(newRow, item.price);
+            });
+    
+            // Update total awal
+            updateGrandTotal();
+        });
+    
+        // Event listener untuk modal checkout
+        document.querySelector('#checkoutModal .btn-primary').addEventListener('click', function() {
+            // Validasi form
+            const customer = document.getElementById('pelanggan').value;
+            const location = document.getElementById('address').value;
+            const paymentMethod = document.getElementById('payment_method').value;
+    
+            if (!customer || !address || !paymentMethod) {
+                showAlert('Mohon lengkapi semua data pesanan!');
+                return;
             }
-        };
-
-        // Log data pesanan (bisa diganti dengan mengirim ke server)
-        console.log('Order Data:', orderData);
-
-        // Clear localStorage
-        localStorage.removeItem('cartItems');
-
-        // Tampilkan notifikasi sukses
-        showAlert('Pesanan berhasil dibuat!');
-
-        // Redirect ke halaman kasir setelah 2 detik
-        setTimeout(() => {
-            window.location.href = '/kasir';
-        }, 2000);
-    });
-</script>
+    
+            // Kumpulkan data pesanan
+            const items = Array.from(document.getElementById('table-body').getElementsByTagName('tr'))
+                .map(row => ({
+                    product_id: row.querySelector('[name="kodeBarang[]"]').value,
+                    quantity: parseInt(row.querySelector('[name="jumlahBarang[]"]').value),
+                    price: parseInt(row.querySelector('[name="hargaSatuan[]"]').value.replace(/[^0-9]/g, '')),
+                    total: parseInt(row.querySelector('[name="hargaTotal[]"]').value.replace(/[^0-9]/g, ''))
+                }));
+    
+            const { subtotal, totalDiscount, grandTotal } = updateGrandTotal();
+    
+            const orderData = {
+                customer,
+                address,
+                payment_method: paymentMethod,
+                items,
+                summary: {
+                    subtotal,
+                    total_discount: totalDiscount,
+                    grand_total: grandTotal
+                }
+            };
+    
+            // Kirim data ke server
+            fetch('/kasir/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify(orderData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Clear localStorage
+                    localStorage.removeItem('cartItems');
+                    
+                    // Tampilkan notifikasi sukses
+                    showAlert('Pesanan berhasil dibuat!');
+                    
+                    // Redirect ke halaman kasir setelah 2 detik
+                    setTimeout(() => {
+                        window.location.href = '/kasir';
+                    }, 2000);
+                } else {
+                    showAlert('Terjadi kesalahan: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Terjadi kesalahan saat memproses pesanan');
+            });
+        });
+    </script>
 </body>
 </html>

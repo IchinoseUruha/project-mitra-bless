@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -116,5 +117,77 @@ class KasirController extends Controller
         $products = Product::with(['brand', 'category'])->get();
         
         return view('karyawan.order_offline', compact('products'));
+    }
+
+    public function checkout(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Validasi request
+            $request->validate([
+                'customer' => 'required|string',
+                'location' => 'required|string',
+                'payment_method' => 'required|string',
+                'items' => 'required|array|min:1',
+                'items.*.product_id' => 'required|exists:products,id',
+                'items.*.quantity' => 'required|integer|min:1',
+                'summary.subtotal' => 'required|numeric',
+                'summary.total_discount' => 'required|numeric',
+                'summary.grand_total' => 'required|numeric'
+            ]);
+
+            // Generate order number
+            $orderNumber = 'ORD-' . date('Ymd') . '-' . rand(1000, 9999);
+
+            // Buat order baru
+            $order = Order::create([
+                'customer_id' => auth()->id(), // Jika ada sistem login
+                'order_number' => $orderNumber,
+                'address' => $request->location,
+                'delivery_method' => 'pickup', // Karena ini kasir offline
+                'payment_method' => $request->payment_method,
+                'payment_details' => json_encode([
+                    'customer_name' => $request->customer,
+                    'payment_date' => date('Y-m-d H:i:s')
+                ]),
+                'subtotal' => $request->summary['subtotal'],
+                'tax' => 0, // Sesuaikan jika ada perhitungan pajak
+                'total' => $request->summary['grand_total'],
+                'status' => 'sedang_diproses'
+            ]);
+
+            // Simpan items dan update stok
+            foreach ($request->items as $item) {
+                // Simpan order item
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'produk_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                    'subtotal' => $item['total']
+                ]);
+
+                // Update stok produk
+                $product = Product::find($item['product_id']);
+                $product->quantity -= $item['quantity'];
+                $product->save();
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pesanan berhasil disimpan',
+                'order_id' => $order->id
+            ]);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -102,5 +102,6 @@ Route::middleware(['auth', AuthKasir::class])->group(function(){
     Route::get('/kasir/daftar-pemesanan', [KasirController::class, 'showDaftarPemesanan'])->name('kasir.pemesanan');
     Route::post('/kasir/pemesanan/{id}  /cancel', [KasirController::class, 'cancelOrder'])->name('kasir.pemesanan.cancel');
     Route::get('/kasir/order', [KasirController::class, 'showOrder'])->name('kasir.order');
+    Route::post('/kasir/checkout', [KasirController::class, 'checkout'])->name('kasir.checkout');
     Route::get('/kasir/search', [KasirController::class, 'searchProducts'])->name('kasir.search');
 });
