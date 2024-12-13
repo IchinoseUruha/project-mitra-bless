@@ -13,7 +13,7 @@
 
     <style>
         /* Root variables for consistent theming */
-:root {
+    :root {
     /* Color palette */
     --primary-color: #7c3aed;
     --primary-hover: #6d28d9;
@@ -24,7 +24,7 @@
     /* Layout dimensions */
     --sidebar-width: 280px;
     --cart-width: 320px;
-}
+    }
 
 /* Base styles for overall document */
 body {
@@ -291,41 +291,9 @@ body {
 </head>
 <body>
     <div class="d-flex min-vh-100">
-        <!-- Left Sidebar - Profile & Navigation -->
-        <div class="sidebar-left">
-            <!-- Profile Section -->
-            <div class="p-4 border-bottom">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="avatar rounded-circle d-flex align-items-center justify-content-center">
-                        <span class="text-white fw-bold fs-5">
-                            {{ substr(Auth::user()->name, 0, 1) }}
-                        </span>
-                    </div>
-                    <div>
-                        <h6 class="mb-0">{{ Auth::user()->name }}</h6>
-                        <small class="text-muted">Kasir</small>
-                    </div>
-                </div>
-            </div>
+       
+        @extends('layouts.sidebarKasir')
 
-            <!-- Navigation Menu -->
-            <nav class="p-4">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a href="{{ route('kasir.index') }}" class="nav-link {{ Request::is('kasir') ? 'active' : '' }}">
-                            <i class="bi bi-cart"></i>
-                            <span>Kasir</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="bi bi-list-check"></i>
-                            <span>Daftar Pemesanan</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
 
         <!-- Main Content Area -->
         <div class="main-content">
@@ -346,7 +314,7 @@ body {
                     </div>
                     <div class="product-info">
                         <h3 class="product-name">{{ $product->name }}</h3>
-                        <p class="product-category">{{ $product->kategori->name ?? 'No Category' }}</p>
+                        <p class="product-category">{{ $product->category->name ?? 'No Category' }}</p>
                         <div class="d-flex justify-content-between align-items-center">
                             <p class="product-price mb-0">Rp {{ number_format($product->price) }}</p>
                             <div class="d-flex gap-2">
@@ -378,7 +346,7 @@ body {
                                          style="max-height: 200px; object-fit: cover;">
                                 </div>
                                 <h5 class="mb-2">{{ $product->name }}</h5>
-                                <p class="text-muted mb-2">{{ $product->kategori->name ?? 'No Category' }}</p>
+                                <p class="text-muted mb-2">{{ $product->category->name ?? 'No Category' }}</p>
                                 <p class="fw-bold text-primary mb-3">Rp {{ number_format($product->price) }}</p>
                                 <p class="mb-3">{{ $product->description }}</p>
                                 <div class="d-flex justify-content-between align-items-center">

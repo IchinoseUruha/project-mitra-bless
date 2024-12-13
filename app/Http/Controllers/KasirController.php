@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 use App\Models\Category;
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class KasirController extends Controller
 {
     public function showKasir()
     {
         // Ambil semua produk untuk ditampilkan di popup/modal pencarian
-        $products = Product::with(['brand', 'kategori'])
+        $products = Product::with(['brand', 'category'])
             ->where('quantity', '>', 0)
             ->orderBy('name')
             ->get();
@@ -28,10 +30,30 @@ class KasirController extends Controller
             }
             return $product;
         });
-        
+
         $order = request()->query('order', 'name');
         
         return view('karyawan.kasir', compact('products', 'order'));
+    }
+
+    public function showDaftarPemesanan(){
+        // Menggunakan model Order seperti cara Product digunakan di showKasir
+        $orders = Order::with('user')  // Gunakan eager loading untuk relasi user
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);  // Menampilkan 10 item per halaman
+
+    return view('karyawan.daftar_pemesanan', compact('orders'));
+    }
+
+    public function cancelOrder($id) {
+        $order = Order::findOrFail($id);
+        $order->status = 'Dibatalkan';
+        $order->save();
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Pesanan berhasil dibatalkan'
+        ]);
     }
 
     public function searchProducts(Request $request)

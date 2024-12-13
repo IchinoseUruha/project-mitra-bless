@@ -29,7 +29,7 @@ class Order extends Model
     }
 
     // Relasi ke customer/user
-    public function customer()
+    public function user()
     {
         return $this->belongsTo(User::class, 'customer_id');
     }
@@ -46,3 +46,4 @@ class Order extends Model
         ];
     }
 }
+?>

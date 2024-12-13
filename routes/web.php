@@ -99,5 +99,7 @@ Route::middleware(['auth', AuthAdmin::class])->group(function(){
 
 Route::middleware(['auth', AuthKasir::class])->group(function(){
     Route::get('/kasir', [KasirController::class, 'showKasir'])->name('kasir.index');
+    Route::get('/kasir/daftar-pemesanan', [KasirController::class, 'showDaftarPemesanan'])->name('kasir.pemesanan');
+    Route::post('/kasir/pemesanan/{id}/cancel', [KasirController::class, 'cancelOrder'])->name('kasir.pemesanan.cancel');
     Route::get('/kasir/search', [KasirController::class, 'searchProducts'])->name('kasir.search');
 });
