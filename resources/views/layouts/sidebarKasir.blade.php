@@ -104,6 +104,17 @@
                 <i class="fas fa-list"></i>
                 <span>Daftar Pemesanan</span>
             </a>
+            
+            <!-- Logout Button -->
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" 
+                        class="menu-link w-full text-red-600 hover:bg-red-50 hover:text-red-700 mt-2">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </form>
+
         </nav>
     </div>
 
