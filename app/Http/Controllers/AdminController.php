@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\User;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -338,8 +339,7 @@ class AdminController extends Controller
 
     public function showDaftarPemesanan(){
         // Menggunakan model Order seperti cara Product digunakan di showKasir
-        $orders = Order::with('user')  // Gunakan eager loading untuk relasi user
-        ->orderBy('created_at', 'desc')
+        $orders = OrderItem::orderBy('id','desc') 
         ->paginate(10);  // Menampilkan 10 item per halaman
 
     return view('admin.pemesanan', compact('orders'));

@@ -68,7 +68,7 @@
               <th class="px-4 md:px-6 py-4 text-left font-semibold whitespace-nowrap">Metode Pembayaran</th>
               <th class="px-4 md:px-6 py-4 text-left font-semibold whitespace-nowrap">Detail Pembayaran</th>
               <th class="px-4 md:px-6 py-4 text-left font-semibold whitespace-nowrap">Total</th>
-              <th class="px-4 md:px-6 py-4 text-left font-semibold whitespace-nowrap">Aksi</th>
+              {{-- <th class="px-4 md:px-6 py-4 text-left font-semibold whitespace-nowrap">Aksi</th> --}}
             </tr>
           </thead>
           <tbody>
@@ -109,7 +109,7 @@
               <td class="px-4 md:px-6 py-4 font-semibold">
                 Rp {{ number_format($order->total, 0, ',', '.') }}
               </td>
-              <td class="px-4 md:px-6 py-4">
+              {{-- <td class="px-4 md:px-6 py-4">
                 <div class="flex flex-col gap-2">
                   <button class="inline-flex items-center justify-center px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-md transition-colors text-sm">
                     <i class="fas fa-check mr-2"></i> Konfirmasi    
@@ -120,7 +120,7 @@
                   </button>
                   @endif
                 </div>
-              </td>
+              </td> --}}
             </tr>
             @endforeach
           </tbody>
