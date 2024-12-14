@@ -107,7 +107,13 @@
                                 <td>{{ ucwords($item->address) }}</td>
                                 <td>{{ ucwords(str_replace('_', ' ', $item->payment_method)) }}</td>
                                 <td>{{ $item->payment_details }}</td>
-                                <td>Rp {{ number_format($item->total, 0, ',', '.') }}</td>
+                                <td>
+                                    @if(Auth::user()->utype == 'customer_b')
+                                        Rp. {{ number_format($item->total, 2) }}
+                                    @else
+                                        Rp. {{ number_format($item->harga_diskon, 2) }}
+                                    @endif
+                                </td>
                                 <td>
                                     @if($item->bukti_pembayaran)
                                         <a href="{{ asset('uploads/bukti_pembayaran/'.$item->bukti_pembayaran) }}" 
@@ -222,8 +228,35 @@
                         </tbody>
                         <tfoot>
                             <tr>
+                                <td colspan="3" class="text-end"><strong>Diskon:</strong></td>
+                                <td>
+                                    <strong>
+                                        @if(Auth::user()->utype == 'customer_b')
+                                            0%
+                                        @else
+                                            @if($item->quantity >= 36)
+                                                10%
+                                            @elseif($item->quantity >= 12)
+                                                5%
+                                            @else
+                                                0%
+                                            @endif
+                                        @endif
+                                    </strong>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                <td><strong>Rp. {{ number_format($order->total, 0, ',', '.') }}</strong></td>
+                                <td>
+                                    <strong>
+                                            @if(Auth::user()->utype == 'customer_b')
+                                                Rp {{ number_format($item->total, 2) }}
+                                            @else
+                                                Rp {{ number_format($item->harga_diskon, 2) }}
+                                            @endif
+                                    </strong>
+                                
+                                </td>
                             </tr>
                         </tfoot>
                     </table>

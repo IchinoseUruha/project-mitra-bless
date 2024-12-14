@@ -20,6 +20,7 @@ class OrderItem extends Model
         'payment_method',
         'payment_details',
         'status',
+        'harga_diskon',
         'bukti_pembayaran'
     ];
 

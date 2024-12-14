@@ -18,7 +18,7 @@ class OrderController extends Controller
     // Halaman Order History dengan View
     public function index()
     {
-        $orders = Order::with(['items.produk'])
+        $orders = Order::with(['items.produk','customer'])
                         ->where('customer_id', Auth::id())
                         ->orderBy('created_at', 'desc')
                         ->get();
