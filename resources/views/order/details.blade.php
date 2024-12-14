@@ -4,8 +4,9 @@
 <style>
     tr th {
         background-color: #F062A8!important;
+        color: white!important;
     }
-    </style>
+</style>
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-12">
@@ -14,96 +15,166 @@
                 </div>
                 
                 <div class="card-body p-0">
-                    @foreach($orders as $order)
                     <!-- Header Pesanan -->
-                    <div class="table-responsive">
-                        <table class="table mb-0">
-                            <thead class="bg-pink text-white">
-                                <tr class="bg-pink" style="">
-                                    <th>Nomor Pesanan</th>
-                                    <th>Tanggal</th>
-                                    <th>Status</th>
-                                    <th>Metode Pengiriman</th>
-                                    <th>Alamat</th>
-                                    <th>Metode Pembayaran</th>
-                                    <th>Detail Pembayaran</th>
-                                    <th>Total</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        {{ $order->order_number }}<br>
-                                        <span class="text-muted small">
-                                            @foreach($order->items as $item)
-                                                {{ $item->produk->name }} ({{ $item->quantity }})
-                                            @endforeach
-                                        </span>
-                                    </td>
-                                    <td>{{ $order->created_at->format('d M Y') }}</td>
-                                    <td>
-                                        <span class="badge bg-{{ $order->status == 'menunggu_pembayaran' ? 'warning' : 
-                                            ($order->status == 'sedang_diproses' ? 'info' : 'secondary') }}">
-                                            {{ ucwords(str_replace('_', ' ', $order->status)) }}
-                                        </span>
-                                    </td>
-                                    <td>{{ ucwords($order->delivery_method) }}</td>
-                                    <td>{{ucwords($order->address)}}</td>
-                                    <td>{{ ucwords(str_replace('_', ' ', $order->payment_method)) }}</td>
-                                    <td>{{ $order->payment_details }}</td>
-                                    <td>Rp {{ number_format($order->total, 0, ',', '.') }}</td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-pink" onclick="toggleDetail({{ $order->id }})">Detail</button>
-                                        @if($order->status == 'menunggu_pembayaran')
-                                            <form action="{{ route('order.cancel', $order->id) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Yakin ingin membatalkan pesanan?')">
-                                                    Batalkan
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    @foreach($orders as $order)
+<!-- Header Pesanan -->
+<div class="table-responsive">
+    <table class="table mb-0">
+        <thead>
+            <tr>
+                <th>Nomor Pesanan</th>
+                <th>Tanggal</th>
+                <th>Status</th>
+                <th>Metode Pengiriman</th>
+                <th>Alamat</th>
+                <th>Metode Pembayaran</th>
+                <th>Detail Pembayaran</th>
+                <th>Total</th>
+                <th>Bukti Pembayaran</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($order->items as $item)
+            <tr>
+                <td>
+                    {{ $item->order_number }}<br>
+                    <span class="text-muted small">
+                        {{ $item->produk->name }} ({{ $item->quantity }})
+                    </span>
+                </td>
+                <td>{{ $item->created_at->format('d M Y') }}</td>
+                <td>
+                    <span class="badge bg-{{ $item->status == 'menunggu_pembayaran' ? 'warning' : 
+                        ($item->status == 'sedang_diproses' ? 'info' : 'secondary') }}">
+                        {{ ucwords(str_replace('_', ' ', $item->status)) }}
+                    </span>
+                </td>
+                <td>{{ ucwords($item->delivery_method) }}</td>
+                <td>{{ ucwords($item->address) }}</td>
+                <td>{{ ucwords(str_replace('_', ' ', $item->payment_method)) }}</td>
+                <td>{{ $item->payment_details }}</td>
+                <td>Rp {{ number_format($item->total, 0, ',', '.') }}</td>
+                <td>
+                    @if($item->bukti_pembayaran)
+                        <a href="{{ asset('uploads/bukti_pembayaran/'.$item->bukti_pembayaran) }}" 
+                           target="_blank">
+                            <img src="{{ asset('uploads/bukti_pembayaran/'.$item->bukti_pembayaran) }}" 
+                                 alt="Bukti Pembayaran" 
+                                 class="img-thumbnail" 
+                                 style="max-width: 100px;">
+                        </a>
+                    @else
+                        @if($item->status == 'menunggu_pembayaran')
+                        <button type="button" 
+                                class="btn btn-sm btn-pink" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#uploadBukti{{ $item->id }}">
+                            Upload Bukti
+                        </button>
+                        @else
+                        <span class="badge bg-secondary">Tidak ada bukti</span>
+                        @endif
+                    @endif
+                </td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-pink mb-1" onclick="toggleDetail({{ $order->id }})">Detail</button>
+                    @if($item->status == 'menunggu_pembayaran')
+                        <form action="{{ route('order.cancel', $order->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Yakin ingin membatalkan pesanan?')">
+                                Batalkan
+                            </button>
+                        </form>
+                    @endif
+                </td>
+            </tr>
+
+            <!-- Modal Upload Bukti -->
+            <div class="modal fade" id="uploadBukti{{ $item->id }}" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-pink text-white">
+                            <h5 class="modal-title">Upload Bukti Pembayaran</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form action="{{ route('order.upload-bukti', $item->id) }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Pilih File Bukti Pembayaran</label>
+                                    <input type="file" name="bukti_pembayaran" class="form-control" accept="image/*" required>
+                                    <small class="text-muted">Format: JPG, PNG, JPEG. Max: 2MB</small>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-pink">Upload</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+
+
+                    <!-- Modal Upload Bukti -->
+                    <div class="modal fade" id="uploadBukti{{ $order->id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-pink text-white">
+                                    <h5 class="modal-title">Upload Bukti Pembayaran</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form action="{{ route('order.upload-bukti', $order->id) }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Pilih File Bukti Pembayaran</label>
+                                            <input type="file" name="bukti_pembayaran" class="form-control" accept="image/*" required>
+                                            <small class="text-muted">Format: JPG, PNG, JPEG. Max: 2MB</small>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                        <button type="submit" class="btn btn-pink">Upload</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Detail Produk -->
-                    <div class="table-responsive detail-table" id="detail{{ $order->id }}" style="display: none;">
-                        <table class="table">
-                                <tr>
-                                    <th>Produk</th>
-                                    <th>Harga</th>
-                                    <th>Jumlah</th>
-                                    <th>Subtotal</th>
-                                </tr>
-                            <tbody>
-                                @foreach($order->items as $item)
-                                <tr>
-                                    <td>{{ $item->produk->name }}</td>
-                                    <td>Rp {{ number_format($item->price, 0, ',', '.') }}</td>
-                                    <td>{{ $item->quantity }}</td>
-                                    <td>Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot class="bg-light">
-                                <tr>
-                                    <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
-                                    <td>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3" class="text-end"><strong>Pajak (10%):</strong></td>
-                                    <td>Rp {{ number_format($order->tax, 0, ',', '.') }}</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                    <td><strong>Rp {{ number_format($order->total, 0, ',', '.') }}</strong></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>                    
+                <div class="table-responsive detail-table" id="detail{{ $order->id }}" style="display: none;">
+                    <table class="table">
+                            <tr>
+                                <th>Produk</th>
+                                <th>Harga</th>
+                                <th>Jumlah</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        <tbody>
+                            @foreach($order->items as $item)
+                            <tr>
+                                <td>{{ $item->produk->name }}</td>
+                                <td>Rp. {{ number_format($item->price, 0, ',', '.') }}</td>
+                                <td>{{ $item->quantity }}</td>
+                                <td>Rp. {{ number_format($item->total, 0, ',', '.') }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot class="bg-light">
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                <td><strong>Rp. {{ number_format($order->total, 0, ',', '.') }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                    
                     <hr>
                     @endforeach
                 </div>

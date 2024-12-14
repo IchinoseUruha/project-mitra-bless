@@ -57,9 +57,10 @@ Route::middleware(['auth'])->group(function(){
 
 // Pindahkan ini SEBELUM middleware admin
 Route::middleware(['auth'])->group(function () {
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
-    Route::post('/checkout/direct', [CheckoutController::class, 'directCheckout'])->name('checkout.direct');
+     // Checkout routes
+     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+     Route::post('/checkout/direct', [CheckoutController::class, 'directCheckout'])->name('checkout.direct');
+     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
 });
 
 //orders
@@ -67,6 +68,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/order/details', [OrderController::class, 'show'])->name('order.details');
     Route::post('/order/{id}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
     Route::post('/order/{id}/confirm', [OrderController::class, 'confirm'])->name('order.confirm');
+    Route::post('/order/upload-bukti/{id}', [OrderController::class, 'uploadBukti'])->name('order.upload-bukti');
 });
 
 

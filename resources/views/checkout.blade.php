@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Styling CSS -->
+<!-- Styling CSS tetap sama seperti sebelumnya -->
 <style>
     /* Reset beberapa default style */
     * {
@@ -143,7 +143,8 @@
             padding: 12px 0;
         }
     }
-    </style>
+</style>
+
 <div class="container mt-5">
     <div class="row">
         <!-- Detail Barang yang Dipesan -->
@@ -156,27 +157,25 @@
                             <th>Nama Produk</th>
                             <th>Harga Satuan</th>
                             <th>Kuantitas</th>
-                            <th>Subtotal</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($cartItems as $item)
                             <tr>
                                 <td>{{ $item->produk->name }}</td>
-                                <td>Rp {{ number_format($item->produk->price, 2) }}</td>
+                                <td>Rp {{ number_format($item->produk->price, 0, ',', '.') }}</td>
                                 <td>{{ $item->quantity }}</td>
-                                <td>Rp {{ number_format($item->quantity * $item->produk->price, 2) }}</td>
+                                <td>Rp {{ number_format($item->quantity * $item->produk->price, 0, ',', '.') }}</td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
 
-                <!-- Total Harga -->
-                <div class="total-price">
-                    <p class="text-gray-800">Subtotal: Rp. {{ number_format($subtotal, 2) }}</p>
-                    <p><strong>Pajak (10%): </strong>Rp {{ number_format($tax, 2) }}</p>
-                    <p><strong>Total: </strong>Rp {{ number_format($total, 2) }}</p>
-                </div>
+                {{-- <!-- Total Harga -->
+                <div class="total-price text-end">
+                    <h5><strong>Total: Rp {{ number_format($total, 0, ',', '.') }}</strong></h5>
+                </div> --}}
             </div>
         </div>
 
@@ -190,22 +189,22 @@
 
                     <!-- Metode Pengiriman -->
                     <div class="form-group">
-                        <label for="sending_method" class="h4">Pilih Metode Pengiriman</label>
-                        <select name="sending_method" id="sending_method" class="form-control" required onchange="toggleAddressInput()">
+                        <label for="delivery_method">Pilih Metode Pengiriman</label>
+                        <select name="delivery_method" id="delivery_method" class="form-control" required onchange="toggleAddressInput()">
                             <option value="diantar">Diantar ke rumah</option>
                             <option value="diambil">Ambil di toko</option>
                         </select>
                     </div>
 
-                    <!-- Alamat Pengiriman (akan muncul jika memilih diantar) -->
-                    <div class="form-group" id="address-container" style="display: none;">
-                        <label for="address" class="h4">Alamat Pengiriman</label>
-                        <input type="text" name="address" id="address" class="form-control" required>
+                    <!-- Alamat Pengiriman -->
+                    <div class="form-group" id="address-container">
+                        <label for="address">Alamat Pengiriman</label>
+                        <input type="text" name="address" id="address" class="form-control">
                     </div>
 
                     <!-- Metode Pembayaran -->
                     <div class="form-group">
-                        <label for="payment_method" class="h4">Metode Pembayaran</label>
+                        <label>Metode Pembayaran</label>
                         <div class="payment-options">
                             <div>
                                 <input type="radio" id="bank_transfer" name="payment_method" value="bank_transfer" onclick="togglePaymentFields()">
@@ -219,24 +218,25 @@
                                 <input type="radio" id="e_wallet" name="payment_method" value="e-wallet" onclick="togglePaymentFields()">
                                 <label for="e_wallet">E-wallet</label>
                                 <select name="wallet_account" id="wallet_account" class="form-control" style="display:none;">
-                                <option value="GoPay">GoPay</option>
-                                <option value="DANA">DANA</option>
+                                    <option value="GoPay">GoPay</option>
+                                    <option value="DANA">DANA</option>
                                 </select>
                             </div>
                             <div>
                                 <input type="radio" id="cash_on_delivery" name="payment_method" value="bayar_ditempat" onclick="togglePaymentFields()">
-                                <label for="Cash">Bayar di Tempat</label>
+                                <label for="cash_on_delivery">Bayar di Tempat</label>
                             </div>
                         </div>
                     </div>
 
                     <!-- Tombol Submit -->
-                    <button type="submit" class="btn btn-primary">Lanjutkan ke Pembayaran</button>
+                    <button type="submit" class="btn btn-primary">Konfirmasi Pemesanan</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
 @if ($errors->any())
     <div class="alert alert-danger">
         <ul>
@@ -247,47 +247,44 @@
     </div>
 @endif
 
-<!-- JavaScript untuk mengelola tampilan input -->
 <script>
-    function togglePaymentFields() {
+function togglePaymentFields() {
     const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
-        
-    // Sembunyikan semua dropdown yang tidak diperlukan
+    
     document.getElementById('bank_account').style.display = 'none';
     document.getElementById('wallet_account').style.display = 'none';
     
-    // Tampilkan sesuai dengan metode yang dipilih
     if (paymentMethod === 'bank_transfer') {
-   document.getElementById('bank_account').style.display = 'block';
-   document.getElementById('bank_account').required = true;
-   document.getElementById('wallet_account').required = false;
-} else if (paymentMethod === 'e-wallet') {  // Perubahan disini
-   document.getElementById('wallet_account').style.display = 'block';
-   document.getElementById('wallet_account').required = true;
-   document.getElementById('bank_account').required = false;
-}
-}
-
-// Tetap gunakan fungsi alamat yang lama
-function toggleAddressInput() {
-    const sendingMethod = document.getElementById('sending_method').value;
-    const addressContainer = document.getElementById('address-container');
-    
-    if (sendingMethod === 'diantar') {
-        addressContainer.style.display = 'block';
-    } else {
-        addressContainer.style.display = 'none';
+        document.getElementById('bank_account').style.display = 'block';
+        document.getElementById('bank_account').required = true;
+        document.getElementById('wallet_account').required = false;
+    } else if (paymentMethod === 'e-wallet') {
+        document.getElementById('wallet_account').style.display = 'block';
+        document.getElementById('wallet_account').required = true;
+        document.getElementById('bank_account').required = false;
     }
 }
 
-// Tambahkan ini untuk form pembayaran
+function toggleAddressInput() {
+    const deliveryMethod = document.getElementById('delivery_method').value;
+    const addressContainer = document.getElementById('address-container');
+    const addressInput = document.getElementById('address');
+    
+    if (deliveryMethod === 'diantar') {
+        addressContainer.style.display = 'block';
+        addressInput.required = true;
+    } else {
+        addressContainer.style.display = 'none';
+        addressInput.required = false;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Cek apakah ada metode pembayaran yang sudah dipilih
+    toggleAddressInput();
     const selectedPayment = document.querySelector('input[name="payment_method"]:checked');
     if (selectedPayment) {
         togglePaymentFields();
     }
 });
 </script>
-
 @endsection

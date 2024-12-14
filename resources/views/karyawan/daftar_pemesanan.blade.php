@@ -67,12 +67,13 @@
               <th class="px-6 py-4 text-left font-semibold">Alamat</th>
               <th class="px-6 py-4 text-left font-semibold">Metode Pembayaran</th>
               <th class="px-6 py-4 text-left font-semibold">Detail Pembayaran</th>
+              <th class="px-6 py-4 text-left font-semibold">Bukti Pembayaran</th>
               <th class="px-6 py-4 text-left font-semibold">Total</th>
               <th class="px-6 py-4 text-left font-semibold">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            @foreach($orders as $order)
+            @foreach($order_items as $order)
             <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
               <td class="px-6 py-4">
                 <span class="font-mono text-sm">{{ $order->order_number }}</span>
@@ -106,6 +107,19 @@
                 </span>
               </td>
               <td class="px-6 py-4">{{ $order->payment_details }}</td>
+              <td>
+                 @if($order->bukti_pembayaran)
+                    <a href="{{ asset('uploads/bukti_pembayaran/'.$order->bukti_pembayaran) }}" 
+                      target="_blank">
+                      <img src="{{ asset('uploads/bukti_pembayaran/'.$order->bukti_pembayaran) }}" 
+                            alt="Bukti Pembayaran" 
+                            class="img-thumbnail" 
+                            style="max-width: 100px;">
+                      </a>
+                 @else
+                  <span class="badge bg-secondary">Tidak ada bukti</span>
+                @endif
+              </td>
               <td class="px-6 py-4 font-semibold">
                 Rp {{ number_format($order->total, 0, ',', '.') }}
               </td>
@@ -131,7 +145,7 @@
         <div class="px-8 py-6 bg-gray-50 rounded-b-lg border-t border-gray-200">
             <div class="flex justify-end items-center"> <!-- Ubah justify-between menjadi justify-end -->
                 <div class="pagination">
-                    {{ $orders->links() }}
+                    {{ $order_items->links() }}
                 </div>
             </div>
         </div>

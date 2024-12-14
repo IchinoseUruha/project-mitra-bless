@@ -43,14 +43,12 @@ class OrderController extends Controller
         $order = Order::where('id', $id)
                      ->where('customer_id', Auth::id())
                      ->firstOrFail();
-
-        if ($order->status !== 'menunggu_pembayaran') {
-            return back()->with('error', 'Pesanan tidak dapat dibatalkan karena sudah diproses.');
-        }
-
-        $order->update(['status' => 'dibatalkan']);
-
-        return redirect()->route('order.details', $order->id)
+    
+        // Update status di order items
+        OrderItem::where('order_id', $id)
+                 ->update(['status' => 'dibatalkan']);
+    
+        return redirect()->back()
                         ->with('success', 'Pesanan berhasil dibatalkan.');
     }
 
@@ -149,5 +147,29 @@ class OrderController extends Controller
             'dibatalkan' => 'Dibatalkan'
         ];
     }
+
+    public function uploadBukti(Request $request, $id)
+{
+    $request->validate([
+        'bukti_pembayaran' => 'required|image|mimes:jpg,png,jpeg|max:2048'
+    ]);
+
+    $orderItem = OrderItem::findOrFail($id);
+    
+    if ($request->hasFile('bukti_pembayaran')) {
+        $file = $request->file('bukti_pembayaran');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('uploads/bukti_pembayaran'), $filename);
+        
+        $orderItem->update([
+            'bukti_pembayaran' => $filename,
+            'status' => 'sedang_diproses'
+        ]);
+
+        return redirect()->back()->with('success', 'Bukti pembayaran berhasil diupload');
+    }
+
+    return redirect()->back()->with('error', 'Gagal mengupload bukti pembayaran');
+}
 }
 

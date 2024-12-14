@@ -38,12 +38,10 @@ class KasirController extends Controller
     }
 
     public function showDaftarPemesanan(){
-        // Menggunakan model Order seperti cara Product digunakan di showKasir
-        $orders = Order::with('user')  // Gunakan eager loading untuk relasi user
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);  // Menampilkan 10 item per halaman
-
-    return view('karyawan.daftar_pemesanan', compact('orders'));
+        $order_items = OrderItem::orderBy('id', 'desc')
+            ->paginate(10);  // Menampilkan 10 item per halaman
+    
+        return view('karyawan.daftar_pemesanan', compact('order_items'));
     }
 
     public function cancelOrder($id) {
@@ -137,13 +135,12 @@ class KasirController extends Controller
                 'summary.grand_total' => 'required|numeric'
             ]);
 
-            // Generate order number
-            $orderNumber = 'ORD-' . date('Ymd') . '-' . rand(1000, 9999);
+            // // Generate order number
+            // $orderNumber = 'ORD-' . date('Ymd') . '-' . rand(1000, 9999);
 
             // Buat order baru
             $order = Order::create([
                 'customer_id' => auth()->id(), // Jika ada sistem login
-                'order_number' => $orderNumber,
                 'address' => $request->location,
                 'delivery_method' => 'pickup', // Karena ini kasir offline
                 'payment_method' => $request->payment_method,

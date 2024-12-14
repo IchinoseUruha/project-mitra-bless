@@ -8,7 +8,7 @@ use App\Models\OrderItem;
 use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
@@ -17,175 +17,141 @@ class CheckoutController extends Controller
         $this->middleware('auth');
     }
 
-    // This method handles displaying the checkout page
     public function index()
     {
+        // Check if this is direct purchase
         if (session()->has('direct_purchase')) {
-            // For direct purchase, get data from session
             $cartItems = collect([session('cartItems')]);
-            $subtotal = session('subtotal');
-            $tax = session('tax');
             $total = session('total');
-
-            // Don't forget session here - we need it for processing
-            // session()->forget(['direct_purchase', 'cartItems', 'subtotal', 'tax', 'total']);
-        } else {
-            // For cart purchase, get data from database
-            $cartItems = Cart::where('customer_id', Auth::id())
-                ->with('produk')
-                ->get();
-
-            $subtotal = $cartItems->sum(function ($item) {
-                return $item->quantity * $item->produk->price;
-            });
-
-            $tax = $subtotal * 0.1;
-            $total = $subtotal + $tax;
+            
+            return view('checkout', compact('cartItems', 'total'));
+        } 
+        
+        // If not direct purchase, check cart
+        $cartItems = Cart::where('customer_id', Auth::id())
+            ->with('produk')
+            ->get();
+    
+        // If cart is empty, redirect back
+        if ($cartItems->isEmpty()) {
+            return redirect()->route('cart.index')
+                ->with('error', 'Keranjang belanja Anda kosong. Silahkan tambahkan produk terlebih dahulu.');
         }
-
-        return view('checkout', compact('cartItems', 'subtotal', 'tax', 'total'));
+    
+        // Calculate total from cart items
+        $total = $cartItems->sum(function ($item) {
+            return $item->quantity * $item->produk->price;
+        });
+    
+        return view('checkout', compact('cartItems', 'total'));
     }
 
-    // This method handles direct product purchase
     public function directCheckout(Request $request)
-    {
-        $request->validate([
-            'id' => 'required|exists:produk,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
+{
+    $request->validate([
+        'id' => 'required|exists:produk,id',  // Diubah dari produks menjadi produk
+        'name' => 'required|string',
+        'price' => 'required|numeric',
+        'quantity' => 'required|integer|min:1'
+    ]);
 
-        // Get the actual product data from database
-        $product = Product::findOrFail($request->id);
+    // Get the product data
+    $product = Product::findOrFail($request->id);
 
-        // Create cart item object with actual product data
-        $cartItem = (object)[
-            'produk' => $product, // Use the full product model
-            'quantity' => $request->quantity,
-        ];
+    // Buat object cart item dengan semua informasi yang diperlukan
+    $cartItem = (object)[
+        'produk' => $product,
+        'quantity' => $request->quantity,
+        'name' => $request->name,
+        'price' => $request->price
+    ];
 
-        // Calculate totals using product price from database
-        $subtotal = $product->price * $request->quantity;
-        $tax = $subtotal * 0.1;
-        $total = $subtotal + $tax;
+    // Hitung total
+    $total = $request->price * $request->quantity;
 
-        // Store in session for checkout process
-        session([
-            'direct_purchase' => true,
-            'cartItems' => $cartItem,
-            'subtotal' => $subtotal,
-            'tax' => $tax,
-            'total' => $total,
-        ]);
+    // Simpan ke session
+    session([
+        'direct_purchase' => true,
+        'cartItems' => $cartItem,
+        'total' => $total
+    ]);
 
-        return redirect()->route('checkout.index');
-    }
+    return redirect()->route('checkout.index');
+}
 
-    // This method processes the checkout
-    public function process(Request $request)
-    {
-        $validated = $request->validate([
-            'sending_method' => 'required|in:diantar,diambil',
-            'address' => 'required_if:sending_method,diantar', 
-            'payment_method' => 'required|in:bank_transfer,e-wallet,bayar_ditempat',
-            'bank_account' => 'required_if:payment_method,bank_transfer',
-            'wallet_account' => 'required_if:payment_method,e-wallet'
-        ]);
+public function process(Request $request)
+{
+    $validated = $request->validate([
+        'delivery_method' => 'required|in:diantar,diambil',
+        'address' => 'required_if:delivery_method,diantar',
+        'payment_method' => 'required|in:e-wallet,bank_transfer,bayar_ditempat',
+        'bank_account' => 'required_if:payment_method,bank_transfer',
+        'wallet_account' => 'required_if:payment_method,e-wallet'
+    ]);
 
-        try {
-            $orderNumber = 'ORD-' . strtoupper(Str::random(10));
+    try {
+        DB::beginTransaction();
 
-            if (session()->has('direct_purchase')) {
-                // Direct purchase process
-                $cartItem = session('cartItems');
-                // Get fresh product data
-                $product = Product::findOrFail($cartItem->produk->id);
-                
-                $subtotal = (float)$product->price * (float)$cartItem->quantity;
-                $tax = $subtotal * 0.1;
-                $total = $subtotal + $tax;
-
-                // Create order
-                $order = $this->createOrder($request, $orderNumber, $subtotal, $tax, $total);
-
-                // Create order item
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'produk_id' => $product->id,
-                    'quantity' => $cartItem->quantity,
-                    'price' => $product->price,
-                    'subtotal' => $cartItem->quantity * $product->price
-                ]);
-
-                // Clear session after successful order
-                session()->forget(['direct_purchase', 'cartItems', 'subtotal', 'tax', 'total']);
-            } else {
-                // Cart purchase process
-                $cartItems = Cart::where('customer_id', Auth::id())
-                    ->with('produk')
-                    ->get();
-
-                $subtotal = 0;
-                foreach ($cartItems as $item) {
-                    $product = Product::find($item->produk_id); // Get fresh product data
-                    $subtotal += (float)$item->quantity * (float)$product->price;
-                }
-                $tax = $subtotal * 0.1;
-                $total = $subtotal + $tax;
-
-                // Create order
-                $order = $this->createOrder($request, $orderNumber, $subtotal, $tax, $total);
-
-                // Create order items
-                foreach ($cartItems as $item) {
-                    $product = Product::find($item->produk_id); // Get fresh product data
-                    OrderItem::create([
-                        'order_id' => $order->id,
-                        'produk_id' => $product->id,
-                        'quantity' => $item->quantity,
-                        'price' => $product->price,
-                        'subtotal' => $item->quantity * $product->price
-                    ]);
-                }
-
-                // Clear cart after successful order
-                Cart::where('customer_id', Auth::id())->delete();
-            }
-
-            return redirect()->route('order.details', $order->id)
-                ->with('success', 'Pesanan berhasil dibuat!');
-
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Terjadi kesalahan saat memproses pesanan: ' . $e->getMessage())
-                ->withInput();
+        if (session()->has('direct_purchase')) {
+            Cart::create([
+                'customer_id' => Auth::id(),
+                'produk_id' => session('cartItems')->produk->id,
+                'quantity' => session('cartItems')->quantity
+            ]);
         }
-    }
+        
+        // Panggil procedure (order_number sudah di-generate di dalam procedure)
+        DB::statement('CALL InsertOrderAndItems(?)', [Auth::id()]);
+        
+        // Get latest order untuk data tambahan
+        $order = Order::where('customer_id', Auth::id())
+                     ->latest()
+                     ->first();
 
-    // Helper method to create order
-    private function createOrder($request, $orderNumber, $subtotal, $tax, $total)
-    {
-        $paymentDetails = null;
-        if ($request->payment_method === 'bank_transfer') {
-            $paymentDetails = $request->bank_account;
-        } elseif ($request->payment_method === 'e-wallet') {
-            $paymentDetails = $request->wallet_account;
-        } elseif ($request->payment_method === 'bayar_ditempat') {
-            $paymentDetails = 'Cash';
-        }
-
-        return Order::create([
-            'customer_id' => Auth::id(),
-            'order_number' => $orderNumber,
-            'address' => $request->sending_method === 'diambil' ? 'Diambil di toko' : $request->address,
-            'delivery_method' => $request->sending_method,
+        // Update order items dengan additional details
+        OrderItem::where('order_id', $order->id)->update([
+            'address' => $request->delivery_method === 'diambil' ? 'Diambil di toko' : $request->address,
+            'delivery_method' => $request->delivery_method,
             'payment_method' => $request->payment_method,
-            'payment_details' => $paymentDetails,
-            'subtotal' => $subtotal,
-            'tax' => $tax,
-            'total' => $total,
-            'status' => $request->sending_method === 'diambil' && $request->payment_method === 'bayar_ditempat' 
-                       ? 'sedang_diproses' : 'menunggu_pembayaran'
+            'payment_details' => $this->getPaymentDetails($request),
+            'status' => $this->getOrderStatus($request)
         ]);
+
+        if (session()->has('direct_purchase')) {
+            session()->forget(['direct_purchase', 'cartItems', 'total']);
+        }
+
+        DB::commit();
+        return redirect()->route('order.details', $order->id)
+            ->with('success', 'Pesanan berhasil dibuat!');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()
+            ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+            ->withInput();
+    }
+}
+    private function getPaymentDetails($request)
+    {
+        switch ($request->payment_method) {
+            case 'bank_transfer':
+                return $request->bank_account;
+            case 'e-wallet':
+                return $request->wallet_account;
+            case 'bayar_ditempat':
+                return 'Cash';
+            default:
+                return null;
+        }
+    }
+
+    private function getOrderStatus($request)
+    {
+        if ($request->delivery_method === 'diambil' && $request->payment_method === 'bayar_ditempat') {
+            return OrderItem::STATUS['SEDANG_DIPROSES'];
+        }
+        return OrderItem::STATUS['MENUNGGU_PEMBAYARAN'];
     }
 
     public function success()
