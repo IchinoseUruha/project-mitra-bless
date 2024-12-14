@@ -31,6 +31,7 @@ class AuthController extends Controller
             'email' => $request->email,
             // 'mobile' => $request->mobile, // Tambahkan mobile
             'password' => Hash::make($request->password),
+            'utype' => 'CUSTOMER_B', //default role pas register
         ]);
         Auth::login($user);
         return redirect()->route('home.index');
