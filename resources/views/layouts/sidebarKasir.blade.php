@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,6 +10,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
+        /* Sidebar styles */
         .sidebar-left {
             width: 256px;
             height: 100vh;
@@ -18,110 +19,155 @@
             top: 0;
             background: white;
             border-right: 1px solid #e5e7eb;
+            box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            overflow-y: auto;
+            transition: transform 0.3s ease-in-out;
         }
 
+        .sidebar-left.hidden {
+            transform: translateX(-100%);
+        }
+
+        /* Avatar styles */
         .avatar {
             width: 48px;
             height: 48px;
-            background-color: rgb(124 58 237);   /* Violet-600 */
+            background-color: #F062A8; /* Pink */
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 9999px;
-        }
-
-        .nav-link.active {
-            background-color: rgb(124 58 237);
+            border-radius: 9999px; /* Circle */
             color: white;
-            border-radius: 0.5rem;
+            font-weight: bold;
+            font-size: 1.25rem;
         }
 
-        .kasir-button {
+        /* Navigation links */
+        .nav-link, .menu-link {
             display: flex;
             align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background-color: rgb(124 58 237);
+            gap: 0.5rem;
+            padding: 0.8rem 1rem;
+            color: #4B5563; /* Gray-700 */
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .menu-link:hover {
+            background-color: #F062A8; /* Hover: Pink */
             color: white;
-            border-radius: 0.5rem;
-            margin-bottom: 0.5rem;
-            transition: background-color 0.2s;
         }
 
-        .kasir-button:hover {
-            background-color: rgb(109 40 217);
+        .nav-link.active, .menu-link.active {
+            background-color: #F062A8; /* Active: Pink */
+            color: white;
         }
 
-        .menu-link {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            color: #4b5563;
-            border-radius: 0.5rem;
-            transition: background-color 0.2s;
+        /* Logout button */
+        button {
+            border: none;
+            cursor: pointer;
         }
 
-        .menu-link:hover {
-            background-color: #f3f4f6;
+        button:hover {
+            background-color: #e3342f; /* Hover: Red */
+            color: white;
         }
 
-        .menu-link i {
-            margin-right: 0.5rem;
+        /* Main Content */
+        .main-content {
+            margin-left: 256px; /* Default margin saat sidebar terlihat */
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        /* Toggle button styles */
+        #sidebarToggle {
+            position: fixed; /* Tombol tetap terlihat saat sidebar disembunyikan */
+            top: 20px;
+            left: 276px; /* Posisi tombol di sebelah kanan sidebar */
+            z-index: 1000;
+            background-color: #F062A8;
+            padding: 10px;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease-in-out;
+        }
+
+        #sidebarToggle:hover {
+            background-color: rgb(156, 54, 92);
         }
     </style>
 </head>
 <body class="bg-gray-50">
-    <!-- Left Sidebar -->
+    <!-- Button to toggle sidebar -->
+    <button id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
     <div class="sidebar-left">
         <!-- Profile Section -->
-        <div class="p-4 border-b">
-            <div class="flex items-center gap-3">
-                <div class="avatar">
-                    <span class="text-white text-xl font-semibold">
-                        {{ substr(Auth::user()->name, 0, 1) }}
-                    </span>
-                </div>
-                <div>
-                    <div class="font-medium">{{ Auth::user()->name }}</div>
-                    <div class="text-sm text-gray-500">Kasir</div>
-                </div>
+        <div class="p-4 border-b flex items-center gap-3">
+            <div class="avatar">
+                {{ substr(Auth::user()->name, 0, 1) }}
+            </div>
+            <div>
+                <p class="font-semibold text-gray-800">{{ Auth::user()->name }}</p>
+                <p class="text-sm text-gray-500">Kasir</p>
             </div>
         </div>
 
-        <!-- Navigation -->
-        <nav class="p-4">
-            <!-- Kasir Button -->
-            <a href="{{ route('kasir.index') }}" 
-               class="kasir-button {{ Request::is('kasir') ? 'active' : '' }}">
-                <i class="fas fa-shopping-cart mr-2"></i>
+        <!-- Navigation Links -->
+        <nav class="p-4 space-y-4">
+            <a href="{{ route('kasir.index') }}" class="nav-link {{ Request::is('kasir') ? 'active' : '' }}">
+                <i class="fas fa-shopping-cart"></i>
                 <span>Kasir</span>
             </a>
-
-            <!-- Daftar Pemesanan -->
-            <a href="{{ route('kasir.pemesanan') }}" 
-               class="menu-link {{ Request::is('kasir/daftar-pemesanan') ? 'active' : '' }}">
+            <a href="{{ route('kasir.pemesanan') }}" class="nav-link {{ Request::is('kasir/daftar-pemesanan') ? 'active' : '' }}">
                 <i class="fas fa-list"></i>
                 <span>Daftar Pemesanan</span>
             </a>
-            
-            <!-- Logout Button -->
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" 
-                        class="menu-link w-full text-red-600 hover:bg-red-50 hover:text-red-700 mt-2">
+                <button type="submit" class="menu-link text-red-600 hover:bg-red-500 hover:text-white">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </button>
             </form>
-
         </nav>
     </div>
 
     <!-- Main Content -->
-    <div class="ml-64 p-6">
+    <div class="main-content">
         @yield('content')
     </div>
 
+    <!-- JavaScript -->
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function () {
+            const sidebar = document.querySelector('.sidebar-left');
+            const mainContent = document.querySelector('.main-content');
+            const toggleButton = document.getElementById('sidebarToggle');
+
+            // Toggle sidebar visibility
+            sidebar.classList.toggle('hidden');
+
+            // Adjust main content margin and toggle button position
+            if (sidebar.classList.contains('hidden')) {
+                mainContent.style.marginLeft = '0'; // Geser konten ke kiri
+                toggleButton.style.left = '20px'; // Pindahkan tombol ke tepi layar
+            } else {
+                mainContent.style.marginLeft = '256px'; // Kembali ke posisi normal
+                toggleButton.style.left = '276px'; // Kembali ke posisi di sebelah sidebar
+            }
+        });
+    </script>
 </body>
 </html>

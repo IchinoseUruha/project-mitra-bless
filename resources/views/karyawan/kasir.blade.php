@@ -15,8 +15,8 @@
         /* Root variables for consistent theming */
     :root {
     /* Color palette */
-    --primary-color: #7c3aed;
-    --primary-hover: #6d28d9;
+    --primary-color: #F062A8;
+    --primary-hover: #F062A8;
     --text-primary: #111827;
     --text-secondary: #4b5563;
     --bg-gray: #f3f4f6;
@@ -188,7 +188,7 @@ body {
 .product-price {
     font-weight: 600;
     color: var(--primary-color);
-    font-size: 1.1rem;
+    font-size: 0.9rem;
 }
 
 /* Shopping Cart Styling */
@@ -206,15 +206,18 @@ body {
 
 /* Button Styles */
 .btn-primary {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-    padding: 0.5rem 1rem;
+    background-color: #F062A8;
+    border-color: white;
+    padding: 0.20rem 0.5rem;  /* Mengurangi padding */
     border-radius: 0.5rem;
+    font-size: 0.800rem; /* Mengurangi ukuran font */
     transition: all 0.3s ease;
+    margin-left: 0.2rem;
+    color: #f3f4f6;
 }
 
 .btn-primary:hover {
-    background-color: var(--primary-hover);
+    background-color: rgb(156, 54, 92);
     border-color: var(--primary-hover);
 }
 
@@ -222,6 +225,8 @@ body {
     color: var(--primary-color);
     border-color: var(--primary-color);
     background-color: transparent;
+    padding: 0.20rem 0.5rem;  /* Mengurangi padding */
+    font-size: 0.800rem; /* Mengurangi ukuran font */
 }
 
 .btn-outline-primary:hover {
@@ -229,20 +234,12 @@ body {
     color: white;
 }
 
-/* Modal Component Styling */
-.modal-content {
-    border-radius: 0.75rem;
-    border: none;
-    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+.text-pink{
+    color: #F062A8
 }
 
-.modal-header {
-    border-bottom: 1px solid #e5e7eb;
-    padding: 1.25rem;
-}
-
-.modal-body {
-    padding: 1.5rem;
+.judul{
+    margin-left: 60px; 
 }
 
 /* Responsive Design Breakpoints */
@@ -297,7 +294,7 @@ body {
 
         <!-- Main Content Area -->
         <div class="main-content">
-            <h4 class="mb-4">Produk Kosmetik</h4>
+            <h4 class="judul mb-4">Produk Kosmetik</h4>
             
             <!-- Search Bar -->
             <div class="search-container">
@@ -318,7 +315,7 @@ body {
                         <div class="d-flex justify-content-between align-items-center">
                             <p class="product-price mb-0">Rp {{ number_format($product->price) }}</p>
                             <div class="d-flex gap-2">
-                                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#productModal{{ $product->id }}">
+                                <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#productModal{{ $product->id }}">
                                     <i class="bi bi-eye"></i> Detail
                                 </button>
                                 <button class="btn btn-primary btn-sm add-to-cart" 
@@ -377,10 +374,10 @@ body {
                 <div class="border-top pt-3">
                     <div class="d-flex justify-content-between mb-3">
                         <span class="fw-bold">Subtotal</span>
-                        <span id="subtotal" class="fw-bold text-primary">Rp 0</span>
+                        <span id="subtotal" class="fw-bold text-pink">Rp 0</span>
                     </div>
                     <a href="{{route('kasir.order')}}">
-                        <button id="btnCheckout" class="btn btn-primary w-100" disabled>
+                        <button id="btnCheckout" class="btn-primary w-100" disabled>
                             Lanjutkan Pemesanan
                         </button>
                     </a>
@@ -601,7 +598,7 @@ body {
         });
     </script>
     
-    // Script untuk order_offline.blade.php
+    {{-- //Script untuk order_offline.blade.php --}}
     <script>
         // Fungsi format Rupiah
         function formatRupiah(angka) {
