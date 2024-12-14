@@ -21,7 +21,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
-            // 'mobile' => 'required|string|max:20|unique:users,mobile', // Validasi nomor telepon
+            'mobile' => 'required|string|max:20|unique:users,mobile', // Validasi nomor telepon
             'password' => 'required|string|min:8|confirmed',
         ]);
         
@@ -29,7 +29,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            // 'mobile' => $request->mobile, // Tambahkan mobile
+            'mobile' => $request->mobile, // Tambahkan mobile
             'password' => Hash::make($request->password),
             'utype' => 'CUSTOMER_B', //default role pas register
         ]);
