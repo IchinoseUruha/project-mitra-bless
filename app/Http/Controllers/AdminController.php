@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
 use Carbon\Carbon;
@@ -342,6 +343,11 @@ class AdminController extends Controller
         ->paginate(10);  // Menampilkan 10 item per halaman
 
     return view('admin.pemesanan', compact('orders'));
+    }
+
+    public function showDaftarCustomer() {
+        $users = User::whereIn('utype', ['customer_b', 'customer_r'])->paginate(10);
+        return view('admin.daftarCustomer', compact('users'));
     }
 
 }

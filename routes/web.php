@@ -98,6 +98,9 @@ Route::middleware(['auth', AuthAdmin::class])->group(function(){
     //daftar pemesanan
     Route::get('/admin/daftar-pemesanan', [AdminController::class, 'showDaftarPemesanan'])->name('admin.pemesanan');
 
+    //daftar customer
+    Route::get('/admin/daftar-customer',[AdminController::class, 'showDaftarCustomer'])->name('admin.customer');
+
 
 });
 
