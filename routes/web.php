@@ -95,6 +95,10 @@ Route::middleware(['auth', AuthAdmin::class])->group(function(){
     Route::put('/admin/product/update', [AdminController::class, 'product_update'])->name('admin.product.update');
     Route::delete('/admin/product/{id}/delete', [AdminController::class, 'product_delete'])->name('admin.product.delete');
 
+    //daftar pemesanan
+    Route::get('/admin/daftar-pemesanan', [AdminController::class, 'showDaftarPemesanan'])->name('admin.pemesanan');
+
+
 });
 
 Route::middleware(['auth', AuthKasir::class])->group(function(){

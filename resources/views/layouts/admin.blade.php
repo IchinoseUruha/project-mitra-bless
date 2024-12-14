@@ -29,13 +29,6 @@
     <div id="wrapper">
         <div id="page" class="">
             <div class="layout-wrap">
-
-                <!-- <div id="preload" class="preload-container">
-    <div class="preloading">
-        <span></span>
-    </div>
-</div> -->
-
                 <div class="section-menu-left">
                     <div class="box-logo">
                         <a href="{{ route('admin.index') }}" id="site-logo-inner">
@@ -142,7 +135,7 @@
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="menu-item">
-                                            <a href="orders.html" class="">
+                                            <a href="{{route('admin.pemesanan')}}" class="">
                                                 <div class="text">Pemesanan</div>
                                             </a>
                                         </li>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Order;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -147,74 +148,6 @@ class AdminController extends Controller
 
         return view('admin.product-add', compact('categories', 'brands'));
     }
-
-    // public function product_store(Request $request){
-
-    //     $request->validate([
-    //         "name" => 'required',
-    //         "slug" => 'required|unique:products,slug',
-    //         "short_description" => 'required',
-    //         "description" => 'required',
-    //         "price" => 'required',
-    //         "sale_price" => 'required',
-    //         "SKU" => 'required',
-    //         "stock_status" => 'required',
-    //         "featured" => 'required',
-    //         "quantity" => 'required',
-    //         "image" => 'required|mimes:png,jpg,jpeg|max:2048',
-    //         "kategori_id" => 'required',
-    //         "brand_id" => 'required',
-    //     ]);
-
-    //     $product = new Product();
-    //     $product->name = $request->name;
-    //     $product->slug =  Str::slug($request->name);
-    //     $product->short_description = $request->short_description;
-    //     $product->description = $request->description;
-    //     $product->price = $request->price;
-    //     $product->sale_price = $request->sale_price;
-    //     $product->SKU = $request->SKU;
-    //     $product->stock_status = $request->stock_status;
-    //     $product->featured = $request->featured;
-    //     $product->quantity = $request->quantity;
-    //     $product->kategori_id = $request->kategori_id;
-    //     $product->brand_id =  $request->brand_id;
-
-    //     $current_timestamp = Carbon::now()->timestamp;
-
-    //     if($request->hasFile('image')){
-
-    //         $image = $request->file('image');
-    //         $imageName = $current_timestamp . '.' . $image->extension();
-    //         $this->GenerateProductThumbnailsImage($image, $imageName);
-    //         $product->image = $imageName;
-
-    //     }
-
-    //     $gallery_arr = array();
-    //     $gallery_images = "";
-    //     $counter = 1;
-
-    //     if($request->hasFile('images')){
-
-    //         $allowedFileExtension = ['jpg', 'png', 'jpeg'];
-    //         $files = $request->file('images');
-    //         foreach($files as $file){
-    //             $getExtension = $file->getClientOriginalExtension();
-    //             $getCheck = in_array($getExtension, $allowedFileExtension);
-    //             if($getCheck){
-    //                 $getFileName = $current_timestamp . "-" . $counter . "." . $getExtension;
-    //                 $this->GenerateProductThumbnailsImage($file, $getFileName);
-    //                 array_push($gallery_arr, $getFileName);
-    //                 $counter = $counter + 1;
-    //             }
-    //         }
-    //         $gallery_images = implode(',', $gallery_arr);
-    //     }
-    //     $product->images = $gallery_images;
-    //     $product->save();
-    //     return redirect()->route('admin.products')->with('status', 'Product has been added successfully!');
-    // }
 
 
     public function product_store(Request $request)
@@ -401,5 +334,14 @@ class AdminController extends Controller
             $constraint->aspectRatio();
         })->save($destinationPathThumbnail.'/'.$imageName);
     }   
+
+    public function showDaftarPemesanan(){
+        // Menggunakan model Order seperti cara Product digunakan di showKasir
+        $orders = Order::with('user')  // Gunakan eager loading untuk relasi user
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);  // Menampilkan 10 item per halaman
+
+    return view('admin.pemesanan', compact('orders'));
+    }
 
 }
