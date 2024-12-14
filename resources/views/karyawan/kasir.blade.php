@@ -63,10 +63,12 @@ body {
 
 /* Main content area */
 .main-content {
-    margin-left: var(--sidebar-width);
-    margin-right: var(--cart-width);
-    padding: 2rem;
+    max-width: 650px; /* Tetapkan lebar maksimum konten */
+    margin-left: 256px; /* Default margin saat sidebar terlihat */
+    padding: 20px;
+    transition: margin-left 0.3s ease-in-out, max-width 0.3s ease-in-out;
 }
+
 
 /* Profile Section Styling */
 .avatar {
