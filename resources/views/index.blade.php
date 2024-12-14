@@ -33,7 +33,7 @@
                 best place for you</h6>
               <h2 class="h1 fw-normal mb-0 animate animate_fade animate_btt animate_delay-5">Glow Up</h2>
               <h2 class="h1 fw-bold animate animate_fade animate_btt animate_delay-5">Starts Here</h2>
-              <a href="#"
+              <a href="{{ route('shop.index') }}" 
                 class="btn-link btn-link_lg default-underline fw-medium animate animate_fade animate_btt animate_delay-7">Shop
                 Now</a>
             </div>
@@ -56,7 +56,7 @@
                 best place for you</h6>
               <h2 class="h1 fw-normal mb-0 animate animate_fade animate_btt animate_delay-5">Pamper Yourself,</h2>
               <h2 class="h1 fw-bold animate animate_fade animate_btt animate_delay-5">You Deserve It</h2>
-              <a href="#"
+              <a href="{{ route('shop.index') }}" 
                 class="btn-link btn-link_lg default-underline fw-medium animate animate_fade animate_btt animate_delay-7">Shop
                 Now</a>
             </div>
@@ -75,7 +75,7 @@
                 best place for you</h6>
               <h2 class="h1 fw-normal mb-0 animate animate_fade animate_btt animate_delay-5">From Skincare</h2>
               <h2 class="h1 fw-bold animate animate_fade animate_btt animate_delay-5">to Self-Care</h2>
-              <a href="#"
+              <a href="{{ route('shop.index') }}" 
                 class="btn-link btn-link_lg default-underline fw-medium animate animate_fade animate_btt animate_delay-7">Shop
                 Now</a>
             </div>
@@ -137,56 +137,56 @@
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_skincare.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Skincare</a>
+                  <a href="{{ route('shop.index') }}" class="menu-link fw-medium">Skincare</a>
                 </div>
               </div>
               <div class="swiper-slide">
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_soap.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Soap</a>
+                  <a href="{{ route('shop.index') }}" class="menu-link fw-medium">Soap</a>
                 </div>
               </div>
               <div class="swiper-slide">
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_sampo.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Shampoo</a>
+                  <a href="{{ route('shop.index') }}" class="menu-link fw-medium">Shampoo</a>
                 </div>
               </div>
               <div class="swiper-slide">
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_bodycare.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Body Care</a>
+                  <a href="{{ route('shop.index') }}" class="menu-link fw-medium">Body Care</a>
                 </div>
               </div>
               <div class="swiper-slide">
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_makeup.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Face Makeup</a>
+                  <a href="{{ route('shop.index') }}" class="menu-link fw-medium">Face Makeup</a>
                 </div>
               </div>
               <div class="swiper-slide">
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_parfume.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Parfume</a>
+                  <a href="{{ route('shop.index') }}" class="menu-link fw-medium">Parfume</a>
                 </div>
               </div>
               <div class="swiper-slide">
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_makeuptools.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Cosmetic Tools</a>
+                  <a href="{{ route('shop.index') }}" class="menu-link fw-medium">Cosmetic Tools</a>
                 </div>
               </div>
               <div class="swiper-slide">
                 <img loading="lazy" class="w-100 h-auto mb-3"  src=" {{asset('assets/images/home/demo3/category_bath.png')}}" width="124"
                   height="124" alt="" />
                 <div class="text-center">
-                  <a href="#" class="menu-link fw-medium">Bathing Tools</a>
+                  <a href="{{ route('shop.index') }}" class="menu-link fw-medium">Bathing Tools</a>
                 </div>
               </div>
           

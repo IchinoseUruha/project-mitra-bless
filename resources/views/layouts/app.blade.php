@@ -450,13 +450,13 @@
                     <div class="sub-menu search-suggestion">
                       <h6 class="sub-menu__title fs-base">Quicklinks</h6>
                       <ul class="sub-menu__list list-unstyled">
-                        <li class="sub-menu__item"><a href="shop2.html" class="menu-link menu-link_us-s">New Arrivals</a>
+                        <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Skincare</a>
                         </li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Dresses</a></li>
-                        <li class="sub-menu__item"><a href="shop3.html" class="menu-link menu-link_us-s">Accessories</a>
+                        <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Face Makeup</a></li>
+                        <li class="sub-menu__item"><a href=<a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Body Care</a>
                         </li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Footwear</a></li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Sweatshirt</a></li>
+                        <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Bathing Tools</a></li>
+                        <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Cosmetics Tools</a></li>
                       </ul>
                     </div>
   
@@ -607,11 +607,11 @@
           <div class="footer-column footer-menu mb-4 mb-lg-0">
             <h6 class="sub-menu__title text-uppercase">Categories</h6>
             <ul class="sub-menu__list list-unstyled">
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Shirts</a></li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Skincare</a></li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Body Care</a></li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Face Makeup</a></li>
-              <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Cosmetics Tools</a></li>
+              <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Bathing Tools</a></li>
+              <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Skincare</a></li>
+              <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Body Care</a></li>
+              <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Face Makeup</a></li>
+              <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Cosmetics Tools</a></li>
             </ul>
           </div>
         </div>
