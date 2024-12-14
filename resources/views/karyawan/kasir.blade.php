@@ -108,7 +108,7 @@ body {
 .search-container {
     position: relative;
     margin-bottom: 1.5rem;
-    margin-left: 2rem
+    margin-left: 3rem
 }
 
 .search-container .bi-search {
