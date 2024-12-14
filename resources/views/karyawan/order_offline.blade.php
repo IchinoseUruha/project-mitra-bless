@@ -123,117 +123,118 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Fungsi format Rupiah
-        function formatRupiah(angka) {
-            return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
+       // Fungsi format Rupiah
+function formatRupiah(angka) {
+    return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
+}
+
+// Setup event listeners untuk baris tabel
+function setupRowEventListeners(row, harga) {
+    // Event listener untuk tombol hapus
+    row.querySelector('.remove-row').addEventListener('click', function() {
+        row.remove();
+        updateGrandTotal();
+    });
+
+    // Event listener untuk input jumlah
+    const qtyInput = row.querySelector('[name="jumlahBarang[]"]');
+    qtyInput.addEventListener('input', function() {
+        let qty = parseInt(this.value) || 0;
+        
+        // Validasi jumlah minimum
+        if (qty < 1) {
+            qty = 1;
+            this.value = 1;
         }
-    
-        // Setup event listeners untuk baris tabel
-        function setupRowEventListeners(row, harga) {
-            // Event listener untuk tombol hapus
-            row.querySelector('.remove-row').addEventListener('click', function() {
-                row.remove();
-                updateGrandTotal();
-            });
-    
-            // Event listener untuk input jumlah
-            const qtyInput = row.querySelector('[name="jumlahBarang[]"]');
-            qtyInput.addEventListener('input', function() {
-                let qty = parseInt(this.value) || 0;
-                
-                // Validasi jumlah minimum
-                if (qty < 1) {
-                    qty = 1;
-                    this.value = 1;
-                }
-    
-                updateRowTotal(row, qty, harga);
-            });
-    
-            // Event listener untuk input diskon
-            const discountInput = row.querySelector('[name="discountPercent[]"]');
-            discountInput.addEventListener('input', function() {
-                let discount = parseFloat(this.value) || 0;
-                
-                // Validasi diskon (0-100%)
-                if (discount < 0) {
-                    discount = 0;
-                    this.value = '0.00';
-                } else if (discount > 100) {
-                    discount = 100;
-                    this.value = '100.00';
-                }
-    
-                const qty = parseInt(qtyInput.value) || 1;
-                updateRowTotal(row, qty, harga, discount);
-            });
+
+        // Automatically set discount based on quantity
+        const discountInput = row.querySelector('[name="discountPercent[]"]');
+        if (qty >= 36) {
+            discountInput.value = '10.00';
+        } else if (qty >= 12) {
+            discountInput.value = '5.00';
+        } else {
+            discountInput.value = '0.00';
         }
+
+        updateRowTotal(row, qty, harga);
+    });
+}
+    // Update total untuk satu baris
+function updateRowTotal(row, quantity, price, discount = null) {
+    const discountInput = row.querySelector('[name="discountPercent[]"]');
     
-        // Update total untuk satu baris
-        function updateRowTotal(row, quantity, price, discount = 0) {
-            const subtotal = quantity * price;
-            const discountAmount = subtotal * (discount / 100);
-            const total = subtotal - discountAmount;
-            
-            row.querySelector('[name="hargaTotal[]"]').value = formatRupiah(total);
-            updateGrandTotal();
-        }
+    // If discount is not provided, get it from the input
+    if (discount === null) {
+        discount = parseFloat(discountInput.value) || 0;
+    } else {
+        discountInput.value = discount.toFixed(2);
+    }
+
+    const subtotal = quantity * price;
+    const discountAmount = subtotal * (discount / 100);
+    const total = subtotal - discountAmount;
+    
+    row.querySelector('[name="hargaTotal[]"]').value = formatRupiah(total);
+    updateGrandTotal();
+}
+        
     
         // Update grand total
         function updateGrandTotal() {
-            const totalInputs = document.getElementsByName('hargaTotal[]');
-            let subtotal = 0;
-            let totalDiscount = 0;
-            let grandTotal = 0;
-    
-            totalInputs.forEach((input, index) => {
-                const value = parseInt(input.value.replace(/[^0-9]/g, '')) || 0;
-                const qtyInput = document.getElementsByName('jumlahBarang[]')[index];
-                const priceInput = document.getElementsByName('hargaSatuan[]')[index];
-                const discountInput = document.getElementsByName('discountPercent[]')[index];
-                
-                const qty = parseInt(qtyInput.value) || 0;
-                const price = parseInt(priceInput.value.replace(/[^0-9]/g, '')) || 0;
-                const discount = parseFloat(discountInput.value) || 0;
-                
-                const rowSubtotal = qty * price;
-                const rowDiscount = rowSubtotal * (discount / 100);
-                
-                subtotal += rowSubtotal;
-                totalDiscount += rowDiscount;
-                grandTotal += value;
-            });
+    const totalInputs = document.getElementsByName('hargaTotal[]');
+    let subtotal = 0;
+    let totalDiscount = 0;
+    let grandTotal = 0;
+
+    totalInputs.forEach((input, index) => {
+        const qtyInput = document.getElementsByName('jumlahBarang[]')[index];
+        const priceInput = document.getElementsByName('hargaSatuan[]')[index];
+        const discountInput = document.getElementsByName('discountPercent[]')[index];
+        
+        const qty = parseInt(qtyInput.value) || 0;
+        const price = parseInt(priceInput.value.replace(/[^0-9]/g, '')) || 0;
+        const discount = parseFloat(discountInput.value) || 0;
+        
+        const rowSubtotal = qty * price;
+        const rowDiscount = rowSubtotal * (discount / 100);
+        const rowTotal = rowSubtotal - rowDiscount;
+        
+        subtotal += rowSubtotal;
+        totalDiscount += rowDiscount;
+        grandTotal += rowTotal;
+    });
     
             // Update ringkasan pesanan
-            document.querySelector('.summary .col-md-6').innerHTML = `
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Ringkasan Pesanan</h5>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Subtotal:</span>
-                            <span>${formatRupiah(subtotal)}</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Total Diskon:</span>
-                            <span>-${formatRupiah(totalDiscount)}</span>
-                        </div>
-                        <div class="d-flex justify-content-between border-top pt-2">
-                            <span class="fw-bold">Total:</span>
-                            <strong>${formatRupiah(grandTotal)}</strong>
-                        </div>
-                    </div>
+    document.querySelector('.summary .col-md-6').innerHTML = `
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Ringkasan Pesanan</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal:</span>
+                    <span>${formatRupiah(subtotal)}</span>
                 </div>
-            `;
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Total Diskon:</span>
+                    <span>-${formatRupiah(totalDiscount)}</span>
+                </div>
+                <div class="d-flex justify-content-between border-top pt-2">
+                    <span class="fw-bold">Total:</span>
+                    <strong>${formatRupiah(grandTotal)}</strong>
+                </div>
+            </div>
+        </div>
+    `;
     
-            // Update status tombol checkout
-            const checkoutBtn = document.querySelector('[data-bs-target="#checkoutModal"]');
-            checkoutBtn.disabled = grandTotal === 0;
-    
-            return {
-                subtotal,
-                totalDiscount,
-                grandTotal
-            };
+           // Update status tombol checkout
+    const checkoutBtn = document.querySelector('[data-bs-target="#checkoutModal"]');
+    checkoutBtn.disabled = grandTotal === 0;
+
+    return {
+        subtotal,
+        totalDiscount,
+        grandTotal
+    };
         }
     
         // Fungsi untuk menampilkan alert
