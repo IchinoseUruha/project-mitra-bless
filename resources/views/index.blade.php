@@ -316,7 +316,7 @@
                     <div class="pc__info position-relative">
                       <h6 class="pc__title"><a href="details.html">Calvin Shorts</a></h6>
                       <div class="product-card__price d-flex">
-                        <span class="money price text-secondary">$62</span>
+                        <span class="money price text-secondary"></span>
                       </div>
 
                       <div

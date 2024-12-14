@@ -108,6 +108,7 @@ body {
 .search-container {
     position: relative;
     margin-bottom: 1.5rem;
+    margin-left: 2rem
 }
 
 .search-container .bi-search {
@@ -119,7 +120,7 @@ body {
 }
 
 #searchProduct {
-    width: 100%;
+    width: calc(100% - 2rem); /* Mengambil lebar penuh minus padding kiri dan kanan */
     padding: 0.75rem 1rem 0.75rem 2.5rem;
     border: 1px solid #e5e7eb;
     border-radius: 0.5rem;
@@ -299,7 +300,7 @@ body {
             <h4 class="judul mb-4">Produk Kosmetik</h4>
             
             <!-- Search Bar -->
-            <div class="search-container">
+            <div class="search-container d-flex align-items-center">
                 <i class="bi bi-search"></i>
                 <input type="text" id="searchProduct" placeholder="Cari produk...">
             </div>
