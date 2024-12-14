@@ -111,7 +111,9 @@ Route::middleware(['auth', AuthAdmin::class])->group(function(){
 Route::middleware(['auth', AuthKasir::class])->group(function(){
     Route::get('/kasir', [KasirController::class, 'showKasir'])->name('kasir.index');
     Route::get('/kasir/daftar-pemesanan', [KasirController::class, 'showDaftarPemesanan'])->name('kasir.pemesanan');
-    Route::post('/kasir/pemesanan/{id}  /cancel', [KasirController::class, 'cancelOrder'])->name('kasir.pemesanan.cancel');
+    Route::get('/kasir/daftar-pemesanan/updateStatus/{id}', [OrderController::class, 'updateStatus'])->name('kasir.orderitem.updateStatus');
+    Route::get('/kasir/order/{id}/detail', [OrderController::class, 'getOrderDetail'])->name('kasir.order.detail');
+    Route::post('/kasir/pemesanan/{id}  /cancel', [KasirController::class, 'cancelOrder'])->name(name: 'kasir.pemesanan.cancel');
     Route::get('/kasir/order', [KasirController::class, 'showOrder'])->name('kasir.order');
     Route::post('/kasir/checkout', [KasirController::class, 'checkout'])->name('kasir.checkout');
     Route::get('/kasir/search', [KasirController::class, 'searchProducts'])->name('kasir.search');

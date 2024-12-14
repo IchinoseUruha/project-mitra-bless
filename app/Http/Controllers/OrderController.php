@@ -171,5 +171,38 @@ class OrderController extends Controller
 
     return redirect()->back()->with('error', 'Gagal mengupload bukti pembayaran');
 }
+
+public function updateStatus($id)
+{
+    $orderItem = OrderItem::findOrFail($id);
+    
+    // Logic untuk update status sesuai enum di database
+    switch($orderItem->status) {
+        case 'menunggu_pembayaran':
+            $orderItem->status = 'sedang_diproses';
+            break;
+        case 'sedang_diproses':
+            $orderItem->status = 'dikirim';  // bukan sedang_dikirim
+            break;
+        case 'dikirim':
+            $orderItem->status = 'selesai';
+            break;
+        default:
+            return back()->with('error', 'Status tidak dapat diubah');
+    }
+    
+    try {
+        $orderItem->save();
+        return back()->with('success', 'Status berhasil diperbarui');
+    } catch (\Exception $e) {
+        return back()->with('error', 'Gagal mengupdate status: ' . $e->getMessage());
+    }
+}
+public function getOrderDetail($id)
+{
+    $order = OrderItem::findOrFail($id);
+    return response()->json($order);
+}
+
 }
 
