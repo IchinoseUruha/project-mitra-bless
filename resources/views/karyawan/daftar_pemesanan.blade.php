@@ -3,12 +3,35 @@
 <head>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Daftar Pemesanan</title>
     <style>
         .pagination {
-            display: flex;
-            gap: 1px;
-        }
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+.pagination > * {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: #374151;
+    background-color: white;
+    border: 1px solid #D1D5DB;
+    border-radius: 0.375rem;
+}
+.pagination > *:hover {
+    background-color: #F3F4F6;
+}
+.pagination .active {
+    background-color: #3B82F6;
+    color: white;
+    border-color: #3B82F6;
+}
+.pagination .disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
         /* ... style pagination lainnya ... */
 
         /* Style untuk modal */
@@ -124,12 +147,8 @@
             </div>
 
             <!-- Footer -->
-            <div class="px-8 py-6 bg-gray-50 rounded-b-lg border-t border-gray-200">
-                <div class="flex justify-end">
-                    <div class="pagination">
-                        {{ $order_items->links() }}
-                    </div>
-                </div>
+            <<div class="px-6 py-4">
+                {{ $order_items->links() }}
             </div>
         </div>
     </div>
