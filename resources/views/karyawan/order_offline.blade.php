@@ -1,362 +1,319 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kasir</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0; /* Ubah margin jadi 0 */
-            background-color: #f9f9f9;
-            min-height: 100vh;
-            display: flex; /* Tambahkan display flex */
-        }
-         /* Container utama */
-        .main-content {
-            flex: 1;
-            margin-left: 250px; /* Sesuaikan dengan lebar sidebar */
-            padding: 20px;
-        }
+   <meta charset="UTF-8">
+   <meta name="csrf-token" content="{{ csrf_token() }}">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Kasir</title>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+   <style>
+       body {
+           font-family: 'Inter', sans-serif;
+           margin: 0;
+           background-color: #f8f9fa;
+           min-height: 100vh;
+           display: flex;
+       }
 
-        .kasir-container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            margin: 20px;
-        }
+       .main-content {
+           flex: 1;
+           margin-left: 250px;
+           padding: 20px;
+       }
 
-        .table td, .table th {
-            vertical-align: middle;
-        }
-        .btn-action {
-            width: 100%;
-            margin-top: 10px;
-        }
-        .form-control {
-            height: calc(2.25rem + 10px);
-        }
-        .header-title {
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .summary {
-            margin-top: 20px;
-            padding-top: 10px;
-            border-top: 2px solid #ddd;
-        }
-    </style>
+       .kasir-container {
+           background: #fff;
+           padding: 2rem;
+           border-radius: 12px;
+           box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+       }
+
+       .header-title {
+           font-size: 1.5rem;
+           font-weight: 600;
+           color: #2c3e50;
+           text-align: center;
+           margin-bottom: 1.5rem;
+           padding-bottom: 1rem;
+           border-bottom: 2px solid #eee;
+       }
+
+       .table {
+           margin-top: 1.5rem;
+       }
+
+       .table th {
+           background-color: #f8f9fa;
+           font-weight: 600;
+           color: #2c3e50;
+       }
+
+       .table td, .table th {
+           vertical-align: middle;
+           padding: 1rem;
+       }
+
+       .form-control, .form-select {
+           padding: 0.5rem 0.75rem;
+           border: 1px solid #dee2e6;
+           border-radius: 6px;
+       }
+
+       .summary {
+           margin-top: 2rem;
+           padding-top: 1.5rem;
+           border-top: 2px solid #eee;
+       }
+
+       .btn-action {
+           padding: 0.75rem 2rem;
+           font-weight: 500;
+           border-radius: 6px;
+       }
+   </style>
 </head>
 <body>
-    @extends('layouts.sidebarKasir')
-    
+   @extends('layouts.sidebarKasir')
+   
    <div class="main-content">
-    <div class="container kasir-container">
-        <div class="header-title">Halaman Kasir Offline</div>
-        <form>
-            <div class="row mb-3">
-                <div class="col-md-3">
-                    <label for="tanggal" class="form-label">Tanggal</label>
-                    <input type="date" class="form-control" id="tanggal">
-                </div>
-                <div class="col-md-3">
-                    <label for="payment_method" class="form-label">Metode Pembayaran</label>
-                    <input type="text" class="form-control" id="payment_method" placeholder="Masukkan Tipe Pembayaran">
-                </div>
-                <div class="col-md-2">
-                    <label for="address" class="form-label">Address</label>
-                    <input type="text" class="form-control" id="address" placeholder="Masukkan Address">
-                </div>
-            </div>
-            <table class="table table-bordered">
-                <thead class="table-light">
-                    <tr>
-                        <th>Nama Barang</th>
-                        <th>Kode Barang</th>
-                        <th>Brand</th>
-                        <th>Jumlah Barang</th>
-                        <th>Harga Satuan</th>
-                        <th>Diskon</th>
-                        <th>Harga Total</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                </tbody>
-            </table>
-            <div class="row summary">
-                <div class="col-md-6">
-                </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-md-12 text-center">
-                    <button type="button" class="btn btn-success btn-action" data-bs-toggle="modal" data-bs-target="#checkoutModal">Checkout</button>
-                </div>
-            </div>
-        </form>
-    </div>
+       <div class="container kasir-container">
+           <div class="header-title">Kasir Offline</div>
+           <form id="offlineOrderForm">
+               @csrf
+               <div class="row mb-4">
+                   <div class="col-md-6">
+                       <label class="form-label">Email Customer (Opsional)</label>
+                       <input type="email" class="form-control" name="customer_email" placeholder="Masukkan email customer jika ada">
+                       <small class="text-muted">Isi jika customer memiliki akun</small>
+                   </div>
+                   <div class="col-md-6">
+                       <label class="form-label">Metode Pembayaran</label>
+                       <select class="form-select" name="payment_method" required>
+                           <option value="cash">Cash</option>
+                           <option value="bank_transfer">Transfer Bank</option>
+                           <option value="e_wallet">E-Wallet</option>
+                       </select>
+                   </div>
+                   <div class="col-md-12 payment-details mt-3" style="display:none;">
+                       <label class="form-label">Detail Pembayaran</label>
+                       <select class="form-select" name="payment_details">
+                           <optgroup label="Bank Transfer">
+                               <option value="BCA 0123456789">BCA - 0123456789</option>
+                               <option value="BNI 0987654321">BNI - 0987654321</option>
+                               <option value="Mandiri 1234567890">Mandiri - 1234567890</option>
+                           </optgroup>
+                           <optgroup label="E-Wallet">
+                               <option value="GoPay 081234567890">GoPay - 081234567890</option>
+                               <option value="DANA 081234567890">DANA - 081234567890</option>
+                               <option value="OVO 081234567890">OVO - 081234567890</option>
+                           </optgroup>
+                       </select>
+                   </div>
+               </div>
 
-    <!-- Modal Checkout -->
-    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="checkoutModalLabel">Konfirmasi Checkout</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Apakah semua data sudah benar dan siap untuk checkout?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary">Konfirmasi</button>
-                </div>
-            </div>
-        </div>
-    </div>
+               <table class="table table-bordered">
+                   <thead>
+                       <tr>
+                           <th>Kode Produk</th>
+                           <th>Jumlah</th>
+                           <th>Harga Satuan</th>
+                           <th>Total</th>
+                           <th>Aksi</th>
+                       </tr>
+                   </thead>
+                   <tbody id="cartItems">
+                   </tbody>
+               </table>
+
+               <div class="summary">
+                   <div class="row">
+                       <div class="col-md-6 ms-auto">
+                           <div class="card">
+                               <div class="card-body">
+                                   <h5 class="card-title">Ringkasan Pesanan</h5>
+                                   <div id="orderSummary"></div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+
+               <div class="text-end mt-4">
+                   <button type="button" class="btn btn-primary btn-action" id="checkoutButton">
+                       Proses Pembayaran
+                   </button>
+               </div>
+           </form>
+       </div>
    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-       // Fungsi format Rupiah
-function formatRupiah(angka) {
-    return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
-}
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+   <script>
+       function formatRupiah(angka) {
+           return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
+       }
 
-// Setup event listeners untuk baris tabel
-function setupRowEventListeners(row, harga) {
-    // Event listener untuk tombol hapus
-    row.querySelector('.remove-row').addEventListener('click', function() {
-        row.remove();
-        updateGrandTotal();
-    });
+       function updateRowTotal(row) {
+           const quantity = parseInt(row.querySelector('[name="quantity[]"]').value) || 0;
+           const price = parseInt(row.querySelector('[name="price[]"]').value) || 0;
+           const total = quantity * price;
+           
+           row.querySelector('[name="total[]"]').value = total;
+           updateOrderSummary();
+       }
 
-    // Event listener untuk input jumlah
-    const qtyInput = row.querySelector('[name="jumlahBarang[]"]');
-    qtyInput.addEventListener('input', function() {
-        let qty = parseInt(this.value) || 0;
-        
-        // Validasi jumlah minimum
-        if (qty < 1) {
-            qty = 1;
-            this.value = 1;
-        }
+       function updateOrderSummary() {
+           let grandTotal = 0;
+           document.querySelectorAll('#cartItems tr').forEach(row => {
+               grandTotal += parseInt(row.querySelector('[name="total[]"]').value) || 0;
+           });
 
-        // Automatically set discount based on quantity
-        const discountInput = row.querySelector('[name="discountPercent[]"]');
-        if (qty >= 36) {
-            discountInput.value = '10.00';
-        } else if (qty >= 12) {
-            discountInput.value = '5.00';
-        } else {
-            discountInput.value = '0.00';
-        }
+           document.getElementById('orderSummary').innerHTML = `
+               <div class="d-flex justify-content-between mb-3">
+                   <span>Total:</span>
+                   <strong>${formatRupiah(grandTotal)}</strong>
+               </div>
+           `;
 
-        updateRowTotal(row, qty, harga);
-    });
-}
-    // Update total untuk satu baris
-function updateRowTotal(row, quantity, price, discount = null) {
-    const discountInput = row.querySelector('[name="discountPercent[]"]');
-    
-    // If discount is not provided, get it from the input
-    if (discount === null) {
-        discount = parseFloat(discountInput.value) || 0;
-    } else {
-        discountInput.value = discount.toFixed(2);
+           document.getElementById('checkoutButton').disabled = grandTotal === 0;
+       }
+
+       function showAlert(message, type = 'warning') {
+           const alertDiv = document.createElement('div');
+           alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+           alertDiv.setAttribute('role', 'alert');
+           alertDiv.style.zIndex = '9999';
+           alertDiv.innerHTML = `
+               ${message}
+               <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+           `;
+           document.body.appendChild(alertDiv);
+           setTimeout(() => alertDiv.remove(), 3000);
+       }
+
+       document.addEventListener('DOMContentLoaded', function() {
+           const form = document.getElementById('offlineOrderForm');
+           const paymentMethod = form.querySelector('[name="payment_method"]');
+           const paymentDetails = document.querySelector('.payment-details');
+           const paymentDetailsSelect = document.querySelector('[name="payment_details"]');
+
+           paymentMethod.addEventListener('change', function() {
+               if (this.value === 'cash') {
+                   paymentDetails.style.display = 'none';
+                   paymentDetailsSelect.removeAttribute('required');
+               } else {
+                   paymentDetails.style.display = 'block';
+                   paymentDetailsSelect.setAttribute('required', 'required');
+                   
+                   const optgroups = paymentDetailsSelect.getElementsByTagName('optgroup');
+                   for (let optgroup of optgroups) {
+                       if (this.value === 'bank_transfer' && optgroup.label === 'Bank Transfer' ||
+                           this.value === 'e_wallet' && optgroup.label === 'E-Wallet') {
+                           optgroup.style.display = '';
+                           if (optgroup.getElementsByTagName('option')[0]) {
+                               optgroup.getElementsByTagName('option')[0].selected = true;
+                           }
+                       } else {
+                           optgroup.style.display = 'none';
+                           for (let option of optgroup.getElementsByTagName('option')) {
+                               option.selected = false;
+                           }
+                       }
+                   }
+               }
+           });
+
+           // Load cart items
+           const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+           const cartItemsContainer = document.getElementById('cartItems');
+           
+           cartItems.forEach(item => {
+               const row = document.createElement('tr');
+               row.innerHTML = `
+                   <td>
+                       <input type="hidden" name="produk_id[]" value="${item.id}">
+                       ${item.id}
+                   </td>
+                   <td>
+                       <input type="number" class="form-control" name="quantity[]" 
+                              value="${item.quantity}" min="1">
+                   </td>
+                   <td>
+                       <input type="hidden" name="price[]" value="${item.price}">
+                       ${formatRupiah(item.price)}
+                   </td>
+                   <td>
+                       <input type="hidden" name="total[]" value="${item.price * item.quantity}">
+                       ${formatRupiah(item.price * item.quantity)}
+                   </td>
+                   <td>
+                       <button type="button" class="btn btn-danger btn-sm remove-item">Hapus</button>
+                   </td>
+               `;
+
+               cartItemsContainer.appendChild(row);
+
+               // Add event listeners
+               row.querySelector('[name="quantity[]"]').addEventListener('change', () => updateRowTotal(row));
+               row.querySelector('.remove-item').addEventListener('click', () => {
+                   row.remove();
+                   updateOrderSummary();
+               });
+           });
+
+           updateOrderSummary();
+
+           document.getElementById('checkoutButton').addEventListener('click', async function() {
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
     }
 
-    const subtotal = quantity * price;
-    const discountAmount = subtotal * (discount / 100);
-    const total = subtotal - discountAmount;
-    
-    row.querySelector('[name="hargaTotal[]"]').value = formatRupiah(total);
-    updateGrandTotal();
-}
-        
-    
-        // Update grand total
-        function updateGrandTotal() {
-    const totalInputs = document.getElementsByName('hargaTotal[]');
-    let subtotal = 0;
-    let totalDiscount = 0;
-    let grandTotal = 0;
+    try {
+        const formData = {
+            customer_email: form.querySelector('[name="customer_email"]').value,
+            payment_method: form.querySelector('[name="payment_method"]').value,
+            payment_details: form.querySelector('[name="payment_details"]').value || null,
+            items: Array.from(document.querySelectorAll('#cartItems tr')).map(row => ({
+                produk_id: row.querySelector('[name="produk_id[]"]').value,
+                quantity: row.querySelector('[name="quantity[]"]').value,
+                price: row.querySelector('[name="price[]"]').value,
+                total: row.querySelector('[name="total[]"]').value
+            }))
+        };
 
-    totalInputs.forEach((input, index) => {
-        const qtyInput = document.getElementsByName('jumlahBarang[]')[index];
-        const priceInput = document.getElementsByName('hargaSatuan[]')[index];
-        const discountInput = document.getElementsByName('discountPercent[]')[index];
-        
-        const qty = parseInt(qtyInput.value) || 0;
-        const price = parseInt(priceInput.value.replace(/[^0-9]/g, '')) || 0;
-        const discount = parseFloat(discountInput.value) || 0;
-        
-        const rowSubtotal = qty * price;
-        const rowDiscount = rowSubtotal * (discount / 100);
-        const rowTotal = rowSubtotal - rowDiscount;
-        
-        subtotal += rowSubtotal;
-        totalDiscount += rowDiscount;
-        grandTotal += rowTotal;
-    });
-    
-            // Update ringkasan pesanan
-    document.querySelector('.summary .col-md-6').innerHTML = `
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Ringkasan Pesanan</h5>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Subtotal:</span>
-                    <span>${formatRupiah(subtotal)}</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Total Diskon:</span>
-                    <span>-${formatRupiah(totalDiscount)}</span>
-                </div>
-                <div class="d-flex justify-content-between border-top pt-2">
-                    <span class="fw-bold">Total:</span>
-                    <strong>${formatRupiah(grandTotal)}</strong>
-                </div>
-            </div>
-        </div>
-    `;
-    
-           // Update status tombol checkout
-    const checkoutBtn = document.querySelector('[data-bs-target="#checkoutModal"]');
-    checkoutBtn.disabled = grandTotal === 0;
+        const response = await fetch('/kasir/process-offline-order', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify(formData)
+        });
 
-    return {
-        subtotal,
-        totalDiscount,
-        grandTotal
-    };
+        // Tambahkan pengecekan response
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Response Error:', errorText);
+            throw new Error('Terjadi kesalahan pada server');
         }
-    
-        // Fungsi untuk menampilkan alert
-        function showAlert(message) {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-warning alert-dismissible fade show position-fixed top-0 end-0 m-3';
-            alertDiv.setAttribute('role', 'alert');
-            alertDiv.style.zIndex = '9999';
-            alertDiv.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            `;
-            document.body.appendChild(alertDiv);
-            
-            // Hapus alert setelah 3 detik
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 3000);
+
+        const data = await response.json();
+
+        if (data.success) {
+            localStorage.removeItem('cartItems');
+            showAlert('Transaksi berhasil!', 'success');
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            throw new Error(data.message || 'Terjadi kesalahan');
         }
-    
-        // Event listener saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set tanggal hari ini sebagai default
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('tanggal').value = today;
-    
-            // Ambil data cart dari localStorage
-            const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-            
-            // Tambahkan item dari cart ke tabel
-            cartItems.forEach(item => {
-                // Buat row baru
-                const newRow = document.createElement('tr');
-                newRow.innerHTML = `
-                    <td><input type="text" class="form-control" name="namaBarang[]" value="${item.name}" readonly></td>
-                    <td><input type="text" class="form-control" name="kodeBarang[]" value="${item.id}" readonly></td>
-                    <td><input type="text" class="form-control" name="brand[]" value="${item.brand || '-'}" readonly></td>
-                    <td><input type="number" class="form-control" name="jumlahBarang[]" value="${item.quantity}" min="1"></td>
-                    <td><input type="text" class="form-control" name="hargaSatuan[]" value="${formatRupiah(item.price)}" readonly></td>
-                    <td><input type="text" class="form-control" name="discountPercent[]" value="0.00"></td>
-                    <td><input type="text" class="form-control" name="hargaTotal[]" value="${formatRupiah(item.price * item.quantity)}" readonly></td>
-                    <td>
-                        <button type="button" class="btn btn-danger btn-sm remove-row">Hapus</button>
-                    </td>
-                `;
-                
-                document.getElementById('table-body').appendChild(newRow);
-                
-                // Setup event listeners untuk baris baru
-                setupRowEventListeners(newRow, item.price);
-            });
-    
-            // Update total awal
-            updateGrandTotal();
-        });
-    
-        // Event listener untuk modal checkout
-        document.querySelector('#checkoutModal .btn-primary').addEventListener('click', function() {
-            // Validasi form
-            const customer = document.getElementById('pelanggan').value;
-            const location = document.getElementById('address').value;
-            const paymentMethod = document.getElementById('payment_method').value;
-    
-            if (!customer || !address || !paymentMethod) {
-                showAlert('Mohon lengkapi semua data pesanan!');
-                return;
-            }
-    
-            // Kumpulkan data pesanan
-            const items = Array.from(document.getElementById('table-body').getElementsByTagName('tr'))
-                .map(row => ({
-                    product_id: row.querySelector('[name="kodeBarang[]"]').value,
-                    quantity: parseInt(row.querySelector('[name="jumlahBarang[]"]').value),
-                    price: parseInt(row.querySelector('[name="hargaSatuan[]"]').value.replace(/[^0-9]/g, '')),
-                    total: parseInt(row.querySelector('[name="hargaTotal[]"]').value.replace(/[^0-9]/g, ''))
-                }));
-    
-            const { subtotal, totalDiscount, grandTotal } = updateGrandTotal();
-    
-            const orderData = {
-                customer,
-                address,
-                payment_method: paymentMethod,
-                items,
-                summary: {
-                    subtotal,
-                    total_discount: totalDiscount,
-                    grand_total: grandTotal
-                }
-            };
-    
-            // Kirim data ke server
-            fetch('/kasir/checkout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify(orderData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Clear localStorage
-                    localStorage.removeItem('cartItems');
-                    
-                    // Tampilkan notifikasi sukses
-                    showAlert('Pesanan berhasil dibuat!');
-                    
-                    // Redirect ke halaman kasir setelah 2 detik
-                    setTimeout(() => {
-                        window.location.href = '/kasir';
-                    }, 2000);
-                } else {
-                    showAlert('Terjadi kesalahan: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showAlert('Terjadi kesalahan saat memproses pesanan');
-            });
-        });
-    </script>
+    } catch (error) {
+        console.error('Error:', error);
+        showAlert(error.message);
+    }
+});
+       });
+   </script>
 </body>
 </html>

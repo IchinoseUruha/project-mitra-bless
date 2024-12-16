@@ -134,6 +134,10 @@
                 <i class="fas fa-list"></i>
                 <span>Daftar Pemesanan</span>
             </a>
+            <a href="{{ route('kasir.pemesanan.offline') }}" class="nav-link {{ Request::is('kasir/daftar-pemesanan-offline') ? 'active' : '' }}">
+                <i class="fas fa-list"></i>
+                <span>Daftar Pemesanan Offline</span>
+            </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="menu-link text-red-600 hover:bg-red-500 hover:text-white">
