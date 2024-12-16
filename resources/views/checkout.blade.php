@@ -40,6 +40,7 @@
     .cart-details table {
         width: 100%;
         margin-bottom: 20px;
+        border-collapse: collapse;
     }
     
     .cart-details table th {
@@ -47,6 +48,7 @@
         color: white !important;
         font-size: 1rem;
         padding: 12px;
+        text-align: center;
     }
     
     /* Tabel Data */
@@ -56,6 +58,16 @@
         font-size: 1rem;
         color: #333;
     }
+
+    .cart-details, .checkout-form {
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease;
+    }
+
+    .cart-details:hover, .checkout-form:hover {
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    }
+
     
     /* Checkout Form */
     .checkout-form {
@@ -143,6 +155,21 @@
             padding: 12px 0;
         }
     }
+
+    table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+th:first-child, td:first-child {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+th:last-child, td:last-child {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
 </style>
 
 <div class="container mt-5">

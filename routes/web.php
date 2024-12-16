@@ -67,7 +67,6 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/order/details', [OrderController::class, 'show'])->name('order.details');
     Route::post('/order/{id}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
-    Route::post('/order/{id}/confirm', [OrderController::class, 'confirm'])->name('order.confirm');
     Route::post('/order/upload-bukti/{id}', [OrderController::class, 'uploadBukti'])->name('order.upload-bukti');
 });
 

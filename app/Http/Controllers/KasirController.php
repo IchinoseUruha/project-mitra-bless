@@ -45,7 +45,7 @@ class KasirController extends Controller
     }
 
     public function cancelOrder($id) {
-        $order = Order::findOrFail($id);
+        $order = OrderItem::findOrFail($id);
         $order->status = 'Dibatalkan';
         $order->save();
     

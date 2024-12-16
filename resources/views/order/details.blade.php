@@ -59,6 +59,31 @@
         font-weight: bold;
         color: #F062A8;
     }
+    .badge-bright-success {
+    background-color: #00FF00 !important;
+    color: black !important;
+    }
+    .badge-bright-danger {
+        background-color: #FF0000 !important;
+        color: white !important;
+    }
+    .badge-bright-warning {
+        background-color: #FFD700 !important;
+        color: black !important;
+    }
+    .badge-bright-info {
+        background-color: #00BFFF !important;
+        color: black !important;
+    }
+    .badge-bright-primary {
+        background-color: #0066FF !important;
+        color: white !important;
+    }
+    .detail-table th, .detail-table td {
+    text-align: center; /* Buat sejajar di tengah */
+    vertical-align: middle; /* Biar posisinya pas di tengah */
+    padding: 8px; /* Biar ada jarak */
+    }
 </style>
 
 <div class="container mt-5">
@@ -73,6 +98,7 @@
                 <!-- Header Pesanan -->
                 <div class="table-responsive">
                     <table class="table mb-0">
+                        @foreach($order->items as $item)
                         <thead>
                             <tr>
                                 <th>Nomor Pesanan</th>
@@ -88,7 +114,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($order->items as $item)
                             <tr>
                                 <td>
                                     {{ $item->order_number }}<br>
@@ -98,8 +123,13 @@
                                 </td>
                                 <td>{{ $item->created_at->format('d M Y') }}</td>
                                 <td>
-                                    <span class="badge bg-{{ $item->status == 'menunggu_pembayaran' ? 'warning' : 
-                                        ($item->status == 'sedang_diproses' ? 'info' : 'secondary') }}">
+                                    <span class="badge {{ 
+                                        $item->status == 'menunggu_pembayaran' ? 'badge-bright-warning' : 
+                                        ($item->status == 'sedang_diproses' ? 'badge-bright-info' : 
+                                        ($item->status == 'sedang_dikirim' ? 'badge-bright-primary' :
+                                        ($item->status == 'selesai' ? 'badge-bright-success' :
+                                        ($item->status == 'dibatalkan' ? 'badge-bright-danger' : 'bg-secondary')))) 
+                                    }}">
                                         {{ ucwords(str_replace('_', ' ', $item->status)) }}
                                     </span>
                                 </td>
@@ -180,86 +210,58 @@
     </table>
 </div>
 
-
-                    <!-- Modal Upload Bukti -->
-                    <div class="modal fade" id="uploadBukti{{ $order->id }}" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header bg-pink text-white">
-                                    <h5 class="modal-title">Upload Bukti Pembayaran</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <form action="{{ route('order.upload-bukti', $order->id) }}" method="POST" enctype="multipart/form-data">
-                                    @csrf
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label class="form-label">Pilih File Bukti Pembayaran</label>
-                                            <input type="file" name="bukti_pembayaran" class="form-control" accept="image/*" required>
-                                            <small class="text-muted">Format: JPG, PNG, JPEG. Max: 2MB</small>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                        <button type="submit" class="btn btn-pink">Upload</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
                 <!-- Detail Produk -->
                 <div class="table-responsive detail-table" id="detail{{ $order->id }}" style="display: none;">
+                    @foreach($order->items as $item)
                     <table class="table">
-                        <tr>
-                            <th>Produk</th>
-                            <th>Harga</th>
-                            <th>Jumlah</th>
-                            <th>Subtotal</th>
-                        </tr>
-                        <tbody>
-                            @foreach($order->items as $item)
                             <tr>
-                                <td>{{ $item->produk->name }}</td>
-                                <td>Rp. {{ number_format($item->price, 0, ',', '.') }}</td>
-                                <td>{{ $item->quantity }}</td>
-                                <td>Rp. {{ number_format($item->total, 0, ',', '.') }}</td>
+                                <th>Produk</th>
+                                <th>Harga</th>
+                                <th>Jumlah</th>
+                                <th>Subtotal</th>
                             </tr>
-                            @endforeach
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="3" class="text-end"><strong>Diskon:</strong></td>
-                                <td>
-                                    <strong>
-                                        @if(Auth::user()->utype == 'customer_b')
-                                            0%
-                                        @else
-                                            @if($item->quantity >= 36)
-                                                10%
-                                            @elseif($item->quantity >= 12)
-                                                5%
-                                            @else
-                                                0%
-                                            @endif
-                                        @endif
-                                    </strong>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                <td>
-                                    <strong>
+                            <tbody>
+                                <tr>
+                                    <td>{{ $item->produk->name }}</td>
+                                    <td>Rp. {{ number_format($item->price, 0, ',', '.') }}</td>
+                                    <td>{{ $item->quantity }}</td>
+                                    <td>Rp. {{ number_format($item->total, 0, ',', '.') }}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Diskon:</strong></td>
+                                    <td>
+                                        <strong>
                                             @if(Auth::user()->utype == 'customer_b')
-                                                Rp {{ number_format($item->total, 2) }}
+                                                0%
                                             @else
-                                                Rp {{ number_format($item->harga_diskon, 2) }}
+                                                @if($item->quantity >= 36)
+                                                    10%
+                                                @elseif($item->quantity >= 12)
+                                                    5%
+                                                @else
+                                                    0%
+                                                @endif
                                             @endif
-                                    </strong>
-                                
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                                        </strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                    <td>
+                                        <strong>
+                                                @if(Auth::user()->utype == 'customer_b')
+                                                    Rp {{ number_format($item->total, 2) }}
+                                                @else
+                                                    Rp {{ number_format($item->harga_diskon, 2) }}
+                                                @endif
+                                        </strong>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>F
+                    @endforeach
                 </div>
                 @endforeach
             </div>

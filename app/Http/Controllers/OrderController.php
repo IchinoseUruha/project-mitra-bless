@@ -52,22 +52,22 @@ class OrderController extends Controller
                         ->with('success', 'Pesanan berhasil dibatalkan.');
     }
 
-    // Konfirmasi pesanan diterima
-    public function confirm($id)
-    {
-        $order = Order::where('id', $id)
-                     ->where('customer_id', Auth::id())
-                     ->firstOrFail();
+    // // Konfirmasi pesanan diterima
+    // public function confirm($id)
+    // {
+    //     $order = Order::where('id', $id)
+    //                  ->where('customer_id', Auth::id())
+    //                  ->firstOrFail();
 
-        if ($order->status !== 'sedang_dikirim') {
-            return back()->with('error', 'Status pesanan tidak dapat diubah.');
-        }
+    //     if ($order->status !== 'sedang_dikirim') {
+    //         return back()->with('error', 'Status pesanan tidak dapat diubah.');
+    //     }
 
-        $order->update(['status' => 'dikirim']);
+    //     $order->update(['status' => 'dikirim']);
 
-        return redirect()->route('order.details', $order->id)
-                        ->with('success', 'Pesanan telah dikonfirmasi diterima.');
-    }
+    //     return redirect()->route('order.details', $order->id)
+    //                     ->with('success', 'Pesanan telah dikonfirmasi diterima.');
+    // }
 
     // Filter pesanan berdasarkan status menggunakan View
     public function filter(Request $request)

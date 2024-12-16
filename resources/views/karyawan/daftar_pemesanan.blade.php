@@ -106,11 +106,13 @@
                                         @endif
 
                                         @if($order->status == 'menunggu_pembayaran')
-                                            <button class="inline-flex items-center justify-center px-4 py-2 border border-pink-500 text-pink-500 hover:bg-pink-50 rounded-md transition-colors">
-                                                <i class="fas fa-times-circle mr-2"></i>
-                                                <a href="{{ route('kasir.orderitem.cancel', $order->id) }}" 
-                                                   class="cancel-btn text-pink-500">Batalkan</a>
-                                            </button>
+                                            <form action="{{ route('kasir.pemesanan.cancel', $order->id) }}" method="POST" class="inline">
+                                                @csrf
+                                                <button class="cancel-btn text-pink-500" class="inline-flex items-center justify-center px-4 py-2 border border-pink-500 text-pink-500 hover:bg-pink-50 rounded-md transition-colors">
+                                                    <i class="fas fa-times-circle mr-2"></i> 
+                                                       Batalkan
+                                                </button>
+                                            </form>
                                         @endif
                                     @endif
                                 </div>

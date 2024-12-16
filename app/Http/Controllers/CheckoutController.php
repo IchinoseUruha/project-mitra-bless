@@ -18,33 +18,178 @@ class CheckoutController extends Controller
     }
 
     public function index()
-    {
-        // Check if this is direct purchase
-        if (session()->has('direct_purchase')) {
-            $cartItems = collect([session('cartItems')]);
-            $total = session('total');
-            
-            return view('checkout', compact('cartItems', 'total'));
-        } 
+{
+    \Log::info('Entering checkout index');
+    \Log::info('Auth ID: ' . Auth::id());
+
+    // Check if this is direct purchase
+    if (session()->has('direct_purchase')) {
+        \Log::info('Direct purchase path');
+        $cartItems = collect([session('cartItems')]);
+        $total = session('total');
         
-        // If not direct purchase, check cart
-        $cartItems = Cart::where('customer_id', Auth::id())
-            ->with('produk')
-            ->get();
+        return view('checkout', compact('cartItems', 'total'));
+    } 
     
-        // If cart is empty, redirect back
-        if ($cartItems->isEmpty()) {
-            return redirect()->route('cart.index')
-                ->with('error', 'Keranjang belanja Anda kosong. Silahkan tambahkan produk terlebih dahulu.');
-        }
+    // If not direct purchase, check cart
+    $cartItems = Cart::where('customer_id', Auth::id())
+        ->with('produk')
+        ->get();
+
+    \Log::info('Regular checkout path - Cart items: ' . $cartItems->count());
     
-        // Calculate total from cart items
-        $total = $cartItems->sum(function ($item) {
+    // Store cart items in session as backup
+    if (!$cartItems->isEmpty()) {
+        session(['checkout_cart_items' => $cartItems]);
+        session(['checkout_total' => $cartItems->sum(function ($item) {
             return $item->quantity * $item->produk->price;
-        });
-    
+        })]);
+    }
+
+    // If cart is empty, try to recover from session
+    if ($cartItems->isEmpty() && session()->has('checkout_cart_items')) {
+        \Log::info('Recovering cart items from session');
+        $cartItems = session('checkout_cart_items');
+        $total = session('checkout_total');
         return view('checkout', compact('cartItems', 'total'));
     }
+
+    // If cart is empty and no session backup, redirect back
+    if ($cartItems->isEmpty()) {
+        \Log::info('Cart completely empty, redirecting to cart');
+        return redirect()->route('cart.index')
+            ->with('error', 'Keranjang belanja Anda kosong. Silahkan tambahkan produk terlebih dahulu.');
+    }
+
+    $total = $cartItems->sum(function ($item) {
+        return $item->quantity * $item->produk->price;
+    });
+
+    return view('checkout', compact('cartItems', 'total'));
+}
+
+    
+public function process(Request $request)
+{
+    try {
+        DB::beginTransaction();
+        
+        // Log data request
+        \Log::info('Process Request Data:', $request->all());
+        
+        $validated = $request->validate([
+            'delivery_method' => 'required|in:diantar,diambil',
+            'address' => 'required_if:delivery_method,diantar',
+            'payment_method' => 'required|in:e-wallet,bank_transfer,bayar_ditempat',
+            'bank_account' => 'required_if:payment_method,bank_transfer',
+            'wallet_account' => 'required_if:payment_method,e-wallet'
+        ]);
+
+        \Log::info('Validated Data:', $validated);
+        \Log::info('User ID:', [Auth::id()]);
+
+        // Call stored procedure
+        if (session()->has('direct_purchase')) {
+            $cartItem = session('cartItems');
+            $result = DB::select(
+                'CALL ProcessOrder(?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [
+                    Auth::id(),
+                    $validated['delivery_method'],
+                    $validated['payment_method'],
+                    $this->getPaymentDetails($request),
+                    $validated['delivery_method'] === 'diambil' ? 'Diambil di toko' : $validated['address'],
+                    true, // isDirectPurchase
+                    $cartItem->produk->id,
+                    $cartItem->quantity,
+                    $cartItem->produk->price
+                ]
+            );
+        } else {
+            $result = DB::select(
+                'CALL ProcessOrder(?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [
+                    Auth::id(),
+                    $validated['delivery_method'],
+                    $validated['payment_method'],
+                    $this->getPaymentDetails($request),
+                    $validated['delivery_method'] === 'diambil' ? 'Diambil di toko' : $validated['address'],
+                    false, // isDirectPurchase
+                    null,
+                    null,
+                    null
+                ]
+            );
+        }
+
+        \Log::info('Stored Procedure Result:', $result ?? ['No result']);
+
+        if (empty($result)) {
+            throw new \Exception('Gagal membuat pesanan');
+        }
+
+        $orderId = $result[0]->{'Created Order ID'};
+        \Log::info('Order ID Created:', [$orderId]);
+        
+        DB::commit();
+        \Log::info('Transaction committed successfully');
+        
+        return redirect()->route('order.details')
+            ->with('success', 'Pesanan berhasil dibuat!');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        \Log::error('Checkout Error: ' . $e->getMessage());
+        \Log::error('Full Error:', [
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return redirect()->back()
+            ->with('error', 'Terjadi kesalahan dalam pemrosesan pesanan: ' . $e->getMessage())
+            ->withInput();
+    }
+}
+// Tambahkan method baru untuk handle update status
+public function updateOrderStatus($orderId, $status)
+{
+    try {
+        DB::beginTransaction();
+        
+        $orderItem = DB::table('order_items')
+            ->where('order_id', $orderId)
+            ->first();
+
+        if ($orderItem) {
+            // Update status
+            DB::table('order_items')
+                ->where('order_id', $orderId)
+                ->update(['status' => $status]);
+
+            // Jika status selesai atau dibatalkan, hapus dari cart
+            if (in_array($status, ['selesai', 'dibatalkan'])) {
+                Cart::where('customer_id', Auth::id())
+                    ->whereIn('produk_id', function($query) use ($orderId) {
+                        $query->select('produk_id')
+                            ->from('order_items')
+                            ->where('order_id', $orderId);
+                    })
+                    ->delete();
+            }
+        }
+
+        DB::commit();
+        return true;
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        \Log::error('Update Status Error: ' . $e->getMessage());
+        return false;
+    }
+}
+
 
     public function directCheckout(Request $request)
 {
@@ -79,81 +224,27 @@ class CheckoutController extends Controller
     return redirect()->route('checkout.index');
 }
 
-public function process(Request $request)
+private function getPaymentDetails($request)
 {
-    $validated = $request->validate([
-        'delivery_method' => 'required|in:diantar,diambil',
-        'address' => 'required_if:delivery_method,diantar',
-        'payment_method' => 'required|in:e-wallet,bank_transfer,bayar_ditempat',
-        'bank_account' => 'required_if:payment_method,bank_transfer',
-        'wallet_account' => 'required_if:payment_method,e-wallet'
-    ]);
-
-    try {
-        DB::beginTransaction();
-
-        if (session()->has('direct_purchase')) {
-            Cart::create([
-                'customer_id' => Auth::id(),
-                'produk_id' => session('cartItems')->produk->id,
-                'quantity' => session('cartItems')->quantity
-            ]);
-        }
-        
-        // Panggil procedure (order_number sudah di-generate di dalam procedure)
-        DB::statement('CALL InsertOrderAndItems(?)', [Auth::id()]);
-        
-        // Get latest order untuk data tambahan
-        $order = Order::where('customer_id', Auth::id())
-                     ->latest()
-                     ->first();
-
-        // Update order items dengan additional details
-        OrderItem::where('order_id', $order->id)->update([
-            'address' => $request->delivery_method === 'diambil' ? 'Diambil di toko' : $request->address,
-            'delivery_method' => $request->delivery_method,
-            'payment_method' => $request->payment_method,
-            'payment_details' => $this->getPaymentDetails($request),
-            'status' => $this->getOrderStatus($request)
-        ]);
-
-        if (session()->has('direct_purchase')) {
-            session()->forget(['direct_purchase', 'cartItems', 'total']);
-        }
-
-        DB::commit();
-        return redirect()->route('order.details', $order->id)
-            ->with('success', 'Pesanan berhasil dibuat!');
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return redirect()->back()
-            ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
-            ->withInput();
+    switch ($request->payment_method) {
+        case 'bank_transfer':
+            return $request->bank_account;
+        case 'e-wallet':
+            return $request->wallet_account;
+        case 'bayar_ditempat':
+            return 'Cash';
+        default:
+            return null;
     }
 }
-    private function getPaymentDetails($request)
-    {
-        switch ($request->payment_method) {
-            case 'bank_transfer':
-                return $request->bank_account;
-            case 'e-wallet':
-                return $request->wallet_account;
-            case 'bayar_ditempat':
-                return 'Cash';
-            default:
-                return null;
-        }
-    }
 
-    private function getOrderStatus($request)
-    {
-        if ($request->delivery_method === 'diambil' && $request->payment_method === 'bayar_ditempat') {
-            return OrderItem::STATUS['SEDANG_DIPROSES'];
-        }
-        return OrderItem::STATUS['MENUNGGU_PEMBAYARAN'];
+private function getOrderStatus($request)
+{
+    if ($request->delivery_method === 'diambil' && $request->payment_method === 'bayar_ditempat') {
+        return 'sedang_diproses';
     }
-
+    return 'menunggu_pembayaran';
+}
     public function success()
     {
         return view('checkout.success');
