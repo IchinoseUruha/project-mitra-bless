@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OfflineOrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -45,19 +46,17 @@ class KasirController extends Controller
     }
     public function showOrderOffline()
     {
-        
-        return view('karyawan.pemesananOffline');
+        $offlineOrders = OfflineOrderItem::orderBy('created_at', 'desc')
+        ->paginate(10);
+        return view('karyawan.pemesananOffline', compact('offlineOrders'));
     }
 
     public function cancelOrder($id) {
         $order = OrderItem::findOrFail($id);
-        $order->status = 'Dibatalkan';
+        $order->status = 'dibatalkan';
         $order->save();
-    
-        return response()->json([
-            'success' => true,
-            'message' => 'Pesanan berhasil dibatalkan'
-        ]);
+        
+        return back();
     }
 
     public function searchProducts(Request $request)
