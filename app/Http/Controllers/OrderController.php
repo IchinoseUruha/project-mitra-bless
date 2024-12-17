@@ -149,28 +149,55 @@ class OrderController extends Controller
     }
 
     public function uploadBukti(Request $request, $id)
-{
-    $request->validate([
-        'bukti_pembayaran' => 'required|image|mimes:jpg,png,jpeg|max:2048'
-    ]);
-
-    $orderItem = OrderItem::findOrFail($id);
+    {
+        try {
+            $request->validate([
+                'bukti_pembayaran' => 'required|image|mimes:jpg,png,jpeg|max:2048'
+            ]);
     
-    if ($request->hasFile('bukti_pembayaran')) {
-        $file = $request->file('bukti_pembayaran');
-        $filename = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('uploads/bukti_pembayaran'), $filename);
-        
-        $orderItem->update([
-            'bukti_pembayaran' => $filename,
-            'status' => 'sedang_diproses'
-        ]);
-
-        return redirect()->back()->with('success', 'Bukti pembayaran berhasil diupload');
+            $orderItem = OrderItem::findOrFail($id);
+            
+            if ($request->hasFile('bukti_pembayaran')) {
+                $file = $request->file('bukti_pembayaran');
+                
+                // Create directory if it doesn't exist
+                $uploadPath = public_path('uploads/bukti_pembayaran');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0755, true);
+                    chmod($uploadPath, 0755);
+                }
+    
+                // Generate unique filename
+                $filename = time() . '_' . str_replace(' ', '_', $file->getClientOriginalName());
+                
+                // Handle file upload
+                try {
+                    $file->move($uploadPath, $filename);
+                    
+                    // Verify file was uploaded
+                    if (!file_exists($uploadPath . '/' . $filename)) {
+                        throw new \Exception('File upload failed');
+                    }
+                    
+                    // Update database
+                    $orderItem->update([
+                        'bukti_pembayaran' => $filename,
+                        'status' => 'sedang_diproses'
+                    ]);
+    
+                    return redirect()->back()->with('success', 'Bukti pembayaran berhasil diupload');
+                } catch (\Exception $e) {
+                    \Log::error('Upload Error: ' . $e->getMessage());
+                    return redirect()->back()->with('error', 'Gagal mengupload file: ' . $e->getMessage());
+                }
+            }
+    
+            return redirect()->back()->with('error', 'Tidak ada file yang diupload');
+        } catch (\Exception $e) {
+            \Log::error('General Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
-
-    return redirect()->back()->with('error', 'Gagal mengupload bukti pembayaran');
-}
 
 public function updateStatus($id)
 {

@@ -71,6 +71,14 @@
         vertical-align: middle;
         padding: 8px;
     }
+
+    /* Modal Custom Styling */
+    .modal-header.bg-pink {
+        background-color: #F062A8;
+    }
+    .btn-close {
+        color: white;
+    }
 </style>
 
 <div class="container mt-5">
@@ -82,7 +90,6 @@
 
             <div class="card-body p-0">
                 @foreach($orders as $order)
-                    @foreach($order->items as $item)
                     <!-- Header Pesanan -->
                     <div class="table-responsive">
                         <table class="table mb-0">
@@ -101,6 +108,7 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach($order->items as $item)
                                 <tr>
                                     <td>
                                         {{ $item->order_number }}<br>
@@ -145,7 +153,7 @@
                                             <button type="button" 
                                                     class="btn btn-sm btn-pink" 
                                                     data-bs-toggle="modal" 
-                                                    data-bs-target="#uploadBukti{{ $item->id }}">
+                                                    data-bs-target="#uploadBuktiModal{{ $item->id }}">
                                                 Upload Bukti
                                             </button>
                                             @else
@@ -169,11 +177,39 @@
                                         </div>
                                     </td>
                                 </tr>
+
+                                <!-- Modal Upload Bukti -->
+                                <div class="modal fade" id="uploadBuktiModal{{ $item->id }}" tabindex="-1" aria-labelledby="uploadBuktiLabel{{ $item->id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-pink text-white">
+                                                <h5 class="modal-title" id="uploadBuktiLabel{{ $item->id }}">Upload Bukti Pembayaran</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form action="{{ route('order.upload-bukti', $item->id) }}" method="POST" enctype="multipart/form-data">
+                                                @csrf
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Pilih File Bukti Pembayaran</label>
+                                                        <input type="file" name="bukti_pembayaran" class="form-control" accept="image/*" required>
+                                                        <small class="text-muted">Format: JPG, PNG, JPEG. Max: 2MB</small>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                    <button type="submit" class="btn btn-pink">Upload</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Detail Produk -->
+                    @foreach($order->items as $item)
                     <div class="table-responsive detail-table" id="detail{{ $order->id }}" style="display: none;">
                         <table class="table">
                             <thead>
@@ -239,10 +275,20 @@
     </div>
 </div>
 
+@push('scripts')
 <script>
     function toggleDetail(orderId) {
         const detailElement = document.getElementById('detail' + orderId);
         detailElement.style.display = detailElement.style.display === 'none' ? 'block' : 'none';
     }
+
+    // Initialize Bootstrap modals
+    document.addEventListener('DOMContentLoaded', function() {
+        var modals = document.querySelectorAll('.modal');
+        modals.forEach(function(modal) {
+            new bootstrap.Modal(modal);
+        });
+    });
 </script>
+@endpush
 @endsection
