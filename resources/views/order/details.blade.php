@@ -46,6 +46,8 @@
         background-color: #F062A8;
         color: white;
         transition: all 0.3s ease;
+        padding: 8px 16px;
+        margin-top: 10px;
     }
     .btn-pink:hover {
         background-color: #E15797;
@@ -59,30 +61,15 @@
         font-weight: bold;
         color: #F062A8;
     }
-    .badge-bright-success {
-    background-color: #00FF00 !important;
-    color: black !important;
-    }
-    .badge-bright-danger {
-        background-color: #FF0000 !important;
-        color: white !important;
-    }
-    .badge-bright-warning {
-        background-color: #FFD700 !important;
-        color: black !important;
-    }
-    .badge-bright-info {
-        background-color: #00BFFF !important;
-        color: black !important;
-    }
-    .badge-bright-primary {
-        background-color: #0066FF !important;
-        color: white !important;
-    }
+    .badge-bright-success { background-color: #00FF00 !important; color: black !important; }
+    .badge-bright-danger { background-color: #FF0000 !important; color: white !important; }
+    .badge-bright-warning { background-color: #FFD700 !important; color: black !important; }
+    .badge-bright-info { background-color: #00BFFF !important; color: black !important; }
+    .badge-bright-primary { background-color: #0066FF !important; color: white !important; }
     .detail-table th, .detail-table td {
-    text-align: center; /* Buat sejajar di tengah */
-    vertical-align: middle; /* Biar posisinya pas di tengah */
-    padding: 8px; /* Biar ada jarak */
+        text-align: center;
+        vertical-align: middle;
+        padding: 8px;
     }
 </style>
 
@@ -95,174 +82,163 @@
 
             <div class="card-body p-0">
                 @foreach($orders as $order)
-                <!-- Header Pesanan -->
-                <div class="table-responsive">
-                    <table class="table mb-0">
-                        @foreach($order->items as $item)
-                        <thead>
-                            <tr>
-                                <th>Nomor Pesanan</th>
-                                <th>Tanggal</th>
-                                <th>Status</th>
-                                <th>Metode Pengiriman</th>
-                                <th>Alamat</th>
-                                <th>Metode Pembayaran</th>
-                                <th>Detail Pembayaran</th>
-                                <th>Total</th>
-                                <th>Bukti Pembayaran</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    {{ $item->order_number }}<br>
-                                    <span class="text-muted small">
-                                        {{ $item->produk->name }} ({{ $item->quantity }})
-                                    </span>
-                                </td>
-                                <td>{{ $item->created_at->format('d M Y') }}</td>
-                                <td>
-                                    <span class="badge {{ 
-                                        $item->status == 'menunggu_pembayaran' ? 'badge-bright-warning' : 
-                                        ($item->status == 'sedang_diproses' ? 'badge-bright-info' : 
-                                        ($item->status == 'sedang_dikirim' ? 'badge-bright-primary' :
-                                        ($item->status == 'selesai' ? 'badge-bright-success' :
-                                        ($item->status == 'dibatalkan' ? 'badge-bright-danger' : 'bg-secondary')))) 
-                                    }}">
-                                        {{ ucwords(str_replace('_', ' ', $item->status)) }}
-                                    </span>
-                                </td>
-                                <td>{{ ucwords($item->delivery_method) }}</td>
-                                <td>{{ ucwords($item->address) }}</td>
-                                <td>{{ ucwords(str_replace('_', ' ', $item->payment_method)) }}</td>
-                                <td>{{ $item->payment_details }}</td>
-                                <td>
-                                    @if(Auth::user()->utype == 'customer_b')
-                                        Rp. {{ number_format($item->total, 2) }}
-                                    @else
-                                        Rp. {{ number_format($item->harga_diskon, 2) }}
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($item->bukti_pembayaran)
-                                        <a href="{{ asset('uploads/bukti_pembayaran/'.$item->bukti_pembayaran) }}" 
-                                           target="_blank">
-                                            <img src="{{ asset('uploads/bukti_pembayaran/'.$item->bukti_pembayaran) }}" 
-                                                 alt="Bukti Pembayaran" 
-                                                 class="img-thumbnail" 
-                                                 style="max-width: 100px;">
-                                        </a>
-                                    @else
-                                        @if($item->status == 'menunggu_pembayaran')
-                                        <button type="button" 
-                                                class="btn btn-sm btn-pink" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#uploadBukti{{ $item->id }}">
-                                            Upload Bukti
-                                        </button>
+                    <!-- Header Pesanan -->
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nomor Pesanan</th>
+                                    <th>Tanggal</th>
+                                    <th>Status</th>
+                                    <th>Metode Pengiriman</th>
+                                    <th>Alamat</th>
+                                    <th>Metode Pembayaran</th>
+                                    <th>Detail Pembayaran</th>
+                                    <th>Total</th>
+                                    <th>Bukti Pembayaran</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($order->items as $item)
+                                <tr>
+                                    <td>
+                                        {{ $item->order_number }}<br>
+                                        <span class="text-muted small">
+                                            {{ $item->produk->name }} ({{ $item->quantity }})
+                                        </span>
+                                    </td>
+                                    <td>{{ $item->created_at->format('d M Y') }}</td>
+                                    <td>
+                                        <span class="badge {{ 
+                                            $item->status == 'menunggu_pembayaran' ? 'badge-bright-warning' : 
+                                            ($item->status == 'sedang_diproses' ? 'badge-bright-info' : 
+                                            ($item->status == 'sedang_dikirim' ? 'badge-bright-primary' :
+                                            ($item->status == 'selesai' ? 'badge-bright-success' :
+                                            ($item->status == 'dibatalkan' ? 'badge-bright-danger' : 'bg-secondary')))) 
+                                        }}">
+                                            {{ ucwords(str_replace('_', ' ', $item->status)) }}
+                                        </span>
+                                    </td>
+                                    <td>{{ ucwords($item->delivery_method) }}</td>
+                                    <td>{{ ucwords($item->address) }}</td>
+                                    <td>{{ ucwords(str_replace('_', ' ', $item->payment_method)) }}</td>
+                                    <td>{{ $item->payment_details }}</td>
+                                    <td>
+                                        @if(Auth::user()->utype == 'customer_b')
+                                            Rp. {{ number_format($item->total, 2) }}
                                         @else
-                                        <span class="badge bg-secondary">Tidak ada bukti</span>
+                                            Rp. {{ number_format($item->harga_diskon, 2) }}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($item->bukti_pembayaran)
+                                            <a href="{{ asset('uploads/bukti_pembayaran/'.$item->bukti_pembayaran) }}" 
+                                            target="_blank">
+                                                <img src="{{ asset('uploads/bukti_pembayaran/'.$item->bukti_pembayaran) }}" 
+                                                    alt="Bukti Pembayaran" 
+                                                    class="img-thumbnail" 
+                                                    style="max-width: 100px;">
+                                            </a>
+                                        @else
+                                            @if($item->status == 'menunggu_pembayaran')
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-pink" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#uploadBukti{{ $item->id }}">
+                                                Upload Bukti
+                                            </button>
+                                            @else
+                                            <span class="badge bg-secondary">Tidak ada bukti</span>
+                                            @endif
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-flex flex-column gap-2">
+                                            <button type="button" class="btn btn-sm btn-pink" onclick="toggleDetail({{ $order->id }})">
+                                                Detail
+                                            </button>
+                                            @if($item->status == 'menunggu_pembayaran')
+                                                <form action="{{ route('order.cancel', $order->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100" onclick="return confirm('Yakin ingin membatalkan pesanan?')">
+                                                        Batalkan
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Detail Produk -->
+            <div class="table-responsive detail-table" id="detail{{ $order->id }}" style="display: none;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Produk</th>
+                            <th>Harga</th>
+                            <th>Jumlah</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($order->items as $item)
+                        <tr>
+                            <td>{{ $item->produk->name }}</td>
+                            <td>Rp. {{ number_format($item->price, 0, ',', '.') }}</td>
+                            <td>{{ $item->quantity }}</td>
+                            <td>Rp. {{ number_format($item->total, 0, ',', '.') }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Diskon:</strong></td>
+                            <td>
+                                <strong>
+                                    @if(Auth::user()->utype == 'customer_b')
+                                        0%
+                                    @else
+                                        @if($item->quantity >= 36)
+                                            10%
+                                        @elseif($item->quantity >= 12)
+                                            5%
+                                        @else
+                                            0%
                                         @endif
                                     @endif
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-pink mb-1" onclick="toggleDetail({{ $order->id }})">Detail</button>
-                                    @if($item->status == 'menunggu_pembayaran')
-                                        <form action="{{ route('order.cancel', $order->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Yakin ingin membatalkan pesanan?')">
-                                                Batalkan
-                                            </button>
-                                        </form>
+                                </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                            <td>
+                                <strong>
+                                    @if(Auth::user()->utype == 'customer_b')
+                                        Rp {{ number_format($item->total, 2) }}
+                                    @else
+                                        Rp {{ number_format($item->harga_diskon, 2) }}
                                     @endif
-                                </td>
-                            </tr>
-
-                            
-            <!-- Modal Upload Bukti -->
-            <div class="modal fade" id="uploadBukti{{ $item->id }}" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header bg-pink text-white">
-                            <h5 class="modal-title">Upload Bukti Pembayaran</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <form action="{{ route('order.upload-bukti', $item->id) }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label class="form-label">Pilih File Bukti Pembayaran</label>
-                                    <input type="file" name="bukti_pembayaran" class="form-control" accept="image/*" required>
-                                    <small class="text-muted">Format: JPG, PNG, JPEG. Max: 2MB</small>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-pink">Upload</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                                </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-end">
+                                <a href="{{ route('customer.invoice', ['id' => $item->id]) }}" 
+                                class="btn btn-pink" 
+                                style="min-width: 150px;">
+                                    <i class="fas fa-download me-2"></i>
+                                    Download Invoice
+                                </a>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-
-                <!-- Detail Produk -->
-                <div class="table-responsive detail-table" id="detail{{ $order->id }}" style="display: none;">
-                    @foreach($order->items as $item)
-                    <table class="table">
-                            <tr>
-                                <th>Produk</th>
-                                <th>Harga</th>
-                                <th>Jumlah</th>
-                                <th>Subtotal</th>
-                            </tr>
-                            <tbody>
-                                <tr>
-                                    <td>{{ $item->produk->name }}</td>
-                                    <td>Rp. {{ number_format($item->price, 0, ',', '.') }}</td>
-                                    <td>{{ $item->quantity }}</td>
-                                    <td>Rp. {{ number_format($item->total, 0, ',', '.') }}</td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="3" class="text-end"><strong>Diskon:</strong></td>
-                                    <td>
-                                        <strong>
-                                            @if(Auth::user()->utype == 'customer_b')
-                                                0%
-                                            @else
-                                                @if($item->quantity >= 36)
-                                                    10%
-                                                @elseif($item->quantity >= 12)
-                                                    5%
-                                                @else
-                                                    0%
-                                                @endif
-                                            @endif
-                                        </strong>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                    <td>
-                                        <strong>
-                                                @if(Auth::user()->utype == 'customer_b')
-                                                    Rp {{ number_format($item->total, 2) }}
-                                                @else
-                                                    Rp {{ number_format($item->harga_diskon, 2) }}
-                                                @endif
-                                        </strong>
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    @endforeach
-                </div>
                 @endforeach
             </div>
         </div>
