@@ -260,7 +260,7 @@
                                     </td>
                                 </tr>
                             </tfoot>
-                        </table>F
+                        </table>
                     @endforeach
                 </div>
                 @endforeach

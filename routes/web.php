@@ -7,12 +7,14 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Middleware\AuthAdmin;
 use App\Http\Middleware\AuthKasir;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\KasirController;
+use App\Http\Controllers\KasirController;use App\Models\User;
+use Illuminate\Http\Request;
 
 
 Auth::routes();
@@ -117,5 +119,14 @@ Route::middleware(['auth', AuthKasir::class])->group(function(){
     Route::get('/kasir/order', [KasirController::class, 'showOrder'])->name('kasir.order');
     Route::get('/kasir/search', [KasirController::class, 'searchProducts'])->name('kasir.search');
     Route::post('/kasir/process-offline-order', [KasirController::class, 'processOfflineOrder'])->name('kasir.process-offline-order');
-
+    Route::get('/kasir/invoice/offline/{id}/download', [InvoiceController::class, 'downloadOfflineInvoice'])->name('kasir.invoice.offline.download');
+    Route::get('/kasir/invoice/online/{id}/download', [InvoiceController::class, 'downloadOnlineInvoice'])->name('kasir.invoice.online.download');
+    Route::get('/kasir/search-customer-emails', function (Request $request) {
+        $query = $request->input('query');
+        return User::where('email', 'LIKE', "%{$query}%")
+                   ->whereIn('utype', ['customer_r', 'customer_b'])
+                   ->select('id', 'email')
+                   ->limit(5)
+                   ->get();
+    })->name('search.customer.emails');
 });

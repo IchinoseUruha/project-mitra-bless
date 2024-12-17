@@ -11,6 +11,7 @@ class OfflineOrderItem extends Model
         'order_id',
         'order_number',
         'produk_id',
+        'nama_produk',
         'quantity',
         'price',
         'total',

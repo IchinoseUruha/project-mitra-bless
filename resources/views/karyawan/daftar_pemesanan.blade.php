@@ -198,6 +198,13 @@
                                 <p class="text-sm text-gray-500">Detail Pembayaran</p>
                                 <p>${data.payment_details}</p>
                             </div>
+                            <div class="mt-6 flex justify-end">
+                                <a href="/kasir/invoice/online/${data.id}/download" 
+                                class="inline-flex items-center px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors">
+                                    <i class="fas fa-download mr-2"></i>
+                                    Download Invoice
+                                </a>
+                            </div>
                         </div>
                     `;
                     document.getElementById('detailModal').classList.add('active');

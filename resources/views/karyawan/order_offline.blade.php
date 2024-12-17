@@ -6,6 +6,9 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Kasir</title>
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+   <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
    <style>
        body {
            font-family: 'Inter', sans-serif;
@@ -70,6 +73,29 @@
            font-weight: 500;
            border-radius: 6px;
        }
+       .ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 9999;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.ui-menu-item {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.ui-menu-item:hover {
+    background: #f8f9fa;
+}
+
+.ui-helper-hidden-accessible {
+    display: none;
+}
    </style>
 </head>
 <body>
@@ -81,11 +107,12 @@
            <form id="offlineOrderForm">
                @csrf
                <div class="row mb-4">
-                   <div class="col-md-6">
-                       <label class="form-label">Email Customer (Opsional)</label>
-                       <input type="email" class="form-control" name="customer_email" placeholder="Masukkan email customer jika ada">
-                       <small class="text-muted">Isi jika customer memiliki akun</small>
-                   </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email Customer (Opsional)</label>
+                        <input type="email" class="form-control" id="customer_email_input" name="customer_email" placeholder="Masukkan email customer jika ada">
+                        <input type="hidden" id="customer_id" name="customer_id">
+                        <small class="text-muted">Isi jika customer memiliki akun</small>
+                    </div>
                    <div class="col-md-6">
                        <label class="form-label">Metode Pembayaran</label>
                        <select class="form-select" name="payment_method" required>
@@ -312,6 +339,32 @@
         console.error('Error:', error);
         showAlert(error.message);
     }
+});
+$(document).ready(function() {
+    $("#customer_email_input").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "/kasir/search-customer-emails", // URL yang sudah disesuaikan
+                dataType: "json",
+                data: {
+                    query: request.term
+                },
+                success: function(data) {
+                    response(data.map(function(item) {
+                        return {
+                            label: item.email,
+                            value: item.email,
+                            id: item.id
+                        };
+                    }));
+                }
+            });
+        },
+        minLength: 2,
+        select: function(event, ui) {
+            $("#customer_id").val(ui.item.id);
+        }
+    });
 });
        });
    </script>

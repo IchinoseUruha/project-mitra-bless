@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OfflineOrderItem;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -192,79 +193,112 @@ class KasirController extends Controller
         }
     }
     public function processOfflineOrder(Request $request)
-{
-    try {
-        \Log::info('Process Offline Order Request:', $request->all());
-
-        DB::beginTransaction();
-
-        $validated = $request->validate([
-            'customer_email' => 'nullable|email',
-            'payment_method' => 'required|in:cash,bank_transfer,e_wallet',
-            'payment_details' => 'required_if:payment_method,bank_transfer,e_wallet',
-            'items' => 'required|array|min:1',
-            'items.*.produk_id' => 'required|integer',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.price' => 'required|numeric',    // Tambahkan validasi price
-            'items.*.total' => 'required|numeric'     // Tambahkan validasi total
-        ]);
-
-        \Log::info('Validated Data:', $validated);
-
-        foreach ($validated['items'] as $item) {
-            // Call stored procedure untuk setiap item
-            $result = DB::select(
-                'CALL ProcessOfflineOrder(?, ?, ?, ?, ?)',
-                [
-                    auth()->id(),
-                    $validated['customer_email'] ?? null,
-                    $item['produk_id'],
-                    $item['quantity'],
-                    $item['price']  // Sekarang price sudah tervalidasi
-                ]
-            );
-
-            \Log::info('Stored Procedure Result:', $result ?? ['No result']);
-
-            if (empty($result)) {
-                throw new \Exception('Gagal membuat pesanan');
-            }
-
-            $orderId = $result[0]->{'Created Order ID'};
-            \Log::info('Order ID:', [$orderId]);
-
-            // Update payment details
-            DB::table('offline_order_items')
-                ->where('order_id', $orderId)
-                ->update([
-                    'payment_method' => $validated['payment_method'],
-                    'payment_details' => $validated['payment_details'] ?? null,
-                    'updated_at' => now()
-                ]);
-        }
-
-        DB::commit();
-        \Log::info('Transaction committed successfully');
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Transaksi berhasil'
-        ]);
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        \Log::error('Offline Order Error:', [
-            'message' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString()
-        ]);
-        
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
+    {
+       try {
+           \Log::info('Process Offline Order Request:', $request->all());
+    
+           DB::beginTransaction();
+    
+           $validated = $request->validate([
+               'customer_email' => 'nullable|email',
+               'customer_id' => 'nullable|exists:users,id',
+               'payment_method' => 'required|in:cash,bank_transfer,e_wallet',
+               'payment_details' => 'required_if:payment_method,bank_transfer,e_wallet',
+               'items' => 'required|array|min:1',
+               'items.*.produk_id' => 'required|integer',
+               'items.*.quantity' => 'required|integer|min:1',
+               'items.*.price' => 'required|numeric',
+               'items.*.total' => 'required|numeric'
+           ]);
+    
+           \Log::info('Validated Data:', $validated);
+    
+           // Verifikasi customer_email jika ada
+           if (!empty($validated['customer_email'])) {
+               $customer = User::where('email', $validated['customer_email'])
+                             ->whereIn('utype', ['customer_r', 'customer_b'])
+                             ->first();
+               
+               if (!$customer) {
+                   throw new \Exception('Customer email tidak valid atau bukan customer retail/business');
+               }
+               $validated['customer_id'] = $customer->id;
+           }
+    
+           foreach ($validated['items'] as $item) {
+               // Cek stok produk terlebih dahulu
+               $produk = DB::table('produk')->where('id', $item['produk_id'])->first();
+               if (!$produk) {
+                   throw new \Exception("Produk dengan ID {$item['produk_id']} tidak ditemukan");
+               }
+    
+               // Menggunakan nama kolom quantity yang sesuai
+               if ($produk->quantity < $item['quantity']) {
+                   throw new \Exception("Stok produk {$produk->name} tidak mencukupi. Stok tersedia: {$produk->quantity}");
+               }
+    
+               // Call stored procedure untuk setiap item
+               $result = DB::select(
+                   'CALL CreateOfflineOrder(?, ?, ?, ?, ?)',
+                   [
+                       auth()->id(),
+                       $validated['customer_email'] ?? null,
+                       $item['produk_id'],
+                       $item['quantity'],
+                       $item['price']
+                   ]
+               );
+    
+               \Log::info('Stored Procedure Result:', $result ?? ['No result']);
+    
+               if (empty($result)) {
+                   throw new \Exception('Gagal membuat pesanan');
+               }
+    
+               $orderId = $result[0]->{'Created Order ID'};
+               \Log::info('Order ID:', [$orderId]);
+    
+               // Update payment details
+               DB::table('offline_order_items')
+                   ->where('order_id', $orderId)
+                   ->update([
+                       'payment_method' => $validated['payment_method'],
+                       'payment_details' => $validated['payment_details'] ?? null,
+                       'updated_at' => now()
+                   ]);
+    
+               // Update stok produk
+               $newQuantity = $produk->quantity - $item['quantity'];
+               DB::table('produk')
+                   ->where('id', $item['produk_id'])
+                   ->update([
+                       'quantity' => $newQuantity,
+                       'updated_at' => now()
+                   ]);
+           }
+    
+           DB::commit();
+           \Log::info('Transaction committed successfully');
+           
+           return response()->json([
+               'success' => true,
+               'message' => 'Transaksi berhasil'
+           ]);
+    
+       } catch (\Exception $e) {
+           DB::rollBack();
+           \Log::error('Offline Order Error:', [
+               'message' => $e->getMessage(),
+               'file' => $e->getFile(),
+               'line' => $e->getLine(),
+               'trace' => $e->getTraceAsString()
+           ]);
+           
+           return response()->json([
+               'success' => false,
+               'message' => 'Error: ' . $e->getMessage()
+           ], 500);
+       }
     }
-}
 
 }

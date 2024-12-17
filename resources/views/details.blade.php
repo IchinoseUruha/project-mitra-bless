@@ -15,7 +15,7 @@
           <div class="row">
               <!-- Gambar Produk -->
               <div class="col-lg-5 text-center">
-                  <img src="{{ asset('uploads/products/' . $product->image) }}" class="img-fluid rounded" style="max-height: 400px; object-fit: contain;" alt="{{ $product->name }}">
+                  <img src="{{ asset($product->image_path) }}" class="img-fluid rounded" style="max-height: 400px; object-fit: contain;" alt="{{ $product->name }}">
               </div>
 
               <!-- Informasi Produk -->
@@ -44,7 +44,7 @@
                           <div class="tab-pane fade show active" id="detail">
                               <div class="mb-2">
                                 <span>Stok Barang: </span>
-                                <span class="text-pink">Unknown</span>
+                                <span class="text-pink">{{$product->quantity}}</span>
                             </div>
                               <div class="mb-2">
                                   <span>Kategori: </span>

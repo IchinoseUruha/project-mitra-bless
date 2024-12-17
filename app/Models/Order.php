@@ -1,5 +1,4 @@
 <?php
-// app/Models/Order.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,6 +17,13 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
-    
+    public function offlineItems()
+    {
+        return $this->hasMany(OfflineOrderItem::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'customer_id','id');
+    }
     
 }

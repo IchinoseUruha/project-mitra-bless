@@ -224,6 +224,13 @@ function showDetail(order) {
                 <p class="text-sm font-medium text-gray-500">Harga Setelah Diskon</p>
                 <p class="mt-1 text-gray-900">${formatCurrency(order.harga_diskon || order.total)}</p>
             </div>
+            <div class="mt-6 flex justify-end">
+                <a href="/kasir/invoice/offline/${order.id}/download" 
+                class="inline-flex items-center px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors">
+                    <i class="fas fa-download mr-2"></i>
+                    Download Invoice
+                </a>
+            </div>
         </div>
     `;
     

@@ -92,7 +92,7 @@ public function process(Request $request)
         if (session()->has('direct_purchase')) {
             $cartItem = session('cartItems');
             $result = DB::select(
-                'CALL ProcessOrder(?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                'CALL CreateOrder(?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [
                     Auth::id(),
                     $validated['delivery_method'],
