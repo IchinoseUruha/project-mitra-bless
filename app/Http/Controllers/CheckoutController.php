@@ -107,7 +107,7 @@ public function process(Request $request)
             );
         } else {
             $result = DB::select(
-                'CALL ProcessOrder(?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                'CALL CreateOrder(?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [
                     Auth::id(),
                     $validated['delivery_method'],
