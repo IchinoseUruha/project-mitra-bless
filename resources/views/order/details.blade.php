@@ -82,6 +82,7 @@
 
             <div class="card-body p-0">
                 @foreach($orders as $order)
+                    @foreach($order->items as $item)
                     <!-- Header Pesanan -->
                     <div class="table-responsive">
                         <table class="table mb-0">
@@ -100,7 +101,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($order->items as $item)
                                 <tr>
                                     <td>
                                         {{ $item->order_number }}<br>
@@ -169,76 +169,70 @@
                                         </div>
                                     </td>
                                 </tr>
-                                @endforeach
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Detail Produk -->
-            <div class="table-responsive detail-table" id="detail{{ $order->id }}" style="display: none;">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Produk</th>
-                            <th>Harga</th>
-                            <th>Jumlah</th>
-                            <th>Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($order->items as $item)
-                        <tr>
-                            <td>{{ $item->produk->name }}</td>
-                            <td>Rp. {{ number_format($item->price, 0, ',', '.') }}</td>
-                            <td>{{ $item->quantity }}</td>
-                            <td>Rp. {{ number_format($item->total, 0, ',', '.') }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="3" class="text-end"><strong>Diskon:</strong></td>
-                            <td>
-                                <strong>
-                                    @if(Auth::user()->utype == 'customer_b')
-                                        0%
-                                    @else
-                                        @if($item->quantity >= 36)
-                                            10%
-                                        @elseif($item->quantity >= 12)
-                                            5%
-                                        @else
-                                            0%
-                                        @endif
-                                    @endif
-                                </strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                            <td>
-                                <strong>
-                                    @if(Auth::user()->utype == 'customer_b')
-                                        Rp {{ number_format($item->total, 2) }}
-                                    @else
-                                        Rp {{ number_format($item->harga_diskon, 2) }}
-                                    @endif
-                                </strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="4" class="text-end">
-                                <a href="{{ route('customer.invoice', ['id' => $item->id]) }}" 
-                                class="btn btn-pink" 
-                                style="min-width: 150px;">
-                                    <i class="fas fa-download me-2"></i>
-                                    Download Invoice
-                                </a>
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
+                    <div class="table-responsive detail-table" id="detail{{ $order->id }}" style="display: none;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Produk</th>
+                                    <th>Harga</th>
+                                    <th>Jumlah</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{ $item->produk->name }}</td>
+                                    <td>Rp. {{ number_format($item->price, 0, ',', '.') }}</td>
+                                    <td>{{ $item->quantity }}</td>
+                                    <td>Rp. {{ number_format($item->total, 0, ',', '.') }}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                @php
+                                    $discount = 0;
+                                    if(Auth::user()->utype != 'customer_b') {
+                                        if($item->quantity >= 36) {
+                                            $discount = 10;
+                                        } elseif($item->quantity >= 12) {
+                                            $discount = 5;
+                                        }
+                                    }
+                                @endphp
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Diskon:</strong></td>
+                                    <td><strong>{{ $discount }}%</strong></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                    <td>
+                                        <strong>
+                                            @if(Auth::user()->utype == 'customer_b')
+                                                Rp {{ number_format($item->total, 2) }}
+                                            @else
+                                                Rp {{ number_format($item->harga_diskon, 2) }}
+                                            @endif
+                                        </strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-end">
+                                        <a href="{{ route('customer.invoice', ['id' => $item->id]) }}" 
+                                        class="btn btn-pink" 
+                                        style="min-width: 150px;">
+                                            <i class="fas fa-download me-2"></i>
+                                            Download Invoice
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    @endforeach
                 @endforeach
             </div>
         </div>
