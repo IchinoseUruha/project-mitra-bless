@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OfflineOrderItem;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,27 +15,127 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Laravel\Facades\Image;
 
-
 class AdminController extends Controller
 {
-    public function index(){
+    public function index()
+    {
+        // Total Orders
+        $totalOrders = OrderItem::count() + OfflineOrderItem::count();
+        
+        // Total Amount (menggunakan harga_diskon jika ada, jika tidak gunakan total)
+        $totalAmount = OrderItem::sum('harga_diskon') + OfflineOrderItem::sum('harga_diskon');
+        
+        // Delivered Orders (selesai)
+        $deliveredOrders = OrderItem::where('status', 'selesai')->count() + 
+                          OfflineOrderItem::where('status', 'selesai')->count();
+        
+        // Delivered Amount
+        $deliveredAmount = OrderItem::where('status', 'selesai')->sum('harga_diskon') +
+                          OfflineOrderItem::where('status', 'selesai')->sum('harga_diskon');
+        
+        // Pending Orders (menunggu_pembayaran, sedang_diproses)
+        $pendingOrders = OrderItem::whereIn('status', ['menunggu_pembayaran', 'sedang_diproses'])->count();
+        
+        // Pending Amount
+        $pendingAmount = OrderItem::whereIn('status', ['menunggu_pembayaran', 'sedang_diproses'])
+                        ->sum('harga_diskon');
+        
+        // Cancelled Orders
+        $cancelledOrders = OrderItem::where('status', 'dibatalkan')->count() + 
+                          OfflineOrderItem::where('status', 'dibatalkan')->count();
+        
+        // Cancelled Amount
+        $cancelledAmount = OrderItem::where('status', 'dibatalkan')->sum('harga_diskon') +
+                          OfflineOrderItem::where('status', 'dibatalkan')->sum('harga_diskon');
 
-        return view('admin.index');
+        // Recent Orders - Get last 10 orders
+        $recentOrders = OrderItem::orderBy('created_at', 'desc')
+            ->take(10)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'order_number' => $item->order_number,
+                    'name' => $item->nama_produk,
+                    'phone' => '-', // Tidak ada di tabel
+                    'subtotal' => $item->total,
+                    'tax' => $item->total * 0.11,
+                    'total' => $item->harga_diskon ?? $item->total,
+                    'status' => $item->status,
+                    'order_date' => $item->created_at,
+                    'total_items' => $item->quantity,
+                    'delivered_on' => $item->status === 'selesai' ? $item->updated_at : null
+                ];
+            });
+
+        // Monthly earnings data for chart
+        $monthlyEarnings = [
+            'total' => [],
+            'pending' => [],
+            'delivered' => [],
+            'canceled' => []
+        ];
+
+        for ($month = 1; $month <= 12; $month++) {
+            // Total Orders
+            $monthlyEarnings['total'][$month] = OrderItem::whereMonth('created_at', $month)
+                ->whereYear('created_at', date('Y'))
+                ->sum('harga_diskon') + 
+                OfflineOrderItem::whereMonth('created_at', $month)
+                ->whereYear('created_at', date('Y'))
+                ->sum('harga_diskon');
+            
+            // Pending Orders
+            $monthlyEarnings['pending'][$month] = OrderItem::whereMonth('created_at', $month)
+                ->whereYear('created_at', date('Y'))
+                ->whereIn('status', ['menunggu_pembayaran', 'sedang_diproses'])
+                ->sum('harga_diskon');
+            
+            // Delivered Orders
+            $monthlyEarnings['delivered'][$month] = OrderItem::whereMonth('created_at', $month)
+                ->whereYear('created_at', date('Y'))
+                ->where('status', 'selesai')
+                ->sum('harga_diskon') +
+                OfflineOrderItem::whereMonth('created_at', $month)
+                ->whereYear('created_at', date('Y'))
+                ->where('status', 'selesai')
+                ->sum('harga_diskon');
+            
+            // Cancelled Orders
+            $monthlyEarnings['canceled'][$month] = OrderItem::whereMonth('created_at', $month)
+                ->whereYear('created_at', date('Y'))
+                ->where('status', 'dibatalkan')
+                ->sum('harga_diskon') +
+                OfflineOrderItem::whereMonth('created_at', $month)
+                ->whereYear('created_at', date('Y'))
+                ->where('status', 'dibatalkan')
+                ->sum('harga_diskon');
+        }
+
+        return view('admin.index', compact(
+            'totalOrders',
+            'totalAmount',
+            'deliveredOrders',
+            'deliveredAmount',
+            'pendingOrders',
+            'pendingAmount',
+            'cancelledOrders',
+            'cancelledAmount',
+            'recentOrders',
+            'monthlyEarnings'
+        ));
     }
 
+    // Existing methods remain unchanged...
     public function brands(){
-
         $brands = Brand::orderBy('id', 'asc')->paginate(10);
         return view('admin.brands', compact('brands'));
     }
 
     public function add_brand(){
-
         return view('admin.brand-add');
     }
 
     public function brand_store(Request $request){
-        
         $request->validate([
             'name' => 'required',
             'slug' => 'required|unique:brand,slug'
@@ -45,10 +146,30 @@ class AdminController extends Controller
         $brand->slug = Str::slug($request->slug);
         $brand->save();
 
-        return redirect()->route('admin.brands')->with('status', 'Brand has been added succesfully!');
-
-
+        return redirect()->route('admin.brands')->with('status', 'Brand has been added successfully!');
     }
+
+    // public function add_brand(){
+
+    //     return view('admin.brand-add');
+    // }
+
+    // public function brand_store(Request $request){
+        
+    //     $request->validate([
+    //         'name' => 'required',
+    //         'slug' => 'required|unique:brand,slug'
+    //     ]);
+
+    //     $brand = new Brand();
+    //     $brand->name = $request->name;
+    //     $brand->slug = Str::slug($request->slug);
+    //     $brand->save();
+
+    //     return redirect()->route('admin.brands')->with('status', 'Brand has been added succesfully!');
+
+
+    // }
 
     public function brand_edit($id){
 

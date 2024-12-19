@@ -108,7 +108,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($order->items as $item)
+                                @foreach($order->items as $key => $item)
                                 <tr>
                                     <td>
                                         {{ $item->order_number }}<br>
@@ -140,76 +140,53 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if($item->bukti_pembayaran)
-                                            <a href="{{ asset('uploads/bukti_pembayaran/'.$item->bukti_pembayaran) }}" 
-                                            target="_blank">
-                                                <img src="{{ asset('uploads/bukti_pembayaran/'.$item->bukti_pembayaran) }}" 
-                                                    alt="Bukti Pembayaran" 
-                                                    class="img-thumbnail" 
-                                                    style="max-width: 100px;">
-                                            </a>
-                                        @else
-                                            @if($item->status == 'menunggu_pembayaran')
-                                            <button type="button" 
-                                                    class="btn btn-sm btn-pink" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#uploadBuktiModal{{ $item->id }}">
-                                                Upload Bukti
-                                            </button>
+                                        @if($key === 0)
+                                            @if($item->bukti_pembayaran)
+                                                <a href="{{ asset('uploads/bukti_pembayaran/'.$item->bukti_pembayaran) }}" 
+                                                target="_blank">
+                                                    <img src="{{ asset('uploads/bukti_pembayaran/'.$item->bukti_pembayaran) }}" 
+                                                        alt="Bukti Pembayaran" 
+                                                        class="img-thumbnail" 
+                                                        style="max-width: 100px;">
+                                                </a>
                                             @else
-                                            <span class="badge bg-secondary">Tidak ada bukti</span>
+                                                @if($item->status == 'menunggu_pembayaran')
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-pink" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#uploadBuktiModal{{ $order->id }}">
+                                                    Upload Bukti
+                                                </button>
+                                                @else
+                                                <span class="badge bg-secondary">Tidak ada bukti</span>
+                                                @endif
                                             @endif
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        <div class="d-flex flex-column gap-2">
-                                            <button type="button" class="btn btn-sm btn-pink" onclick="toggleDetail({{ $order->id }})">
-                                                Detail
-                                            </button>
-                                            @if($item->status == 'menunggu_pembayaran')
-                                                <form action="{{ route('order.cancel', $order->id) }}" method="POST">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100" onclick="return confirm('Yakin ingin membatalkan pesanan?')">
-                                                        Batalkan
-                                                    </button>
-                                                </form>
-                                            @endif
-                                        </div>
+                                        @if($key === 0)
+                                            <div class="d-flex flex-column gap-2">
+                                                <button type="button" class="btn btn-sm btn-pink" onclick="toggleDetail({{ $order->id }})">
+                                                    Detail
+                                                </button>
+                                                @if($item->status == 'menunggu_pembayaran')
+                                                    <form action="{{ route('order.cancel', $order->id) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100" onclick="return confirm('Yakin ingin membatalkan pesanan?')">
+                                                            Batalkan
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        @endif
                                     </td>
                                 </tr>
-
-                                <!-- Modal Upload Bukti -->
-                                <div class="modal fade" id="uploadBuktiModal{{ $item->id }}" tabindex="-1" aria-labelledby="uploadBuktiLabel{{ $item->id }}" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-pink text-white">
-                                                <h5 class="modal-title" id="uploadBuktiLabel{{ $item->id }}">Upload Bukti Pembayaran</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <form action="{{ route('order.upload-bukti', $item->id) }}" method="POST" enctype="multipart/form-data">
-                                                @csrf
-                                                <div class="modal-body">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Pilih File Bukti Pembayaran</label>
-                                                        <input type="file" name="bukti_pembayaran" class="form-control" accept="image/*" required>
-                                                        <small class="text-muted">Format: JPG, PNG, JPEG. Max: 2MB</small>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                    <button type="submit" class="btn btn-pink">Upload</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Detail Produk -->
-                    @foreach($order->items as $item)
                     <div class="table-responsive detail-table" id="detail{{ $order->id }}" style="display: none;">
                         <table class="table">
                             <thead>
@@ -221,43 +198,58 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php
+                                    $totalAmount = 0;
+                                    $totalDiscount = 0;
+                                @endphp
+                                @foreach($order->items as $item)
                                 <tr>
                                     <td>{{ $item->produk->name }}</td>
                                     <td>Rp. {{ number_format($item->price, 0, ',', '.') }}</td>
                                     <td>{{ $item->quantity }}</td>
                                     <td>Rp. {{ number_format($item->total, 0, ',', '.') }}</td>
                                 </tr>
-                            </tbody>
-                            <tfoot>
                                 @php
-                                    $discount = 0;
+                                    $totalAmount += $item->total;
                                     if(Auth::user()->utype != 'customer_b') {
                                         if($item->quantity >= 36) {
                                             $discount = 10;
                                         } elseif($item->quantity >= 12) {
                                             $discount = 5;
+                                        } else {
+                                            $discount = 0;
                                         }
+                                        $totalDiscount += ($item->total * $discount / 100);
                                     }
                                 @endphp
+                                @endforeach
+                            </tbody>
+                            <tfoot>
                                 <tr>
-                                    <td colspan="3" class="text-end"><strong>Diskon:</strong></td>
-                                    <td><strong>{{ $discount }}%</strong></td>
+                                    <td colspan="3" class="text-end"><strong>Total Sebelum Diskon:</strong></td>
+                                    <td><strong>Rp. {{ number_format($totalAmount, 0, ',', '.') }}</strong></td>
                                 </tr>
+                                @if(Auth::user()->utype != 'customer_b' && $totalDiscount > 0)
                                 <tr>
-                                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                    <td colspan="3" class="text-end"><strong>Total Diskon:</strong></td>
+                                    <td><strong>Rp. {{ number_format($totalDiscount, 0, ',', '.') }}</strong></td>
+                                </tr>
+                                @endif
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total Akhir:</strong></td>
                                     <td>
                                         <strong>
                                             @if(Auth::user()->utype == 'customer_b')
-                                                Rp {{ number_format($item->total, 2) }}
+                                                Rp. {{ number_format($totalAmount, 0, ',', '.') }}
                                             @else
-                                                Rp {{ number_format($item->harga_diskon, 2) }}
+                                                Rp. {{ number_format($totalAmount - $totalDiscount, 0, ',', '.') }}
                                             @endif
                                         </strong>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="4" class="text-end">
-                                        <a href="{{ route('customer.invoice', ['id' => $item->id]) }}" 
+                                        <a href="{{ route('customer.invoice', ['id' => $order->id]) }}" 
                                         class="btn btn-pink" 
                                         style="min-width: 150px;">
                                             <i class="fas fa-download me-2"></i>
@@ -268,7 +260,34 @@
                             </tfoot>
                         </table>
                     </div>
-                    @endforeach
+
+                    <!-- Modal Upload Bukti -->
+                    @if($order->items->first()->status == 'menunggu_pembayaran' && !$order->items->first()->bukti_pembayaran)
+                    <div class="modal fade" id="uploadBuktiModal{{ $order->id }}" tabindex="-1" aria-labelledby="uploadBuktiLabel{{ $order->id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-pink text-white">
+                                    <h5 class="modal-title" id="uploadBuktiLabel{{ $order->id }}">Upload Bukti Pembayaran</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="{{ route('order.upload-bukti', $order->id) }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Pilih File Bukti Pembayaran</label>
+                                            <input type="file" name="bukti_pembayaran" class="form-control" accept="image/*" required>
+                                            <small class="text-muted">Format: JPG, PNG, JPEG. Max: 2MB</small>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                        <button type="submit" class="btn btn-pink">Upload</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                 @endforeach
             </div>
         </div>

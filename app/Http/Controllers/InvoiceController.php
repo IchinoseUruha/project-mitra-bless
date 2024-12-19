@@ -51,28 +51,42 @@ class InvoiceController extends Controller
         
         return $pdf->download('Invoice-'.$orderItem->order_number.'.pdf');
     }
-        public function downloadOnlineInvoice($id)
-        {
-            $orderItem = OrderItem::findOrFail($id);
-            $order = Order::with('user')->findOrFail($orderItem->order_id);  // Menggunakan relasi yang sudah ada
-            // Debug the relationships
-            \Log::info('Order Data:', [
-                'order_id' => $order->id,
-                'customer_id' => $order->customer_id,
-                'user' => $order->user
-            ]);
-
-            $data = [
-                'order' =>$order,
-                'orderItem' => $orderItem,
-                'company_name' => 'Toko Bless',
-                'company_address' => 'Jln. Gacor King',
-                'company_phone' => '081 488 sisanya kapan2',
-                'invoice_date' => now()->format('d/m/Y'),
-            ];
-
-            $pdf = PDF::loadView('invoices.online', $data);
+    public function downloadOnlineInvoice($id)
+    {
+        $order = Order::with(['items.produk', 'user'])->findOrFail($id);
+        
+        // Calculate totals
+        $totalAmount = 0;
+        $totalDiscount = 0;
+        
+        foreach ($order->items as $item) {
+            $totalAmount += $item->total;
             
-            return $pdf->download('Invoice-'.$orderItem->order_number.'.pdf');
+            if (auth()->user()->utype != 'customer_b') {
+                if ($item->quantity >= 36) {
+                    $discount = 10;
+                } elseif ($item->quantity >= 12) {
+                    $discount = 5;
+                } else {
+                    $discount = 0;
+                }
+                $totalDiscount += ($item->total * $discount / 100);
+            }
         }
+
+        $data = [
+            'order' => $order,
+            'company_name' => 'Toko Bless',
+            'company_address' => 'Jln. Gacor King',
+            'company_phone' => '081 488 sisanya kapan2',
+            'invoice_date' => now()->format('d/m/Y'),
+            'totalAmount' => $totalAmount,
+            'totalDiscount' => $totalDiscount,
+            'finalTotal' => $totalAmount - $totalDiscount
+        ];
+
+        $pdf = PDF::loadView('invoices.online', $data);
+        
+        return $pdf->download('Invoice-'.$order->items->first()->order_number.'.pdf');
+    }
 }

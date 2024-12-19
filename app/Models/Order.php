@@ -17,13 +17,21 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
     public function offlineItems()
     {
         return $this->hasMany(OfflineOrderItem::class);
     }
+
+    // Relasi ke user untuk controller lain
     public function user()
     {
-        return $this->belongsTo(User::class, 'customer_id','id');
+        return $this->belongsTo(User::class, 'customer_id', 'id');
     }
-    
+
+    // Relasi ke customer (alias dari user)
+    public function customer()
+    {
+        return $this->belongsTo(User::class, 'customer_id');
+    }
 }

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Invoice #{{ $orderItem->order_number }}</title>
+    <title>Invoice #{{ $order->items->first()->order_number }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -104,13 +104,13 @@
     </div>
 
     <div class="invoice-details">
-        <p><strong>Invoice Number:</strong> #{{ $orderItem->order_number }}</p>
+        <p><strong>Invoice Number:</strong> #{{ $order->items->first()->order_number }}</p>
         <p><strong>Customer:</strong> {{ $order->user->name ?? 'N/A' }}</p> 
         <p><strong>Tanggal:</strong> {{ $invoice_date }}</p>
-        <p><strong>Metode Pembayaran:</strong> {{ ucfirst(str_replace('_', ' ', $orderItem->payment_method)) }}</p>
-        <p><strong>Detail Pembayaran:</strong> {{ $orderItem->payment_details }}</p>
-        <p><strong>Shipping Address:</strong> {{ $orderItem->address }}</p>
-        <p><strong>Delivery Method:</strong> {{ ucfirst($orderItem->delivery_method) }}</p>
+        <p><strong>Metode Pembayaran:</strong> {{ ucfirst(str_replace('_', ' ', $order->items->first()->payment_method)) }}</p>
+        <p><strong>Detail Pembayaran:</strong> {{ $order->items->first()->payment_details }}</p>
+        <p><strong>Shipping Address:</strong> {{ $order->items->first()->address }}</p>
+        <p><strong>Delivery Method:</strong> {{ ucfirst($order->items->first()->delivery_method) }}</p>
     </div>
 
     <table>
@@ -123,28 +123,47 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $totalAmount = 0;
+                $totalDiscount = 0;
+            @endphp
+            @foreach($order->items as $item)
             <tr>
-                <td>{{ $orderItem->nama_produk ?? $orderItem->produk_id }}</td>
-                <td>{{ $orderItem->quantity }}</td>
-                <td>Rp {{ number_format($orderItem->price, 0, ',', '.') }}</td>
-                <td>Rp {{ number_format($orderItem->total, 0, ',', '.') }}</td>
+                <td>{{ $item->produk->name }}</td>
+                <td>{{ $item->quantity }}</td>
+                <td>Rp {{ number_format($item->price, 0, ',', '.') }}</td>
+                <td>Rp {{ number_format($item->total, 0, ',', '.') }}</td>
             </tr>
+            @php
+                $totalAmount += $item->total;
+                if(Auth::user()->utype != 'customer_b') {
+                    if($item->quantity >= 36) {
+                        $discount = 10;
+                    } elseif($item->quantity >= 12) {
+                        $discount = 5;
+                    } else {
+                        $discount = 0;
+                    }
+                    $totalDiscount += ($item->total * $discount / 100);
+                }
+            @endphp
+            @endforeach
         </tbody>
     </table>
 
     <div class="total">
-        <p><strong>Subtotal:</strong> Rp {{ number_format($orderItem->total, 0, ',', '.') }}</p>
-        @if($orderItem->harga_diskon)
-            <p><strong>Discount:</strong> Rp {{ number_format($orderItem->total - $orderItem->harga_diskon, 0, ',', '.') }}</p>
-            <p><strong>Grand Total:</strong> Rp {{ number_format($orderItem->harga_diskon, 0, ',', '.') }}</p>
+        <p><strong>Subtotal:</strong> Rp {{ number_format($totalAmount, 0, ',', '.') }}</p>
+        @if($totalDiscount > 0)
+            <p><strong>Discount:</strong> Rp {{ number_format($totalDiscount, 0, ',', '.') }}</p>
+            <p><strong>Grand Total:</strong> Rp {{ number_format($totalAmount - $totalDiscount, 0, ',', '.') }}</p>
+        @else
+            <p><strong>Grand Total:</strong> Rp {{ number_format($totalAmount, 0, ',', '.') }}</p>
         @endif
     </div>
 
-    {{-- <div class="payment-info">
-        <p>Thank you for your purchase!</p>
-        @if($orderItem->payment_method != 'cash')
-            <p>Please complete your payment to process your order.</p>
-        @endif
-    </div> --}}
+    <div class="payment-info">
+        <p>Terima kasih telah berbelanja di {{ $company_name }}.</p>
+        <p>Jika ada pertanyaan, silakan hubungi kami di {{ $company_phone }}.</p>
+    </div>
 </body>
 </html>

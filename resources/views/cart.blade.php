@@ -24,7 +24,7 @@
                  onmouseout="this.style.backgroundColor='transparent'; this.style.boxShadow='none';">
                 <div style="width: 25%; display: flex; justify-content: flex-start;">
                     <img 
-                        src="{{ asset('uploads/products/thumbnails') }}/{{ $item->produk->image }}" 
+                        src="{{ $item->produk->image_path }}" 
                         alt="{{ $item->produk->name }}" 
                         style="border-radius: 0.75rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); width: 80px; height: 80px; object-fit: cover;"
                     />

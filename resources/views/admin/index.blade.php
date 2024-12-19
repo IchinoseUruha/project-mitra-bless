@@ -2,12 +2,10 @@
 
 @section('content')
 <div class="main-content-inner">
-
     <div class="main-content-wrap">
         <div class="tf-section-2 mb-30">
             <div class="flex gap20 flex-wrap-mobile">
                 <div class="w-half">
-
                     <div class="wg-chart-default mb-20">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap14">
@@ -16,12 +14,11 @@
                                 </div>
                                 <div>
                                     <div class="body-text mb-2">Total Orders</div>
-                                    <h4>3</h4>
+                                    <h4>{{ $totalOrders }}</h4>
                                 </div>
                             </div>
                         </div>
                     </div>
-
 
                     <div class="wg-chart-default mb-20">
                         <div class="flex items-center justify-between">
@@ -31,12 +28,11 @@
                                 </div>
                                 <div>
                                     <div class="body-text mb-2">Total Amount</div>
-                                    <h4>481.34</h4>
+                                    <h4>Rp {{ number_format($totalAmount, 2) }}</h4>
                                 </div>
                             </div>
                         </div>
                     </div>
-
 
                     <div class="wg-chart-default mb-20">
                         <div class="flex items-center justify-between">
@@ -46,12 +42,11 @@
                                 </div>
                                 <div>
                                     <div class="body-text mb-2">Pending Orders</div>
-                                    <h4>3</h4>
+                                    <h4>{{ $pendingOrders }}</h4>
                                 </div>
                             </div>
                         </div>
                     </div>
-
 
                     <div class="wg-chart-default">
                         <div class="flex items-center justify-between">
@@ -61,16 +56,14 @@
                                 </div>
                                 <div>
                                     <div class="body-text mb-2">Pending Orders Amount</div>
-                                    <h4>481.34</h4>
+                                    <h4>Rp {{ number_format($pendingAmount, 2) }}</h4>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="w-half">
-
                     <div class="wg-chart-default mb-20">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap14">
@@ -79,12 +72,11 @@
                                 </div>
                                 <div>
                                     <div class="body-text mb-2">Delivered Orders</div>
-                                    <h4>0</h4>
+                                    <h4>{{ $deliveredOrders }}</h4>
                                 </div>
                             </div>
                         </div>
                     </div>
-
 
                     <div class="wg-chart-default mb-20">
                         <div class="flex items-center justify-between">
@@ -94,12 +86,11 @@
                                 </div>
                                 <div>
                                     <div class="body-text mb-2">Delivered Orders Amount</div>
-                                    <h4>0.00</h4>
+                                    <h4>Rp {{ number_format($deliveredAmount, 2) }}</h4>
                                 </div>
                             </div>
                         </div>
                     </div>
-
 
                     <div class="wg-chart-default mb-20">
                         <div class="flex items-center justify-between">
@@ -109,12 +100,11 @@
                                 </div>
                                 <div>
                                     <div class="body-text mb-2">Canceled Orders</div>
-                                    <h4>0</h4>
+                                    <h4>{{ $cancelledOrders }}</h4>
                                 </div>
                             </div>
                         </div>
                     </div>
-
 
                     <div class="wg-chart-default">
                         <div class="flex items-center justify-between">
@@ -124,14 +114,12 @@
                                 </div>
                                 <div>
                                     <div class="body-text mb-2">Canceled Orders Amount</div>
-                                    <h4>0.00</h4>
+                                    <h4>Rp {{ number_format($cancelledAmount, 2) }}</h4>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
-
             </div>
 
             <div class="wg-box">
@@ -147,22 +135,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap10">
-                            <h4>$37,802</h4>
-                            <div class="box-icon-trending up">
-                                <i class="icon-trending-up"></i>
-                                <div class="body-title number">0.56%</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="mb-2">
-                            <div class="block-legend">
-                                <div class="dot t2"></div>
-                                <div class="text-tiny">Order</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap10">
-                            <h4>$28,305</h4>
+                            <h4>Rp {{ number_format($deliveredAmount, 2) }}</h4>
                             <div class="box-icon-trending up">
                                 <i class="icon-trending-up"></i>
                                 <div class="body-title number">0.56%</div>
@@ -170,17 +143,16 @@
                         </div>
                     </div>
                 </div>
-                <div id="line-chart-8"></div>
+                <div id="revenue-chart"></div>
             </div>
-
         </div>
-        <div class="tf-section mb-30">
 
+        <div class="tf-section mb-30">
             <div class="wg-box">
                 <div class="flex items-center justify-between">
                     <h5>Recent orders</h5>
                     <div class="dropdown default">
-                        <a class="btn btn-secondary dropdown-toggle" href="#">
+                        <a class="btn btn-secondary dropdown-toggle" href="{{ route('admin.pemesanan') }}">
                             <span class="view-all">View all</span>
                         </a>
                     </div>
@@ -196,7 +168,6 @@
                                     <th class="text-center">Subtotal</th>
                                     <th class="text-center">Tax</th>
                                     <th class="text-center">Total</th>
-
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Order Date</th>
                                     <th class="text-center">Total Items</th>
@@ -205,18 +176,18 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach($recentOrders as $order)
                                 <tr>
-                                    <td class="text-center">1</td>
-                                    <td class="text-center">Divyansh Kumar</td>
-                                    <td class="text-center">1234567891</td>
-                                    <td class="text-center">$172.00</td>
-                                    <td class="text-center">$36.12</td>
-                                    <td class="text-center">$208.12</td>
-
-                                    <td class="text-center">ordered</td>
-                                    <td class="text-center">2024-07-11 00:54:14</td>
-                                    <td class="text-center">2</td>
-                                    <td></td>
+                                    <td class="text-center">{{ $order['order_number'] }}</td>
+                                    <td class="text-center">{{ $order['name'] }}</td>
+                                    <td class="text-center">{{ $order['phone'] }}</td>
+                                    <td class="text-center">Rp {{ number_format($order['subtotal'], 2) }}</td>
+                                    <td class="text-center">Rp {{ number_format($order['tax'], 2) }}</td>
+                                    <td class="text-center">Rp {{ number_format($order['total'], 2) }}</td>
+                                    <td class="text-center">{{ $order['status'] }}</td>
+                                    <td class="text-center">{{ $order['order_date']->format('Y-m-d H:i:s') }}</td>
+                                    <td class="text-center">{{ $order['total_items'] }}</td>
+                                    <td class="text-center">{{ $order['delivered_on'] ? $order['delivered_on']->format('Y-m-d H:i:s') : '' }}</td>
                                     <td class="text-center">
                                         <a href="#">
                                             <div class="list-icon-function view-icon">
@@ -227,14 +198,86 @@
                                         </a>
                                     </td>
                                 </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
-
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const monthlyData = @json($monthlyEarnings);
+    
+    var options = {
+        series: [{
+            name: 'Total',
+            data: [...Object.values(monthlyData.total || {})],
+        }, {
+            name: 'Pending',
+            data: [...Object.values(monthlyData.pending || {})],
+        }, {
+            name: 'Delivered',
+            data: [...Object.values(monthlyData.delivered || {})],
+        }, {
+            name: 'Canceled',
+            data: [...Object.values(monthlyData.canceled || {})],
+        }],
+        chart: {
+            type: 'bar',
+            height: 325,
+            toolbar: {
+                show: false,
+            },
+        },
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                columnWidth: '10px',
+                endingShape: 'rounded'
+            },
+        },
+        dataLabels: {
+            enabled: false
+        },
+        legend: {
+            show: false,
+        },
+        colors: ['#2377FC', '#FFA500', '#078407', '#FF0000'],
+        stroke: {
+            show: false,
+        },
+        xaxis: {
+            labels: {
+                style: {
+                    colors: '#212529',
+                },
+            },
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        },
+        yaxis: {
+            show: false,
+        },
+        fill: {
+            opacity: 1
+        },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return "Rp " + val.toLocaleString()
+                }
+            }
+        }
+    };
+
+    const chart = new ApexCharts(document.querySelector("#line-chart-8"), options);
+    chart.render();
+});
+</script>
+@endpush
+
 @endsection
