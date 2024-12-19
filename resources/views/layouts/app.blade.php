@@ -400,10 +400,10 @@
                 <a href="{{ route('home.index') }}" class="navigation__link">Home</a>
               </li>
               <li class="navigation__item">
-                <a href="{{ route('shop.index') }}" class="navigation__link">Belanja</a>
+                <a href="{{ route('shop.index') }}" class="navigation__link">Shop</a>
               </li>
               <li class="navigation__item">
-                <a href="{{ route('cart.index') }}" class="navigation__link">Keranjang</a>
+                <a href="{{ route('cart.index') }}" class="navigation__link">Cart</a>
               </li>
               @auth
               <li class="navigation__item">
@@ -412,9 +412,6 @@
               @endauth
               <li class="navigation__item">
                 <a href="{{ route('about') }}" class="navigation__link">About</a>
-              </li>
-              <li class="navigation__item">
-                <a href="contact.html" class="navigation__link">Contact</a>
               </li>
             </ul>
           </nav>

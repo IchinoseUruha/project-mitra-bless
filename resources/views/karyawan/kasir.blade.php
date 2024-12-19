@@ -108,7 +108,7 @@ body {
 .search-container {
     position: relative;
     margin-bottom: 1.5rem;
-    margin-left: 3rem
+    margin-left: 3rem;
 }
 
 .search-container .bi-search {
@@ -152,6 +152,7 @@ body {
     /* Add minimum width to ensure cards don't get too small */
     min-width: 200px;
     height: 100%;
+    margin-left: 3rem;
 }
 
 .product-card:hover {
@@ -391,7 +392,7 @@ body {
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    // Script untuk kasir.blade.php
+    {{-- // Script untuk kasir.blade.php --}}
     <script>
         // Cart Management
         let cart = [];
