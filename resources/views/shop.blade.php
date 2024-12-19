@@ -212,7 +212,7 @@
                     <h5 class="accordion-header" id="accordion-heading-brand">
                         <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
                             data-bs-target="#accordion-filter-brand" aria-expanded="true" aria-controls="accordion-filter-brand">
-                            Product Brands
+                            Merek Produk
                         </button>
                     </h5>
                     <div id="accordion-filter-brand" class="accordion-collapse collapse show border-0"
@@ -235,7 +235,7 @@
                     <h5 class="accordion-header" id="accordion-heading-1">
                         <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
                             data-bs-target="#accordion-filter-1" aria-expanded="true" aria-controls="accordion-filter-1">
-                            Product Categories
+                            Kategori Produk
                         </button>
                     </h5>
                     <div id="accordion-filter-1" class="accordion-collapse collapse show border-0"

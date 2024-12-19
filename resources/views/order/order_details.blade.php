@@ -84,7 +84,7 @@
 
                                     <!-- Modal Upload Bukti -->
                                     <div class="modal fade" id="uploadBukti{{ $item->id }}" tabindex="-1">
-                                        <div class="modal-dialog">
+                                        <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header bg-pink text-white">
                                                     <h5 class="modal-title">Upload Bukti Pembayaran</h5>
@@ -163,18 +163,6 @@
     </div>
 </div>
 
-<style>
-.bg-pink {
-    background-color: #F062A8 !important;
-}
-.text-pink {
-    color: #F062A8 !important;
-}
-.table td {
-    vertical-align: middle;
-}
-</style>
-
 @if(session('success'))
 <div class="alert alert-success alert-dismissible fade show" role="alert">
     {{ session('success') }}
@@ -188,4 +176,34 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 @endif
+
 @endsection
+
+<style>
+.bg-pink {
+    background-color: #F062A8 !important;
+}
+.text-pink {
+    color: #F062A8 !important;
+}
+.table td {
+    vertical-align: middle;
+}
+
+.modal-dialog.modal-lg {
+    max-width: 80% !important; /* Adjusting modal width */
+}
+
+.modal-body {
+    max-height: 400px; /* Limiting the height of modal content */
+    overflow-y: auto; /* Enabling scrolling if content is too long */
+}
+
+.modal-footer {
+    padding: 15px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+</style>
