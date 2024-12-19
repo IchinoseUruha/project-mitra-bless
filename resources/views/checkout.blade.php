@@ -218,6 +218,7 @@ th:last-child, td:last-child {
                     <div class="form-group">
                         <label for="delivery_method">Pilih Metode Pengiriman</label>
                         <select name="delivery_method" id="delivery_method" class="form-control" required onchange="toggleAddressInput()">
+                            <option value="" disabled selected>Pilih metode pengiriman</option>
                             <option value="diantar">Diantar ke rumah</option>
                             <option value="diambil">Ambil di toko</option>
                         </select>

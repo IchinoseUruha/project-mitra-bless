@@ -397,21 +397,21 @@
           <nav class="navigation">
             <ul class="navigation__list list-unstyled d-flex">
               <li class="navigation__item">
-                <a href="{{ route('home.index') }}" class="navigation__link">Home</a>
+                <a href="{{ route('home.index') }}" class="navigation__link">Halaman Utama</a>
               </li>
               <li class="navigation__item">
-                <a href="{{ route('shop.index') }}" class="navigation__link">Shop</a>
+                <a href="{{ route('shop.index') }}" class="navigation__link">Belanja</a>
               </li>
               <li class="navigation__item">
-                <a href="{{ route('cart.index') }}" class="navigation__link">Cart</a>
+                <a href="{{ route('cart.index') }}" class="navigation__link">Keranjang</a>
               </li>
               @auth
               <li class="navigation__item">
-                  <a href="{{ route('order.details') }}" class="navigation__link">Orders</a>
+                  <a href="{{ route('order.details') }}" class="navigation__link">Pesanan</a>
               </li>
               @endauth
               <li class="navigation__item">
-                <a href="{{ route('about') }}" class="navigation__link">About</a>
+                <a href="{{ route('about') }}" class="navigation__link">Tentang kami</a>
               </li>
             </ul>
           </nav>
