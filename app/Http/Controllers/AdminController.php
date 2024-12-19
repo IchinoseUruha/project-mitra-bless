@@ -67,6 +67,23 @@ class AdminController extends Controller
                 ];
             });
 
+            $currentMonth = date('n');
+            $lastMonth = $currentMonth - 1;
+            if ($lastMonth < 1) $lastMonth = 12;
+        
+            $currentMonthRevenue = OrderItem::whereMonth('created_at', $currentMonth)
+                ->whereYear('created_at', date('Y'))
+                ->sum('harga_diskon');
+            
+            $lastMonthRevenue = OrderItem::whereMonth('created_at', $lastMonth)
+                ->whereYear('created_at', date('Y'))
+                ->sum('harga_diskon');
+        
+            $percentageChange = 0;
+            if ($lastMonthRevenue > 0) {
+                $percentageChange = (($currentMonthRevenue - $lastMonthRevenue) / $lastMonthRevenue) * 100;
+            }        
+
         // Monthly earnings data for chart
         $monthlyEarnings = [
             'total' => [],
@@ -121,7 +138,8 @@ class AdminController extends Controller
             'cancelledOrders',
             'cancelledAmount',
             'recentOrders',
-            'monthlyEarnings'
+            'monthlyEarnings',
+            'percentageChange'
         ));
     }
 

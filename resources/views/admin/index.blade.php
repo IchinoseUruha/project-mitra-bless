@@ -3,8 +3,10 @@
 @section('content')
 <div class="main-content-inner">
     <div class="main-content-wrap">
+        <!-- Statistics Cards Section -->
         <div class="tf-section-2 mb-30">
             <div class="flex gap20 flex-wrap-mobile">
+                <!-- Left Column -->
                 <div class="w-half">
                     <div class="wg-chart-default mb-20">
                         <div class="flex items-center justify-between">
@@ -63,6 +65,7 @@
                     </div>
                 </div>
 
+                <!-- Right Column -->
                 <div class="w-half">
                     <div class="wg-chart-default mb-20">
                         <div class="flex items-center justify-between">
@@ -121,7 +124,9 @@
                     </div>
                 </div>
             </div>
+            
 
+            <!-- Earnings Revenue Chart Section -->
             <div class="wg-box">
                 <div class="flex items-center justify-between">
                     <h5>Earnings revenue</h5>
@@ -136,17 +141,18 @@
                         </div>
                         <div class="flex items-center gap10">
                             <h4>Rp {{ number_format($deliveredAmount, 2) }}</h4>
-                            <div class="box-icon-trending up">
-                                <i class="icon-trending-up"></i>
-                                <div class="body-title number">0.56%</div>
+                            <div class="box-icon-trending {{ $percentageChange >= 0 ? 'up' : 'down' }}">
+                                <i class="icon-trending-{{ $percentageChange >= 0 ? 'up' : 'down' }}"></i>
+                                <div class="body-title number">{{ number_format(abs($percentageChange), 2) }}%</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div id="revenue-chart"></div>
+                <div id="line-chart-8" style="min-height: 365px;"></div>
             </div>
         </div>
 
+        <!-- Recent Orders Table Section -->
         <div class="tf-section mb-30">
             <div class="wg-box">
                 <div class="flex items-center justify-between">
@@ -162,17 +168,17 @@
                         <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <th style="width: 80px">OrderNo</th>
-                                    <th>Name</th>
-                                    <th class="text-center">Phone</th>
+                                    <th style="width: 200px" class="text-center">OrderNo</th>
+                                    <th class="text-center">Name</th>
+                                    {{-- <th class="text-center">Phone</th> --}}
                                     <th class="text-center">Subtotal</th>
-                                    <th class="text-center">Tax</th>
+                                    {{-- <th class="text-center">Tax</th> --}}
                                     <th class="text-center">Total</th>
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Order Date</th>
                                     <th class="text-center">Total Items</th>
                                     <th class="text-center">Delivered On</th>
-                                    <th></th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -180,15 +186,15 @@
                                 <tr>
                                     <td class="text-center">{{ $order['order_number'] }}</td>
                                     <td class="text-center">{{ $order['name'] }}</td>
-                                    <td class="text-center">{{ $order['phone'] }}</td>
-                                    <td class="text-center">Rp {{ number_format($order['subtotal'], 2) }}</td>
-                                    <td class="text-center">Rp {{ number_format($order['tax'], 2) }}</td>
+                                    {{-- <td class="text-center">{{ $order['phone'] }}</td> --}}
+                                    <td class="text-center">Rp. {{ number_format($order['subtotal'], 2) }}</td>
+                                    {{-- <td class="text-center">Rp {{ number_format($order['tax'], 2) }}</td> --}}
                                     <td class="text-center">Rp {{ number_format($order['total'], 2) }}</td>
                                     <td class="text-center">{{ $order['status'] }}</td>
                                     <td class="text-center">{{ $order['order_date']->format('Y-m-d H:i:s') }}</td>
                                     <td class="text-center">{{ $order['total_items'] }}</td>
                                     <td class="text-center">{{ $order['delivered_on'] ? $order['delivered_on']->format('Y-m-d H:i:s') : '' }}</td>
-                                    <td class="text-center">
+                                    {{-- <td class="text-center">
                                         <a href="#">
                                             <div class="list-icon-function view-icon">
                                                 <div class="item eye">
@@ -196,7 +202,7 @@
                                                 </div>
                                             </div>
                                         </a>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -209,6 +215,7 @@
 </div>
 
 @push('scripts')
+<script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const monthlyData = @json($monthlyEarnings);
@@ -245,7 +252,9 @@ document.addEventListener('DOMContentLoaded', function() {
             enabled: false
         },
         legend: {
-            show: false,
+            show: true,
+            position: 'top',
+            horizontalAlign: 'left'
         },
         colors: ['#2377FC', '#FFA500', '#078407', '#FF0000'],
         stroke: {
@@ -260,7 +269,12 @@ document.addEventListener('DOMContentLoaded', function() {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         },
         yaxis: {
-            show: false,
+            show: true,
+            labels: {
+                formatter: function(value) {
+                    return 'Rp ' + value.toLocaleString();
+                }
+            }
         },
         fill: {
             opacity: 1
