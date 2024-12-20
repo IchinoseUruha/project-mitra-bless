@@ -153,31 +153,22 @@ class OrderController extends Controller
         \Log::info('Upload Bukti Started for Order ID: ' . $id);
         
         try {
-            // Validate with a larger file size limit if needed
             $request->validate([
-                'bukti_pembayaran' => 'required|image|mimes:jpg,png,jpeg|max:5120' // Increased to 5MB
+                'bukti_pembayaran' => 'required|image|mimes:jpg,png,jpeg|max:5120'
             ]);
     
-            // Find the order first, then get its first item
+            // Find the order
             $order = Order::findOrFail($id);
-            $orderItem = $order->items()->first();
             
-            if (!$orderItem) {
-                \Log::error('OrderItem not found for Order ID: ' . $id);
-                return redirect()->back()->with('error', 'Order item tidak ditemukan');
-            }
-    
             if ($request->hasFile('bukti_pembayaran')) {
                 $file = $request->file('bukti_pembayaran');
                 
-                // Log file information
                 \Log::info('File Details:', [
                     'original_name' => $file->getClientOriginalName(),
                     'mime_type' => $file->getMimeType(),
                     'size' => $file->getSize()
                 ]);
                 
-                // Create upload directory if it doesn't exist
                 $uploadPath = public_path('uploads/bukti_pembayaran');
                 if (!file_exists($uploadPath)) {
                     mkdir($uploadPath, 0755, true);
@@ -192,9 +183,11 @@ class OrderController extends Controller
                     // Update database with transaction
                     \DB::beginTransaction();
                     
-                    $orderItem->bukti_pembayaran = $filename;
-                    $orderItem->status = 'sedang_diproses';
-                    $orderItem->save();
+                    // Update all order items for this order
+                    OrderItem::where('order_id', $id)->update([
+                        'bukti_pembayaran' => $filename,
+                        'status' => 'sedang_diproses'
+                    ]);
                     
                     \DB::commit();
                     \Log::info('Upload successful for Order ID: ' . $id . ', File: ' . $filename);
