@@ -150,51 +150,73 @@ class OrderController extends Controller
 
     public function uploadBukti(Request $request, $id)
     {
+        \Log::info('Upload Bukti Started for Order ID: ' . $id);
+        
         try {
+            // Validate with a larger file size limit if needed
             $request->validate([
-                'bukti_pembayaran' => 'required|image|mimes:jpg,png,jpeg|max:2048'
+                'bukti_pembayaran' => 'required|image|mimes:jpg,png,jpeg|max:5120' // Increased to 5MB
             ]);
     
-            $orderItem = OrderItem::findOrFail($id);
+            // Find the order first, then get its first item
+            $order = Order::findOrFail($id);
+            $orderItem = $order->items()->first();
             
+            if (!$orderItem) {
+                \Log::error('OrderItem not found for Order ID: ' . $id);
+                return redirect()->back()->with('error', 'Order item tidak ditemukan');
+            }
+    
             if ($request->hasFile('bukti_pembayaran')) {
                 $file = $request->file('bukti_pembayaran');
                 
-                // Create directory if it doesn't exist
+                // Log file information
+                \Log::info('File Details:', [
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getMimeType(),
+                    'size' => $file->getSize()
+                ]);
+                
+                // Create upload directory if it doesn't exist
                 $uploadPath = public_path('uploads/bukti_pembayaran');
                 if (!file_exists($uploadPath)) {
                     mkdir($uploadPath, 0755, true);
-                    chmod($uploadPath, 0755);
                 }
     
-                // Generate unique filename
                 $filename = time() . '_' . str_replace(' ', '_', $file->getClientOriginalName());
                 
-                // Handle file upload
                 try {
+                    // Move the file
                     $file->move($uploadPath, $filename);
                     
-                    // Verify file was uploaded
-                    if (!file_exists($uploadPath . '/' . $filename)) {
-                        throw new \Exception('File upload failed');
-                    }
+                    // Update database with transaction
+                    \DB::beginTransaction();
                     
-                    // Update database
-                    $orderItem->update([
-                        'bukti_pembayaran' => $filename,
-                        'status' => 'sedang_diproses'
-                    ]);
-    
+                    $orderItem->bukti_pembayaran = $filename;
+                    $orderItem->status = 'sedang_diproses';
+                    $orderItem->save();
+                    
+                    \DB::commit();
+                    \Log::info('Upload successful for Order ID: ' . $id . ', File: ' . $filename);
+                    
                     return redirect()->back()->with('success', 'Bukti pembayaran berhasil diupload');
+                    
                 } catch (\Exception $e) {
-                    \Log::error('Upload Error: ' . $e->getMessage());
-                    return redirect()->back()->with('error', 'Gagal mengupload file: ' . $e->getMessage());
+                    \DB::rollBack();
+                    \Log::error('Error in file upload or database update: ' . $e->getMessage());
+                    return redirect()->back()->with('error', 'Gagal mengupload bukti pembayaran: ' . $e->getMessage());
                 }
             }
     
             return redirect()->back()->with('error', 'Tidak ada file yang diupload');
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation Error: ' . $e->getMessage());
+            return redirect()->back()
+                ->withErrors($e->validator)
+                ->with('error', 'File terlalu besar. Maksimal ukuran file adalah 5MB.');
         } catch (\Exception $e) {
-            \Log::error('General Error: ' . $e->getMessage());
+            \Log::error('Upload Bukti Error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }

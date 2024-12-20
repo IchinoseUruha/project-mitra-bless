@@ -275,8 +275,12 @@
                                     <div class="modal-body">
                                         <div class="mb-3">
                                             <label class="form-label">Pilih File Bukti Pembayaran</label>
-                                            <input type="file" name="bukti_pembayaran" class="form-control" accept="image/*" required>
-                                            <small class="text-muted">Format: JPG, PNG, JPEG. Max: 2MB</small>
+                                            <input type="file" 
+                                                   name="bukti_pembayaran" 
+                                                   class="form-control" 
+                                                   accept="image/*" 
+                                                   required>
+                                            <small class="text-muted">Format: JPG, PNG, JPEG. Maksimal: 5MB</small>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -300,6 +304,13 @@
         const detailElement = document.getElementById('detail' + orderId);
         detailElement.style.display = detailElement.style.display === 'none' ? 'block' : 'none';
     }
+    // Add this to your scripts section
+document.querySelector('input[name="bukti_pembayaran"]').addEventListener('change', function() {
+    if (this.files[0].size > 5 * 1024 * 1024) {
+        alert('File terlalu besar! Maksimal ukuran file adalah 5MB.');
+        this.value = '';
+    }
+});
 
     // Initialize Bootstrap modals
     document.addEventListener('DOMContentLoaded', function() {
