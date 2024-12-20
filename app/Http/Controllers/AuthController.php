@@ -6,6 +6,7 @@ use App\Models\User; // Gunakan model User
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -16,27 +17,43 @@ class AuthController extends Controller
     }
 
     // Proses registrasi
+    
     public function register(Request $request)
     {
+        // Validasi input
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
-            'mobile' => 'required|string|max:20|unique:users,mobile', // Validasi nomor telepon
+            'mobile' => 'required|string|max:20|unique:users,mobile',
             'password' => 'required|string|min:8|confirmed',
         ]);
-        
-
+    
+        // Buat user di database Laravel
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'mobile' => $request->mobile, // Tambahkan mobile
+            'mobile' => $request->mobile,
             'password' => Hash::make($request->password),
-            'utype' => 'CUSTOMER_B', //default role pas register
+            'utype' => 'CUSTOMER_B', // Default role
         ]);
+    
+        try {
+            // Perbaikan cara passing parameter
+            DB::statement("CALL update_user_roles(?, ?, ?)", [
+                $request->email,          // email dalam string
+                $request->password,       // password asli
+                'CUSTOMER_B'             // utype dalam string, sesuai dengan CASE statement
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to assign database roles: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Failed to assign database roles.']);
+        }
+    
         Auth::login($user);
         return redirect()->route('home.index');
-
     }
+    
+
 
     // Menampilkan form login
     public function showLoginForm()
