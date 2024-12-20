@@ -117,6 +117,10 @@ Route::middleware(['auth', AuthAdmin::class])->group(function(){
     //daftar customer
     Route::get('/admin/daftar-customer',[AdminController::class, 'showDaftarCustomer'])->name('admin.customer');
 
+    //detail account
+    Route::get('/admin/detail-account', [AdminController::class, 'detailAccount'])->name('admin.detailAccount');
+    Route::get('/admin/update/detail-account',[AdminController::class,'updatedAccount'])->name('admin.updatedAccount');
+
 
 });
 
