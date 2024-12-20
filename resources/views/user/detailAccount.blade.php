@@ -81,6 +81,54 @@
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
+                            <div class="mb-4">
+                                <label for="current_password" class="form-label fw-medium">Current Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">
+                                        <i class="fas fa-lock text-muted"></i>
+                                    </span>
+                                    <input type="password" 
+                                           class="form-control @error('current_password') is-invalid @enderror" 
+                                           id="current_password" 
+                                           name="current_password">
+                                </div>
+                                @error('current_password')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="password" class="form-label fw-medium">New Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">
+                                        <i class="fas fa-key text-muted"></i>
+                                    </span>
+                                    <input type="password" 
+                                           class="form-control @error('password') is-invalid @enderror" 
+                                           id="password" 
+                                           name="password">
+                                </div>
+                                @error('password')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="password_confirmation" class="form-label fw-medium">Confirm New Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">
+                                        <i class="fas fa-key text-muted"></i>
+                                    </span>
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="password_confirmation" 
+                                           name="password_confirmation">
+                                </div>
+                            </div>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
