@@ -3,6 +3,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Middleware\AuthAdmin;
 use App\Http\Middleware\AuthKasir;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CheckoutController;
@@ -33,6 +35,14 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+//reset password 
+Route::view('/forgot-password','auth.forgot-password')->name('password.request');
+
+Route::post('/forgot-password', [ResetPasswordController::class,'passwordEmail']);
+
+Route::get('/reset-password/{token}', [ResetPasswordController::class,'passwordReset'])->name('password.reset');
+
+Route::post('/reset-password', [ResetPasswordController::class,'passwordUpdate'])->name('password.update');
 
 Route::get('/', [HomeController::class, 'index'])->name('home.index');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');

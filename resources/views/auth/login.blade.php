@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+{{-- @if (session('status'))
+    <x-flashMsg msg="{{session ('status')}}" />
+@endif --}}
+
 @section('content')
 <main class="pt-90">
     <div class="mb-4 pb-4"></div>
@@ -44,6 +48,10 @@
                         <div class="customer-option mt-4 text-center">
                             <span class="text-secondary">No account yet?</span>
                             <a href="{{ route('register') }}" class="btn-text js-show-register">Create Account</a>
+                        </div>
+                        <div class="customer-option mt-4 text-center">
+                            <span class="text-secondary">Dont remember your password ?</span>
+                            <a href="{{ route('password.request') }}" class="btn-text js-show-register">Forgot Password</a>
                         </div>
                     </form>
                 </div>
